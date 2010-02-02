@@ -1,0 +1,184 @@
+* {
+	font-family:  sans-serif, sans, arial, verdana;
+}
+body, html {
+	margin: 0px;
+	padding: 0px;
+}
+body {
+	background: #EFF4CC url(side_topg.jpg) repeat-x;
+	background: #CEE9F4 url(side_top.jpg) repeat-x;
+}
+#header {
+	position: relative;
+	width: 800px;
+	height: 34px;
+	margin: 0 auto;
+}
+	#header h1 {
+	margin: 0px;
+		height: 34px;
+		padding-left: 50px;
+		font-weight: normal;
+		font-size: 1.3em;
+		line-height: 1.5em;
+		color: #fff;
+		background: url(logo.gif) 10px 3px no-repeat;
+	}
+	#header ul#menu {
+		position: absolute;
+		list-style: none;
+		top: 10px;
+		right: 50px;
+		margin: 0px;
+		padding: 0px;
+		text-align: right:
+	}
+	#header ul#menu li {
+		display: inline;
+		margin: 0px;
+		padding: 0px;
+	}
+	#header ul#menu li a {
+		font-size: .9em;
+		padding-left: 10px;
+		color: #fff;
+		text-decoration: none;
+	}
+	#header ul#menu li a:hover {
+		color: #eee;
+	}
+
+#page {
+	width: 700px;
+	margin: 0 auto;
+	padding: 20px 50px 50px 50px;
+	background-color: #fff;
+}
+#page h2 {
+	margin: 50px 0px 0px 0px;
+	font-weight: normal;
+}
+#page h2 {
+	color: #000;
+	font-size: 1.2em;
+	border-bottom: 1px solid #aaa;
+}
+#page h3 {
+	margin: 50px 0px 0px 0px;
+	font-size: .9em;
+}
+#page p {
+	font-size: .8em;
+	line-height: 1.4em;
+}
+#page a {
+	text-decoration: underline;
+	color: blue;
+	cursor: hand;
+	cursor: pointer;
+}
+#page pre {
+	font-size: .9em;
+	font-family: monospace;
+	background-color: #F5F5F5;
+	border: 1px solid #ccc;
+	padding: 10px 15px 10px 15px;
+}
+#page p img {
+	margin-left: 20px;
+}
+
+#page ul {
+	list-style: square;
+}
+	#page ul lh {
+		font-weight: bold;
+	}
+	#page ul li {
+		font-size: .8em;
+	}
+
+#page table {
+	border: 1px solid #CFD4E6;
+}
+	#page table th, #page table td {
+		padding: 2px 5px 2px 5px;
+	}
+	#page table th {
+		color: #fff;
+		text-align: left;
+		border-bottom: 1px solid #aaa;
+		background-color: #727EA3;
+	}
+	#page table th, #page table td {
+		font-size: .7em;
+		padding-right: 20px;
+		vertical-align: top;
+	}
+	#page table tr.odd {
+		background-color: #E0E3EE;
+	}
+	#page table tr.even {
+		background-color: #F7F8FA;
+	}
+
+
+#page table ul {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+#page table ul *, #page ul table *, #page table table *, #page ul ul * {
+	font-size: 1em;
+}
+#page table table {
+	border: 0px;
+}
+#page td td {
+	padding: 0px 0px 3px 0px;
+}
+#page td td.property {
+	padding-right: 10px;
+}
+
+
+#page .property {
+	font-weight: bold;
+}
+#footer {
+	width: 100%;
+	background: #242424 url(content_black.jpg) center center repeat-y;
+	border-top: 1px solid #242424;
+}
+	#footer div {
+		margin: 0 auto;
+		padding: 5px 50px 5px 50px;
+		width: 700px;
+		font-size: .7em;
+		color: #fff;
+	}
+	#footer div a {
+		color: #fff;
+	}
+
+
+span.striked {
+	text-decoration: line-through;
+}
+
+.xmpl {
+	padding: 10px 15px 10px 15px !important;
+	background-color: #FFFFEE !important;
+	border: 1px solid #F8E78C !important;
+}
+table.xmpl {
+	padding: 0px !important;
+}
+ul.xmpl {
+	padding: 5px 15px 5px 30px !important;
+}
+.xmpl th {
+	background-color: #F8E78C !important;
+	border: 0px !important;
+}

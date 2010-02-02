@@ -1,0 +1,289 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title>jquery tinysort</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<link rel="stylesheet" type="text/css" media="screen" href="style/screen.css" />
+		<!--script type="text/javascript" src="scripts/jquery-1.2.6.min.js"></script-->
+		<script type="text/javascript" src="scripts/jquery-1.4.1.min.js"></script>
+		<script type="text/javascript" src="scripts/jquery.tinysort.js"></script>
+		<script type="text/javascript">
+			<!--
+			$(function(){
+				$("h1").text("jQuery."+$.tinysort.id+" "+$.tinysort.version);
+				$("#page>table>tbody>tr:odd").addClass("odd");
+				$("#page>table>tbody>tr:even").addClass("even");
+				$("#page tbody>tr").find("td:eq(0)").addClass("property");
+
+				var mMenu = $("<ul id=\"menu\" />").appendTo("#header");
+				$("h2").each(function(i,o){
+					mMenu.append("<li><a href=\"#"+$(this).text()+"\">"+$(this).text()+"</a></li>");
+					$(this).attr("id",$(this).text());
+				});
+
+				$("pre.example").each(function(){
+					var mPre = $(this);
+					var iNm = parseInt(mPre.attr("title")?mPre.attr("title"):6);
+					mPre.removeAttr("title");
+					var sTg = mPre.text().match(/(\w+)(?=#)/)[0];
+					var sId = mPre.text().match(/(?:#)(\w+)/)[1];
+					mPre.after("<"+sTg+" id=\""+sId+"\" class=\"xmpl\"></"+sTg+">").after("<p>test: <a onclick='"+mPre.text().replace(/\n/g,"")+"'>sort</a> or <a onclick=\"refill('"+sId+"',"+iNm+")\">refill</a></p>");//.after("<b>"+sTg+" "+sId+"</b>")
+					refill(sId,iNm);
+				});
+			
+				for (var i=0;i<6;i++) addTRow();
+				
+			});
+
+			function refill(s,num) {
+				var mEl = $("#"+s);
+				mEl.children().remove();
+				switch (s) {
+					case "xattr":
+					case "xret":	for (var i=0;i<num;i++) mEl.append("<li><span"+(brnd()?"":" class=\"striked\"")+">"+getPassword(6)+"</span></li>"); break;
+					case "xsub":	for (var i=0;i<num;i++) mEl.append("<li><span>"+getPassword(1,true)+"</span> <span>"+getPassword(6)+"</span></li>"); break;
+					case "xval":	for (var i=0;i<num;i++) mEl.append("<li><span>"+getPassword(1,true)+"</span> <a href=\"#\" title=\""+getPassword(6)+"\">"+getPassword(6)+"</a></li>"); break;
+					case "xany":	for (var i=0;i<num;i++) mEl.append("<span>"+getPassword(5,true)+" </span>"); break;
+					case "xnum":	for (var i=0;i<num;i++) mEl.append("<li>"+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+"</li>"); break;
+					case "xrnd":
+						for (var i=0;i<num;i++) {
+							if (i>0) {
+								mEl.append("<li>"+getPassword(6)+"</li>");
+							} else {
+								var sId = "s"+i;
+								mEl.append("<li><ul id=\""+sId+"\"></ul></li>");
+								refill(sId,6);
+							}
+						}
+					default:  for (var i=0;i<num;i++) mEl.append("<li>"+getPassword(6)+"</li>");
+				}
+			}
+
+			var aAsc = [];
+			function sortTable(nr) {
+				aAsc[nr] = aAsc[nr]=="asc"?"desc":"asc";
+				$("#xtable>tbody>tr").tsort("td:eq("+nr+")[abbr]",{order:aAsc[nr]});
+			}
+			function addTRow() {
+				var sName = getPassword(6);
+				var iInt = rand(0,9999);
+				var fFloat = rand(0,9999)/100;
+				var sSome = brnd()?(brnd()?rand(0,999):getPassword(4)):"";
+				var sRow = "<tr>";
+				sRow += "<td abbr=\""+sName+"\">"+sName+"</td>";
+				sRow += "<td abbr=\""+iInt+"\">"+iInt+"</td>";
+				sRow += "<td abbr=\""+fFloat+"\">"+fFloat+"</td>";
+				sRow += "<td"+(sSome!=""?" abbr=\""+sSome+"\"":"")+">"+sSome+"</td>";
+				sRow += "<td><a onclick=\"deleteTRow(this)\">x</a></td>";
+				sRow += "</tr>";
+				if ($("#xtable>tbody>tr>td").length==1) $("#xtable>tbody").html("");
+				$("#xtable>tbody").append(sRow);
+			}
+			function deleteTRow(e) {
+				$(e).parent().parent().remove();
+			}
+			function getPassword(iLen,bCut) {
+				if (!bCut) bCut = false;
+				aLtr = [['a','e','i','o','u','y'],['aa','ai','au','ea','ee','ei','eu','ia','ie','io','iu','oa','oe','oi','ua','ui'],['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'],['bb','br','bs','cc','ch','cl','cr','db','dd','df','dg','dh','dj','dk','dl','dm','dn','dp','dq','dr','ds','dt','dv','dw','dz','fb','fd','ff','fg','fh','fj','fk','fl','fm','fn','fp','fq','fr','fs','ft','fv','fw','fz','gb','gd','gf','gg','gh','gj','gk','gl','gm','gn','gp','gq','gr','gs','gt','gv','gw','gz','kb','kd','kf','kg','kh','kj','kk','kl','km','kn','kp','kq','kr','ks','kt','kv','kw','kz','lb','ld','lf','lg','lh','lj','lk','ll','lm','ln','lp','lq','lr','ls','lt','lv','lw','lz','mb','md','mf','mg','mh','mj','mk','ml','mm','mn','mp','mq','mr','ms','mt','mv','mw','mz','nb','nd','nf','ng','nh','nj','nk','nl','nm','nn','np','nq','nr','ns','nt','nv','nw','nz','pb','pd','pf','pg','ph','pj','pk','pl','pm','pn','pp','pq','pr','ps','pt','pv','pw','pz','qb','qd','qf','qg','qh','qj','qk','ql','qm','qn','qp','qq','qr','qs','qt','qv','qw','qz','rb','rd','rf','rg','rh','rj','rk','rl','rm','rn','rp','rq','rr','rs','rt','rv','rw','rz','sb','sc','sd','sf','sg','sh','sj','sk','sl','sm','sn','sp','sq','sr','ss','st','sv','sw','sz','tb','td','tf','tg','th','tj','tk','tl','tm','tn','tp','tq','tr','ts','tt','tv','tw','tz','vb','vd','vf','vg','vh','vj','vk','vl','vm','vn','vp','vq','vr','vs','vt','vv','vw','vz','xb','xd','xf','xg','xh','xj','xk','xl','xm','xn','xp','xq','xr','xs','xt','xv','xw','xx','xz']];
+				iSnm = 6;
+				sPsw = "";
+				iNum = 0;
+				for (var i=0;i<iSnm;i++) {
+					if (i==0)			iNum = rand(0,2);
+					else if (i==iSnm-1)	iNum = (iNum<2)?2:rand(0,1);
+					else				iNum = (iNum<2)?rand(0,1)+2:rand(0,1);
+					aLst = aLtr[iNum];
+					sPsw += aLst[ rand(0,aLst.length-1) ];
+				}
+				return bCut?sPsw.substr(0,iLen):sPsw;
+			}
+			function rand(fStr,fEnd) {
+				var fNum = fStr + Math.random()*(fEnd-fStr);
+				return (isInt(fStr)&&isInt(fEnd))?Math.round(fNum):fNum;
+			}
+			function brnd() {
+				return Math.random()<.5;
+			}
+			function isInt(n) {
+				return (n%1)==0;
+			}
+			-->
+		</script>
+	</head>
+	<body>
+		<div id="header">
+			<h1><span>TinySort</span></h1>
+		</div>
+		<div id="page">
+			<p>TinySort will sort any nodetype by it’s text- or attribute value, or by that of one of it’s children.</p>
+			<p>You can download SFBrowser at <a href="http://plugins.jquery.com/project/SFBrowser">http://plugins.jquery.com/project/SFBrowser</a> since that will always have the latest release. This is also the place where you can report bugs or request new features.</p>
+
+			<p>The examples below should help getting you on your way.</p>
+
+			<h2>usage</h2>
+			<p>The first parse in the tsort function can either be nothing...</p>
+			<pre>$("li").tsort();
+$("ul#people&gt;li").tsort();</pre>
+			<p>a string (as you would in <a href="http://docs.jquery.com/Traversing/find#expr">find</a>)...</p>
+			<pre>$("ul#people&gt;li").tsort("span.surname");</pre>
+			<p>a 'settings' object...</p>
+			<pre>$("ul#people&gt;li").tsort({place:"end"});</pre>
+			<p>or both...</p>
+			<pre>$("ul#people&gt;li").tsort("img",{order:"desc",attr:"alt"});</pre>
+
+			<p>Change default settings globally like so:</p>
+			<pre>$.tinysort.defaults.order = "desc";
+$.tinysort.defaults.attr = "title";</pre>
+			
+			<p>TinySort has four settings:</p>
+
+			<table id="properties" cellpadding="0" cellspacing="0">
+				<thead><tr><th>property</th><th>type</th><th>description</th><th>possible values</th><th>default</th></tr></thead>
+				<tbody>
+					<tr>
+						<td>order</td>
+						<td>String</td>
+						<td>the order of the sorting method</td>
+						<td>
+							<table cellpadding="0" cellspacing="0">
+								<tr><td>asc</td><td>ascending order</td></tr>
+								<tr><td>desc</td><td>descending order</td></tr>
+								<tr><td>rand</td><td>random order</td></tr>
+							</table>
+						</td>
+						<td>"asc"</td>
+					</tr>
+					<tr>
+						<td>attr</td>
+						<td>String</td>
+						<td>order by attribute value (ie title, href, class)</td>
+						<td>anything</td>
+						<td>""</td>
+					</tr>
+					<tr>
+						<td>place</td>
+						<td>String</td>
+						<td>determines the placement of the ordered elements in respect to the unordered elements filtered out by using the 'attr' setting or the first parsed 'find' string</td>
+						<td>
+							<table cellpadding="0" cellspacing="0">
+								<tr><td>start</td><td>sorted elements are prepended at the parent attribute</td></tr>
+								<tr><td>end</td><td>sorted elements are appended at the parent attribute</td></tr>
+								<tr><td>org</td><td>placement occurs at the positions the sortable elements are found</td></tr>
+								<tr><td>first</td><td>elements are appended after the first occurance of a sortable element</td></tr>
+							</table>
+						</td>
+						<td>"start"</td>
+					</tr>
+					<tr>
+						<td>returns</td>
+						<td>Boolean</td>
+						<td>affects the returned jquery array</td>
+						<td>
+							<table cellpadding="0" cellspacing="0">
+								<tr><td>false</td><td>all elements are returned</td></tr>
+								<tr><td>true</td><td>only sorted elements are returned</td></tr>
+							</table>
+						</td>
+						<td>false</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h2>examples</h2>
+			
+			<h3>default sorting</h3>
+			<p>The default sort is done by simply calling the 'tsort' function onto your selection.</p>
+			<pre class="example">$("ul#xdflt>li").tsort();</pre>
+
+			<h3>sorted by sub-selection</h3>
+			<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The returned array will be in the newly sorted order.<br/>
+			In this example the list elements are sorted to the text of the second span and a number is prepended.</p>
+			<pre class="example">$("ul#xsub>li").tsort("span:eq(1)").each(function(i){$(this).prepend(i+": ")});</pre>
+
+			<h3>sorted with attribute</h3>
+			<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The following will only sort the non-striked elements.</p>
+			<pre class="example" title="12">$("ul#xattr>li").tsort("span[class!=striked]");</pre>
+
+			<h3>return only sorted elements</h3>
+			<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
+			<pre class="example" title="12">$("ul#xret>li").tsort("span[class!=striked]",{returns:true,place:"org"}).css({color:"red"});</pre>
+
+			<h3>sorted by attribute value</h3>
+			<p>Sort by attribute value by parsing the additional parameter 'orderby=attributeName'. This will sort by attribute of, either the jquery selection, or of the sub-selection (if provided).</p>
+			<pre class="example">$("ul#xval>li").tsort("a[title]",{orderby:"title"});</pre>
+
+			<h3>sorted descending</h3>
+			<p>Sort by ascending or descending order by parsing the additional 'order="desc"/"asc"' parameter.</p>
+			<pre class="example">$("ul#xdesc>li").tsort("",{order:"desc"});</pre>
+
+			<h3>sort on any node</h3>
+			<p>TinySort works on any nodeType. The following is a div with spans.</p>
+			<pre class="example" title="12">$("div#xany>span").tsort("",{order:"desc"});</pre>
+
+			<h3>sorted numbers</h3>
+			<p>TinySort also works on numbers.</p>
+			<pre class="example">$("ul#xnum>li").tsort();</pre>
+
+			<h3>randomize</h3>
+			<p>TinySort can also order randomly (or is that a contradiction).</p>
+			<pre class="example">$("ul#xrnd li").tsort("",{order:"rand"});</pre>
+
+			<h3>sorting tables</h3>
+			<p>With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:</p>
+			<pre>var aAsc = [];
+function sortTable(nr) {
+	aAsc[nr] = aAsc[nr]=="asc"?"desc":"asc";
+	$("#xtable>tbody>tr").tsort("td:eq("+nr+")[abbr]",{order:aAsc[nr]});
+}</pre>
+			<p>Note that the mixed column only sorts those rows of which the td's have the abbr attribute set, and because of the default place value the non-sorted elements always remain at the bottom</p>
+			<table id="xtable" class="xmpl">
+				<thead>
+					<tr>
+						<th><a href="javascript:sortTable(0)">word</a></th>
+						<th><a href="javascript:sortTable(1)">int</a></th>
+						<th><a href="javascript:sortTable(2)">float</a></th>
+						<th><a href="javascript:sortTable(3)">mixed</a></th>
+						<th><a href="javascript:addTRow()">add row</a></th>
+					</tr>
+				</thead>
+				<tbody><tr><td/></tr></tbody>
+			</table>
+			
+			<!--h3>animated sorting</h3>
+			<p>Adding the 'animate' property animate the elements to the new order.</p>
+			<pre class="example">
+var mParent = $("ul#xanim");
+mParent.css({position:"relative",width:mParent.width(),height:mParent.height()});
+var aLis = $("ul#xanim>li");
+var oLis = {};
+aLis.each(function(i,o){
+	var mLi = $(this);
+	oLis[this] = {el:mLi,css:mLi.position()};
+});
+aLis.tsort().each(function(){
+	var oLi = oLis[this];
+	var mLi = $(this);
+	oLi.newcss = mLi.position();
+	oLi.css[position] = "absolute";
+}).each(function(){
+	mEl = $(this);
+	var oLi = oLis[this];
+	mEl.css(oLi.css);
+	mEl.animate(oLi.newcss, "fast", null, function() {
+		$(this).css({position:"static"}).parent().css({position:"static"});
+	});
+});</pre-->
+
+			<h2>known issues</h2>
+			<ul>
+				<li>Selecting from multiple parent nodes (ie. "li" in a nested tree) might have some unexpected results.</li>
+				<li>Mixed numeral and literal values sort as literal. So ["pic11","pic2","pic1"] will result in ["pic1","pic11","pic2"].</li>
+			</ul>
+
+		</div>
+		<div id="footer"> 
+			<div>© 2008 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>
+		</div>
+	</body>
+</html>
