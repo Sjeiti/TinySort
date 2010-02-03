@@ -15,13 +15,13 @@
 				$("#page>table>tbody>tr:odd").addClass("odd");
 				$("#page>table>tbody>tr:even").addClass("even");
 				$("#page tbody>tr").find("td:eq(0)").addClass("property");
-
-				var mMenu = $("<ul id=\"menu\" />").appendTo("#header");
+				var mMenu = $("<ul id=\"menu\" />").appendTo("#header>div");
+				$("<li><a href=\"#\">TinySort</a></li>").appendTo(mMenu).click(function(){$(document).scrollTop(0)});
 				$("h2").each(function(i,o){
 					mMenu.append("<li><a href=\"#"+$(this).text()+"\">"+$(this).text()+"</a></li>");
 					$(this).attr("id",$(this).text());
 				});
-
+//
 				$("pre.example").each(function(){
 					var mPre = $(this);
 					var iNm = parseInt(mPre.attr("title")?mPre.attr("title"):6);
@@ -69,11 +69,13 @@
 				var sName = getPassword(6);
 				var iInt = rand(0,9999);
 				var fFloat = rand(0,9999)/100;
+				var sStNm = getPassword(1,true).toUpperCase()+"_"+rand(0,99);//(rand(0,99)>50?rand(0,99):rand(0,9));
 				var sSome = brnd()?(brnd()?rand(0,999):getPassword(4)):"";
 				var sRow = "<tr>";
 				sRow += "<td abbr=\""+sName+"\">"+sName+"</td>";
 				sRow += "<td abbr=\""+iInt+"\">"+iInt+"</td>";
 				sRow += "<td abbr=\""+fFloat+"\">"+fFloat+"</td>";
+				sRow += "<td abbr=\""+sStNm+"\">"+sStNm+"</td>";
 				sRow += "<td"+(sSome!=""?" abbr=\""+sSome+"\"":"")+">"+sSome+"</td>";
 				sRow += "<td><a onclick=\"deleteTRow(this)\">x</a></td>";
 				sRow += "</tr>";
@@ -113,11 +115,12 @@
 	</head>
 	<body>
 		<div id="header">
-			<h1><span>TinySort</span></h1>
+			<div><h1><span>TinySort</span></h1></div>
 		</div>
 		<div id="page">
 			<p>TinySort will sort any nodetype by it’s text- or attribute value, or by that of one of it’s children.</p>
-			<p>You can download SFBrowser at <a href="http://plugins.jquery.com/project/SFBrowser">http://plugins.jquery.com/project/SFBrowser</a> since that will always have the latest release. This is also the place where you can report bugs or request new features.</p>
+
+			<p>You can download TinySort as <a href="http://code.google.com/p/tinysort/downloads">zip</a> or do a <a href="http://tinysort.googlecode.com/svn/trunk">repository checkout</a>. If you stumble upon anything out of the ordinary you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>.</p>
 
 			<p>The examples below should help getting you on your way.</p>
 
@@ -244,6 +247,7 @@ function sortTable(nr) {
 						<th><a href="javascript:sortTable(1)">int</a></th>
 						<th><a href="javascript:sortTable(2)">float</a></th>
 						<th><a href="javascript:sortTable(3)">mixed</a></th>
+						<th><a href="javascript:sortTable(4)">mixed</a></th>
 						<th><a href="javascript:addTRow()">add row</a></th>
 					</tr>
 				</thead>
