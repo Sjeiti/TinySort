@@ -39,7 +39,7 @@
 		 id: "TinySort"
 		,version: "1.0.3"
 		,defaults: {
-			order: "asc"	// order: asc, desc or rand
+			 order: "asc"	// order: asc, desc or rand
 			,attr: ""		// order by attribute value
 			,place: "start"	// place ordered elements at position: start, end, org (original position), first
 			,returns: false	// return all elements or only the sorted ones (true/false)
@@ -111,7 +111,6 @@
 	});
 	// is numeric
 	function isNum(n) {
-//		return /^[\+-]?\d*\.?\d*$/.exec(n);
 		var x = /^\s*?[\+-]?(\d*\.?\d*?)\s*?$/.exec(n);
 		return x&&x.length>0?x[1]:false;
 	};

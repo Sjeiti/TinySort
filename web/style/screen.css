@@ -6,12 +6,20 @@ body, html {
 	padding: 0px;
 }
 body {
-	background: #EFF4CC url(side_topg.jpg) repeat-x;
-	background: #CEE9F4 url(side_top.jpg) repeat-x;
+	/*background: #CEE9F4 url(side_top.jpg) repeat-x;
+	background: #EFF4CC url(side_topg.jpg) repeat-x;*/
+	background: #FAFAFA url(bg.png) 0px 34px repeat-x;
 }
 
 .striked {
 	text-decoration: line-through;
+}
+
+.alert {
+	background-color: #FE0;
+	color: #000;
+	padding: 10px;
+	font-weight: bold;
 }
 /*#header {
 	position: relative;
@@ -88,7 +96,7 @@ body {
 	font-size: .9em;
 	color: #444;
 	clear:both;
-	margin-top: 24px;
+	margin-top: 44px;
 }
 #page p {
 	font-size: .8em;
@@ -118,16 +126,18 @@ body {
 	}
 
 #page table {
-	border: 1px solid #9BE62B;/*#90BBDB;#CFD4E6;*/
+	border: 1px solid #CCC;/*#9BE62B;#90BBDB;#CFD4E6;*/
+	background-color: #FAFAFA;
 }
+	#page table table { background-color: transparent; }
 	#page table th, #page table td {
 		padding: 2px 5px 2px 5px;
 	}
 	#page table th {
-		color: #444;/*#fff;*/
+		color: #000;/*#fff;*/
 		text-align: left;
-		border-bottom: 1px solid #9BE62B;/*#90BBDB;#aaa;*/
-		background-color: #B8ED67;/*#CEE9F4;#90BBDB;#727EA3;*/
+		border-bottom: 2px solid #DDD;/*#9BE62B;#90BBDB;#aaa;*/
+		background-color: #EEE;/*#B8ED67;#CEE9F4;#90BBDB;#727EA3;*/
 	}
 	#page table th, #page table td {
 		font-size: .7em;
@@ -138,17 +148,17 @@ body {
 		font-size: 1em;
 	}
 	#page table tr.odd {
-		background-color: #E6F1F4;/*#E6F1F4;E0E3EE;*/
+		background-color: #F4F4F4;/*#E6F1F4;#E6F1F4;E0E3EE;*/
 	}
 #page pre {
 	font-size: .9em;
 	font-family: monospace;
-	background-color: #F5F5F5;
-	border: 1px solid #ccc;
+	background-color: #FFD;
+	border: 1px solid #CC8;
 	padding: 10px 15px 10px 15px;
 }
 #page .property {
-	color:#579;
+	color:#A11;
 	font-weight: bold;
 }
 #footer {
@@ -168,7 +178,7 @@ body {
 	}
 
 #inhere {
-	background-color: #CEE9F4;
+	background-color: #F0F0F0;
 	width: 100%;
 	height: 400px;
 }

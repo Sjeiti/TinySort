@@ -21,7 +21,6 @@
 					mMenu.append("<li><a href=\"#"+$(this).text()+"\">"+$(this).text()+"</a></li>");
 					$(this).attr("id",$(this).text());
 				});
-//
 				$("pre.example").each(function(){
 					var mPre = $(this);
 					var iNm = parseInt(mPre.attr("title")?mPre.attr("title"):6);
@@ -31,11 +30,8 @@
 					mPre.after("<"+sTg+" id=\""+sId+"\" class=\"xmpl\"></"+sTg+">").after("<p>test: <a onclick='"+mPre.text().replace(/\n/g,"")+"'>sort</a> or <a onclick=\"refill('"+sId+"',"+iNm+")\">refill</a></p>");//.after("<b>"+sTg+" "+sId+"</b>")
 					refill(sId,iNm);
 				});
-			
 				for (var i=0;i<6;i++) addTRow();
-				
 			});
-
 			function refill(s,num) {
 				var mEl = $("#"+s);
 				mEl.children().remove();
@@ -45,6 +41,9 @@
 					case "xsub":	for (var i=0;i<num;i++) mEl.append("<li><span>"+getPassword(1,true)+"</span> <span>"+getPassword(6)+"</span></li>"); break;
 					case "xval":	for (var i=0;i<num;i++) mEl.append("<li><span>"+getPassword(1,true)+"</span> <a href=\"#\" title=\""+getPassword(6)+"\">"+getPassword(6)+"</a></li>"); break;
 					case "xany":	for (var i=0;i<num;i++) mEl.append("<span>"+getPassword(5,true)+" </span>"); break;
+					case "ximg":
+						for (var i=0;i<num;i++) $("<img src=\"style/logo.gif\" title=\""+getPassword(2)+"\" />").appendTo(mEl).css({border:"23px solid #"+rndHex(3),backgroundColor:"#000"});
+					break;
 					case "xnum":	for (var i=0;i<num;i++) mEl.append("<li>"+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+"</li>"); break;
 					case "xrnd":
 						for (var i=0;i<num;i++) {
@@ -59,7 +58,6 @@
 					default:  for (var i=0;i<num;i++) mEl.append("<li>"+getPassword(6)+"</li>");
 				}
 			}
-
 			var aAsc = [];
 			function sortTable(nr) {
 				aAsc[nr] = aAsc[nr]=="asc"?"desc":"asc";
@@ -103,6 +101,13 @@
 			function rand(fStr,fEnd) {
 				var fNum = fStr + Math.random()*(fEnd-fStr);
 				return (isInt(fStr)&&isInt(fEnd))?Math.round(fNum):fNum;
+			}
+			function rndHex(n) {
+				if (!n) n = 6;
+				var sRt = "";
+				var sHx = "0123456789ABCDEF"
+				for (var i=0;i<n;i++) sRt += sHx.substr(Math.round(Math.random()*14),1);
+				return sRt;
 			}
 			function brnd() {
 				return Math.random()<.5;
@@ -223,6 +228,10 @@ $.tinysort.defaults.attr = "title";</pre>
 			<h3>sort on any node</h3>
 			<p>TinySort works on any nodeType. The following is a div with spans.</p>
 			<pre class="example" title="12">$("div#xany>span").tsort("",{order:"desc"});</pre>
+
+			<h3>images sorted by title</h3>
+			<p>Sort by attribute title value.</p>
+			<pre class="example">$("span#ximg>img").tsort({attr:"title"});</pre>
 
 			<h3>sorted numbers</h3>
 			<p>TinySort also works on numbers.</p>
