@@ -1,16 +1,16 @@
-/*
+/*!
 * jQuery TinySort - A plugin to sort child nodes by (sub) contents or attributes.
 *
-* Version: 1.0.4
+* Version: 1.0.5
 *
-* Copyright (c) 2008 Ron Valstar
+* Copyright (c) 2008-2011 Ron Valstar http://www.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
 *   http://www.opensource.org/licenses/mit-license.php
 *   http://www.gnu.org/licenses/gpl.html
-*
-* description
-*   - A plugin to sort child nodes by (sub) contents or attributes.
+*//*
+* contributors:
+*	brian.gibson@gmail.com
 *
 * Usage:
 *   $("ul#people>li").tsort();
@@ -22,27 +22,29 @@
 *   $.tinysort.defaults.order = "desc";
 *
 * in this update:
-*	- changed setArray to pushStack
+*	- applied patch to sort by .val() instead of .text()  (thanks to brian.gibson@gmail.com)
 *
 * in last update:
-*	- tested with jQuery 1.4.1
-*	- correct isNum return
+*	- changed setArray to pushStack
 *
 * Todos
 *   - fix mixed literal/numeral values
-*   - determine if I have to use pushStack or pushStack
+*   - find solution for foreign characters
 *
 */
 ;(function($) {
 	// default settings
 	$.tinysort = {
 		 id: "TinySort"
-		,version: "1.0.4"
+		,version: "1.0.5"
+		,copyright: "Copyright (c) 2008-2011 Ron Valstar"
+		,uri: "http://tinysort.sjeiti.com/"
 		,defaults: {
 			 order: "asc"	// order: asc, desc or rand
 			,attr: ""		// order by attribute value
 			,place: "start"	// place ordered elements at position: start, end, org (original position), first
 			,returns: false	// return all elements or only the sorted ones (true/false)
+			,useVal: false	// use element value instead of text
 		}
 	};
 	$.fn.extend({
@@ -59,8 +61,9 @@
 				// element or sub selection
 				var mElm = (!_find||_find=="")?$(this):$(this).find(_find);
 				// text or attribute value
-				var sSort = oSettings.order=="rand"?""+Math.random():(oSettings.attr==""?mElm.text():mElm.attr(oSettings.attr));
-				// to sort or not to sort
+//				var sSort = oSettings.order=="rand"?""+Math.random():(oSettings.attr==""?mElm.text():mElm.attr(oSettings.attr));
+				var sSort = oSettings.order=="rand"?""+Math.random():(oSettings.attr==""?(oSettings.useVal?mElm.val():mElm.text()):mElm.attr(oSettings.attr));
+ 				// to sort or not to sort
 				var mParent = $(this).parent();
 				if (!oElements[mParent]) oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
 				if (mElm.length>0)	oElements[mParent].s.push({s:sSort,e:$(this),n:i}); // s:string, e:element, n:number

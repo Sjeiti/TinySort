@@ -1,15 +1,15 @@
-<?xml version="1.0"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!doctype html>
+<!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 	<head>
+		<meta charset="utf-8">
 		<title>jquery tinysort</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<link rel="stylesheet" type="text/css" media="screen" href="style/screen.css" />
-		<!--script type="text/javascript" src="scripts/jquery-1.2.6.min.js"></script-->
-		<script type="text/javascript" src="scripts/jquery-1.4.1.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.6.1.min.js'>\x3C/script>")</script>
 		<script type="text/javascript" src="scripts/jquery.tinysort.js"></script>
 		<script type="text/javascript">
-			<!--
 			$(function(){
 				$("h1").text("jQuery."+$.tinysort.id+" "+$.tinysort.version);
 				$("#page>table>tbody>tr:odd").addClass("odd");
@@ -115,7 +115,6 @@
 			function isInt(n) {
 				return (n%1)==0;
 			}
-			-->
 		</script>
 	</head>
 	<body>
@@ -123,7 +122,7 @@
 			<div><h1><span>TinySort</span></h1></div>
 		</div>
 		<div id="page">
-			<p>TinySort will sort any nodetype by it’s text- or attribute value, or by that of one of it’s children.</p>
+			<p>TinySort will sort any nodetype by it's text- or attribute value, or by that of one of it's children.</p>
 
 			<p>You can download TinySort as <a href="http://code.google.com/p/tinysort/downloads">zip</a> or do a <a href="http://tinysort.googlecode.com/svn/trunk">repository checkout</a>. If you stumble upon anything out of the ordinary you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>.</p>
 
@@ -296,7 +295,7 @@ aLis.tsort().each(function(){
 
 		</div>
 		<div id="footer"> 
-			<div>© 2008 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>
+			<div>Â© 2008 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>
 		</div>
 	</body>
 </html>
