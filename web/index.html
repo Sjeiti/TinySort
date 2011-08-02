@@ -5,13 +5,25 @@
 <!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8">
-		<title>jquery tinysort</title>
+
+		<title>TinySort</title>
+
+		<meta name="generator" content="editplus" />
+		<meta name="author" content="Ron Valstar" />
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="shortcut icon" href="favicon.ico">
 		<link rel="stylesheet" type="text/css" media="screen" href="style/screen.css" />
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.6.1.min.js'>\x3C/script>")</script>
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.6.2.min.js'>\x3C/script>")</script>
 		<script type="text/javascript" src="scripts/jquery.tinysort.js"></script>
 		<script type="text/javascript">
 			$(function(){
 				$('h1').text('jQuery.'+$.tinysort.id+' '+$.tinysort.version);
+				$('#footer>div').html($.tinysort.copyright.replace('Ron Valstar','<a href="http://www.sjeiti.com/">Ron Valstar</a>'));
+
 				$('#page>table>tbody>tr:odd').addClass('odd');
 				$('#page>table>tbody>tr:even').addClass('even');
 				$('#page tbody>tr').find('td:eq(0)').addClass('property');
@@ -83,7 +95,17 @@
 
 
 					case 'xany':	for (var i=0;i<num;i++) mEl.append('<span>'+getPassword(5,true)+' </span>'); break;
-					case 'ximg':	for (var i=0;i<num;i++) $('<img src="style/logo.gif" title="'+getPassword(2)+'" />').appendTo(mEl).css({border:'23px solid #'+rndHex(3),backgroundColor:'#000'}); break;
+					case 'ximg':
+						for (var i=0;i<num;i++) {
+							var c = '#'+rndHex(3);
+							console.log('c:',c); // TRACE ### c
+							$('<img src="style/logo.png" title="'+getPassword(2)+'" />').css({
+								 border:'23px solid '+c
+								,backgroundColor:c
+							}).appendTo(mEl);
+						}
+						console.log('cCCCCCCCC'); // TRACE ### c
+					break;
 					case 'xnum':	for (var i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
 					case 'xrnd':
 						for (var i=0;i<num;i++) {
@@ -143,11 +165,10 @@
 				return (isInt(fStr)&&isInt(fEnd))?Math.round(fNum):fNum;
 			}
 			function rndHex(n) {
-				if (!n) n = 6;
-				var sRt = '';
-				var sHx = '0123456789ABCDEF'
-				for (var i=0;i<n;i++) sRt += sHx.substr(Math.round(Math.random()*14),1);
-				return sRt;
+				var sHex = Math.floor(Math.random()*Math.pow(16,n)).toString(16);
+				var iHex = sHex.length;
+				if (iHex<n) for (var i=0;i<n-iHex;i++) sHex = '0'+sHex;
+				return sHex;
 			}
 			function brnd() {
 				return Math.random()<.5;
@@ -182,8 +203,10 @@ $("ul#people&gt;li").tsort();</pre>
 			<p>Change default settings globally like so:</p>
 			<pre>$.tinysort.defaults.order = "desc";
 $.tinysort.defaults.attr = "title";</pre>
+
+			<br/>
 			
-			<p>TinySort has four settings:</p>
+			<p>TinySort has a number of settings:</p>
 
 			<table id="properties" cellpadding="0" cellspacing="0">
 				<thead><tr><th>property</th><th>type</th><th>description</th><th>possible values</th><th>default</th></tr></thead>
@@ -207,6 +230,30 @@ $.tinysort.defaults.attr = "title";</pre>
 						<td>order by attribute value (ie title, href, class)</td>
 						<td>anything</td>
 						<td>""</td>
+					</tr>
+					<tr>
+						<td>useVal</td>
+						<td>Boolean</td>
+						<td>use element value instead of text</td>
+						<td>
+							<table cellpadding="0" cellspacing="0">
+								<tr><td>false</td><td>use text</td></tr>
+								<tr><td>true</td><td>use value</td></tr>
+							</table>
+						</td>
+						<td>false</td>
+					</tr>
+					<tr>
+						<td>data</td>
+						<td>String</td>
+						<td>use the data attribute for sorting</td>
+						<td>
+							<table cellpadding="0" cellspacing="0">
+								<tr><td>null</td><td>use text</td></tr>
+								<tr><td>String</td><td>use data attribute</td></tr>
+							</table>
+						</td>
+						<td>null</td>
 					</tr>
 					<tr>
 						<td>place</td>
@@ -233,6 +280,25 @@ $.tinysort.defaults.attr = "title";</pre>
 							</table>
 						</td>
 						<td>false</td>
+					</tr>
+					<tr>
+						<td>cases</td>
+						<td>Boolean</td>
+						<td>a case sensitive sort (orders [aB,aa,ab,bb])</td>
+						<td>
+							<table cellpadding="0" cellspacing="0">
+								<tr><td>false</td><td>cases are ignored</td></tr>
+								<tr><td>true</td><td>case sensitive sort</td></tr>
+							</table>
+						</td>
+						<td>false</td>
+					</tr>
+					<tr>
+						<td>sortFunction</td>
+						<td>function</td>
+						<td>override the default sort function</td>
+						<td>any sort function</td>
+						<td>...</td>
 					</tr>
 				</tbody>
 			</table>

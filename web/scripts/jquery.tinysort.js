@@ -1,7 +1,7 @@
 /*!
 * jQuery TinySort - A plugin to sort child nodes by (sub) contents or attributes.
 *
-* Version: 1.0.5
+* Version: 1.1.0
 *
 * Copyright (c) 2008-2011 Ron Valstar http://www.sjeiti.com/
 *
@@ -22,29 +22,36 @@
 *   $.tinysort.defaults.order = "desc";
 *
 * in this update:
-*	- applied patch to sort by .val() instead of .text()  (thanks to brian.gibson@gmail.com)
+*   - if the first char in the _find parameter is a : we'll use $.filter instead of $.find
+*   - added caseSensitive sorting
+*   - added custom sort function
+*	- added data-attribute support
+*	- tiny speed increase
+*	- tested with jQuery 1.6.2
 *
 * in last update:
-*	- changed setArray to pushStack
+*	- applied patch to sort by .val() instead of .text()  (thanks to brian.gibson@gmail.com)
 *
 * Todos
 *   - fix mixed literal/numeral values
-*   - find solution for foreign characters
 *
 */
 ;(function($) {
 	// default settings
 	$.tinysort = {
 		 id: "TinySort"
-		,version: "1.0.5"
+		,version: "1.1.0"
 		,copyright: "Copyright (c) 2008-2011 Ron Valstar"
 		,uri: "http://tinysort.sjeiti.com/"
 		,defaults: {
 			 order: "asc"	// order: asc, desc or rand
-			,attr: ""		// order by attribute value
+			,attr: null		// order by attribute value
+			,useVal: false	// use element value instead of text
+			,data: null		// use the data attribute for sorting
 			,place: "start"	// place ordered elements at position: start, end, org (original position), first
 			,returns: false	// return all elements or only the sorted ones (true/false)
-			,useVal: false	// use element value instead of text
+			,cases: false	// a case sensitive sort orders [aB,aa,ab,bb]
+			,sortFunction: null // override the default sort function
 		}
 	};
 	$.fn.extend({
@@ -56,34 +63,46 @@
 
 			var oSettings = $.extend({}, $.tinysort.defaults, _settings);
 
+			if (!oSettings.sortFunction) oSettings.sortFunction = oSettings.order=='rand'?function() {
+				return Math.random()<.5?1:-1;
+			}:function(a,b) {
+				var x = !oSettings.cases&&a.s&&a.s.toLowerCase?a.s.toLowerCase():a.s;
+				var y = !oSettings.cases&&b.s&&b.s.toLowerCase?b.s.toLowerCase():b.s;
+				if (isNum(a.s)&&isNum(b.s)) {
+					x = parseFloat(a.s);
+					y = parseFloat(b.s);
+				}
+				return (oSettings.order=="asc"?1:-1)*(x<y?-1:(x>y?1:0));
+			};
+
 			var oElements = {}; // contains sortable- and non-sortable list per parent
+
+			var bFind = !(!_find||_find=='');
+			var bAttr = !(oSettings.attr===null||oSettings.attr=="");
+			var bData = oSettings.data!==null;
+
+			// since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
+			var bFilter = bFind&&_find[0]==':';
+			var $Filter = bFilter?this.filter(_find):this; 
+
 			this.each(function(i) {
+				var $This = $(this);
 				// element or sub selection
-				var mElm = (!_find||_find=="")?$(this):$(this).find(_find);
+				var mElm = bFind?(bFilter?$Filter.filter(this):$This.find(_find)):$This;
+
 				// text or attribute value
-//				var sSort = oSettings.order=="rand"?""+Math.random():(oSettings.attr==""?mElm.text():mElm.attr(oSettings.attr));
-				var sSort = oSettings.order=="rand"?""+Math.random():(oSettings.attr==""?(oSettings.useVal?mElm.val():mElm.text()):mElm.attr(oSettings.attr));
+				var sSort = bData?mElm.data(oSettings.data):(bAttr?mElm.attr(oSettings.attr):(oSettings.useVal?mElm.val():mElm.text()));
  				// to sort or not to sort
-				var mParent = $(this).parent();
+				var mParent = $This.parent();
 				if (!oElements[mParent]) oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
-				if (mElm.length>0)	oElements[mParent].s.push({s:sSort,e:$(this),n:i}); // s:string, e:element, n:number
-				else				oElements[mParent].n.push({e:$(this),n:i});
+				if (mElm.length>0)	oElements[mParent].s.push({s:sSort,e:$This,n:i}); // s:string, e:element, n:number
+				else				oElements[mParent].n.push({e:$This,n:i});
 			});
 			//
 			// sort
 			for (var sParent in oElements) {
 				var oParent = oElements[sParent];
-				oParent.s.sort(
-					function zeSort(a,b) {
-						var x = a.s.toLowerCase?a.s.toLowerCase():a.s;
-						var y = b.s.toLowerCase?b.s.toLowerCase():b.s;
-						if (isNum(a.s)&&isNum(b.s)) {
-							x = parseFloat(a.s);
-							y = parseFloat(b.s);
-						}
-						return (oSettings.order=="asc"?1:-1)*(x<y?-1:(x>y?1:0));
-					}
-				);
+				oParent.s.sort(oSettings.sortFunction);
 			}
 			//
 			// order elements and fill new order
@@ -108,8 +127,7 @@
 					aCnt[bSList?0:1]++;
 				}
 			}
-			//
-			return this.pushStack(aNewOrder); // pushStack or pushStack?
+			return this.pushStack(aNewOrder);
 		}
 	});
 	// is numeric
