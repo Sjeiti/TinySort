@@ -182,6 +182,16 @@ $(function(){
 			return s==sJoin;
 		})(),'implement data-attribute support');
 	});
+	test('issue 15', function() {
+		expect(1);
+		ok( (function(){
+			var s = '';
+			getUl(0,['12','01','001','010','023','101','a','0a','ba']).find('li').tsort({forceStrings:false})
+			.each(function(i,el){ s += $(el).text(); });
+			console.log(s);
+			return s=='01001010120230a101aba'; // not 001010100230a10112aba
+		})(),'implementation of forceStrings');
+	});
 
 });
 
