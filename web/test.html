@@ -5,13 +5,13 @@
 
 		<meta charset="utf-8" />
 
-		<link href="../../qunit/qunit/qunit.css" type="text/css" rel="stylesheet" />
+		<link href="qunit/qunit.css" type="text/css" rel="stylesheet" />
 		<style>html,body{padding:0;margin:0;}</style>
 
-		<script type="text/javascript" src="scripts/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="scripts/jquery-1.6.4.min.js"></script>
 		<script type="text/javascript" src="scripts/jquery.tinysort.js"></script>
 
-		<script type="text/javascript" src="../../qunit/qunit/qunit.js"></script>
+		<script type="text/javascript" src="qunit/qunit.js"></script>
 
 		<script type="text/javascript">
 $(function(){
@@ -57,14 +57,11 @@ $(function(){
 		return $(sUl);
 	}
 
-//trace(getUl(0).find('li').tsort(':lt(3)',{returns:true})); // TRACE ### getUl(0).find('li').tsort(':lt(5)',{returns:true})
-//return;
-
 	$('#qunit-header').text($.tinysort.id+' '+$.tinysort.version);
 
 	module('Tinysort');
 	test('default functionality', function() {
-		expect(7);
+		expect(11);
 		ok( (function(){
 			var s = '';
 			getUl(0).find('li').tsort()
@@ -107,6 +104,30 @@ $(function(){
 			.each(function(i,el){ s += $(el).text(); });
 			return s==sSRvr;
 		})(),'$Li.tsort({order:\'desc\'});');
+		ok( (function(){
+			var s = '';
+			getUl(0,[6,1,5,2,4]).find('li').tsort()
+			.each(function(i,el){ s += $(el).text(); });
+			return s=='12456';
+		})(),'$Li.tsort(); with integers');
+		ok( (function(){
+			var s = '';
+			getUl(0,[4.6,3.1,2.5,5.2,7.4]).find('li').tsort()
+			.each(function(i,el){ s += $(el).text(); });
+			return s=='2.53.14.65.27.4';
+		})(),'$Li.tsort();   with floats');
+		ok( (function(){
+			var s = '';
+			getUl(0,[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]).find('li').tsort()
+			.each(function(i,el){ s += ' '+$(el).text(); });
+			return s==' 1 2 2.5 3.1 4 4.6 5 5.2 6 7.4 11 a b c d';
+		})(),'$Li.tsort();   mixed types');
+		ok( (function(){
+			var s = '';
+			getUl(0,[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]).find('li').tsort({forceStrings:true})
+			.each(function(i,el){ s += ' '+$(el).text(); });
+			return s==' 1 11 2 2.5 3.1 4 4.6 5 5.2 6 7.4 a b c d';
+		})(),'$Li.tsort({forceStrings:true});   mixed types');
 	});
 
 	module('regression');
@@ -116,7 +137,6 @@ $(function(){
 			var s = '';
 			getUl(0,['Q','R','S','T','U','V','W','X','Y','Z','Å','Ä','Ö']).find('li').tsort({cases:true})
 			.each(function(i,el){ s += $(el).text(); });
-			trace('s:',s); // TRACE ### s
 			return s=='QRSTUVWXYZÄÅÖ';
 		})(),'fixed using new');
 	});
@@ -162,8 +182,6 @@ $(function(){
 			return s==sJoin;
 		})(),'implement data-attribute support');
 	});
-
-trace('getUl(5):',getUl(5)); // TRACE ### getUl(5)
 
 });
 
