@@ -129,6 +129,43 @@ $(function(){
 			return s==' 1 11 2 2.5 3.1 4 4.6 5 5.2 6 7.4 a b c d';
 		})(),'$Li.tsort({forceStrings:true});   mixed types');
 	});
+	test('exposed private functions', function() {
+		var o = $.tinysort.expose();
+		expect(10);
+		ok( (function(){
+			return o.toLowerCase('aSdF')=='asdf';
+		})(),'toLowerCase("aSdF");');
+		ok( (function(){
+			return o.toLowerCase(23)===23;
+		})(),'toLowerCase(23);');
+
+		ok( (function(){
+			return o.isNum(23)===true;
+		})(),'isNum(23);');
+		ok( (function(){
+			return o.isNum('23')===true;
+		})(),'isNum("23");');
+		ok( (function(){
+			return o.isNum('23a')===false;
+		})(),'isNum("23a");');
+		ok( (function(){
+			return o.isNum('b23')===false;
+		})(),'isNum("b23");');
+
+		ok( (function(){
+			return o.contains(['b23'],'a')===false;
+		})(),'isNum(["b23"],"a");');
+
+		ok( (function(){
+			return o.contains(['b23','a'],'a')===true;
+		})(),'contains(["b23","a"],"a");');
+		ok( (function(){
+			return o.contains([2,3,5,74],23)===false;
+		})(),'contains([2,3,5,74],23);');
+		ok( (function(){
+			return o.contains([2,3,5,74],74)===true;
+		})(),'contains([2,3,5,74],74);');
+	});
 
 	module('regression');
 	test('issue 8', function() {
@@ -167,10 +204,12 @@ $(function(){
 		ok( (function(){
 			var s = '';
 			getUl(0).find('li').tsort({sortFunction:function(a,b){
-				return 1;
+				var aa = a[0], bb = b[0];
+				return aa==bb?0:(aa>bb?1:-1);
 			}})
 			.each(function(i,el){ s += $(el).text(); });
-			return s==sRvrs;
+			trace(s);
+			return s=='eek-oif-myr-aar-oac-eax-';
 		})(),'custom sort function');
 	});
 	test('issue 14', function() {
@@ -186,13 +225,25 @@ $(function(){
 		expect(1);
 		ok( (function(){
 			var s = '';
-			getUl(0,['12','01','001','010','023','101','a','0a','ba']).find('li').tsort({forceStrings:false})
+			getUl(0,['01','001','a','0a','ba']).find('li').tsort({forceStrings:false})
 			.each(function(i,el){ s += $(el).text(); });
-			console.log(s);
-			return s=='01001010120230a101aba'; // not 001010100230a10112aba
+			return s=='010010aaba'; // not 001010aaba
 		})(),'implementation of forceStrings');
 	});
-
+/*	test('IE woes', function() {
+		expect(1);
+		ok( (function(){
+			var i = 0;
+			var ss='';
+			var s = (['01','001','a','0a','ba']).sort(function(a,b){
+				ss += i+' '+a+' '+b+"\n";
+				i++;
+				var aa = a[0], bb = b[0];
+				return aa==bb?0:(aa>bb?1:-1);
+			}).join('');
+			return s=='010010aaba';
+		})(),'asdf');
+	});*/
 });
 
 
@@ -202,6 +253,6 @@ $(function(){
 		<h1 id="qunit-header">Tinysort</h1>  
 		<h2 id="qunit-banner"></h2>  
 		<h2 id="qunit-userAgent"></h2>  
-		<ol id="qunit-tests">
+		<ol id="qunit-tests"></ol>
 	</body>
 </html>

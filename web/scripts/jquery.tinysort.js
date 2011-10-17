@@ -10,6 +10,7 @@
 *
 * contributors:
 *	brian.gibson@gmail.com
+*	michael.thornberry@gmail.com
 *
 * Usage:
 *   $("ul#people>li").tsort();
@@ -21,6 +22,9 @@
 *   $.tinysort.defaults.order = "desc";
 *
 * in this update:
+*	- better isNum
+*
+* in last update:
 * 	- reduced minified filesize with 14% by doing
 *     - bit of code cleaning
 * 	  - removed redundant var declarations
@@ -28,14 +32,6 @@
 * 	  - removed the comment for the minified version
 *	- added better documentation for custom sort function
 *	- tested with jQuery 1.6.4
-*
-* in last update:
-*   - if the first char in the _find parameter is a : we'll use $.filter instead of $.find
-*   - added caseSensitive sorting
-*   - added custom sort function
-*	- added data-attribute support
-*	- tiny speed increase
-*	- tested with jQuery 1.6.2
 *
 * Todos
 *   - fix mixed literal/numeral values
@@ -46,7 +42,7 @@
 	var f = false, n = null;
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.1.1'
+		,version: '1.1.2'
 		,copyright: 'Copyright (c) 2008-2011 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {
@@ -68,6 +64,7 @@
 
 			,sortFunction: n	// override the default sort function
 		}
+//		,expose: function(){return {toLowerCase:toLowerCase,isNum:isNum,contains:contains};}
 	};
 	$.fn.extend({
 		tinysort: function(_find,_settings) {
@@ -148,8 +145,7 @@
 	}
 	// is numeric
 	function isNum(n) {
-		var x = /^\s*?[\+-]?(\d*\.?\d*?)\s*?$/.exec(n);
-		return x&&x.length>0?x[1]:f;
+		return !isNaN(parseFloat(n)) && isFinite(n);
 	}
 	// array contains
 	function contains(a,n) {
