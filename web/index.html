@@ -1,8 +1,5 @@
 <!doctype html>
-<!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
-<!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
-<!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<html class="no-js" lang="en">
 	<head>
 		<meta charset="utf-8">
 
@@ -20,6 +17,7 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.6.4.min.js'>\x3C/script>")</script>
 		<script type="text/javascript" src="scripts/jquery.tinysort.js"></script>
 		<script type="text/javascript">
+			var i,j;
 			$(function(){
 				$('h1').text('jQuery.'+$.tinysort.id+' '+$.tinysort.version);
 				$('#footer>div').html($.tinysort.copyright.replace('Ron Valstar','<a href="http://www.sjeiti.com/">Ron Valstar</a>'));
@@ -42,35 +40,36 @@
 					mPre.after('<'+sTg+' id=\''+sId+'\' class=\'xmpl\'></'+sTg+'>').after('<p>test: <a onclick="'+mPre.text().replace(/\n/g,'')+'">sort</a> or <a onclick=\'refill("'+sId+'",'+iNm+')\'>refill</a></p>');
 					refill(sId,iNm);
 				});
-				for (var i=0;i<6;i++) addTRow();
+				for (i=0;i<6;i++) addTRow();
 			});
+
 			function refill(s,num) {
 				var mEl = $('#'+s);
 				mEl.children().remove();
 				switch (s) {
 					case 'xattr':
-					case 'xret':	for (var i=0;i<num;i++) mEl.append('<li><span'+(brnd()?'':' class="striked"')+'>'+getPassword(6)+'</span></li>'); break;
-					case 'xsub':	for (var i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <span>'+getPassword(6)+'</span></li>'); break;
-					case 'xval':	for (var i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#" title="'+getPassword(6)+'">'+getPassword(6)+'</a></li>'); break;
+					case 'xret':	for (i=0;i<num;i++) mEl.append('<li><span'+(brnd()?'':' class="striked"')+'>'+getPassword(6)+'</span></li>'); break;
+					case 'xsub':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <span>'+getPassword(6)+'</span></li>'); break;
+					case 'xval':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#" title="'+getPassword(6)+'">'+getPassword(6)+'</a></li>'); break;
 
 					case 'xinp':
-						for (var i=0;i<num;i++) {
-							var fnGetFormElement = function fnGetFormElement(){
+						for (i=0;i<num;i++) {
+							var fnGetFormElement = function(){
 								var aTypes = ['text','password','file','url','email','number','range','search','date','time','select'];//,'radio'
 								var sType = aTypes[Math.floor(Math.random()*aTypes.length)];
 								var sName = getPassword(6,true);
 								var sEcho = '<label for="'+sName+'">'+sType+'</label>';
 								switch (sType) {
-									case 'text':		sEcho += '<input type="text" placeholder="enter some text" name="'+sName+'" />'; break;
-									case 'password':	sEcho += '<input type="password" placeholder="enter a password" name="'+sName+'" />'; break;
-									case 'url':			sEcho += '<input type="url" placeholder="enter an url" name="'+sName+'" />'; break;
+									case 'text':		sEcho += '<input type="text" name="'+sName+'" placeholder="enter some text" />'; break;
+									case 'password':	sEcho += '<input type="password" name="'+sName+'" placeholder="enter a password" />'; break;
+									case 'url':			sEcho += '<input type="url" name="'+sName+'" placeholder="enter an url" />'; break;
 									case 'number':		sEcho += '<input type="number" name="'+sName+'" />'; break;
 									case 'range':		sEcho += '<input type="range" name="'+sName+'" />'; break;
 									case 'file':		sEcho += '<input type="file" name="'+sName+'" />'; break;
 									case 'date':		sEcho += '<input type="date" name="'+sName+'" />'; break;
 									case 'time':		sEcho += '<input type="time" name="'+sName+'" />'; break;
-									case 'search':		sEcho += '<input type="search" placeholder="search something" name="'+sName+'" />'; break;
-									case 'email':		sEcho += '<input type="email" placeholder="enter an email adress" name="'+sName+'" />'; break;
+									case 'search':		sEcho += '<input type="search" name="'+sName+'" placeholder="search something" />'; break;
+									case 'email':		sEcho += '<input type="email" name="'+sName+'" placeholder="enter an email adress" />'; break;
 									case 'radio':
 										for (var j=0;j<3;j++) {
 											var sVal = getPassword(6,true);
@@ -79,37 +78,35 @@
 									break;
 									case 'select':
 										sEcho += '<select name="'+getPassword(6,true)+'">';
-										for (var j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
+										for (j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
 										sEcho += '<optgroup label="'+getPassword(6,true)+'">';
-										for (var j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
+										for (j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
 										sEcho += '</optgroup>';
 										sEcho += '</select>';
 									break;
 								}
-								return sEcho;										
-							}
+								return sEcho;
+							};
 							mEl.append('<li>'+fnGetFormElement()+'<span></span></li>');
 						}
 					break;
 
 
 
-					case 'xany':	for (var i=0;i<num;i++) mEl.append('<span>'+getPassword(5,true)+' </span>'); break;
+					case 'xany':	for (i=0;i<num;i++) mEl.append('<span>'+getPassword(5,true)+' </span>'); break;
 					case 'ximg':
-						for (var i=0;i<num;i++) {
+						for (i=0;i<num;i++) {
 							var c = '#'+rndHex(3);
-							console.log('c:',c); // TRACE ### c
 							$('<img src="style/logo.png" title="'+getPassword(2)+'" />').css({
 								 border:'23px solid '+c
-								,backgroundColor:c
+								,background:c
 							}).appendTo(mEl);
 						}
-						console.log('cCCCCCCCC'); // TRACE ### c
 					break;
-					case 'xcst':	for (var i=0;i<num;i++) mEl.append('<li>'+rand(0,999)+'</li>'); break;
-					case 'xnum':	for (var i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
+					case 'xcst':	for (i=0;i<num;i++) mEl.append('<li>'+rand(0,999)+'</li>'); break;
+					case 'xnum':	for (i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
 					case 'xrnd':
-						for (var i=0;i<num;i++) {
+						for (i=0;i<num;i++) {
 							if (i>0) {
 								mEl.append('<li>'+getPassword(6)+'</li>');
 							} else {
@@ -118,8 +115,8 @@
 								refill(sId,6);
 							}
 						}
-					
-					default:  for (var i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
+					break;
+					default:  for (i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
 				}
 			}
 			var aAsc = [];
@@ -131,7 +128,7 @@
 				var sName = getPassword(6);
 				var iInt = rand(0,9999);
 				var fFloat = rand(0,9999)/100;
-				var sStNm = getPassword(1,true).toUpperCase()+'_'+rand(0,99);//(rand(0,99)>50?rand(0,99):rand(0,9));
+				var sStNm = getPassword(1,true).toUpperCase()+'_'+rand(0,99);
 				var sSome = brnd()?(brnd()?rand(0,999):getPassword(4)):'';
 				var sRow = '<tr>';
 				sRow += '<td abbr="'+sName+'">'+sName+'</td>';
@@ -149,15 +146,15 @@
 			}
 			function getPassword(iLen,bCut) {
 				if (!bCut) bCut = false;
-				aLtr = [['a','e','i','o','u','y'],['aa','ai','au','ea','ee','ei','eu','ia','ie','io','iu','oa','oe','oi','ua','ui'],['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'],['bb','br','bs','cc','ch','cl','cr','db','dd','df','dg','dh','dj','dk','dl','dm','dn','dp','dq','dr','ds','dt','dv','dw','dz','fb','fd','ff','fg','fh','fj','fk','fl','fm','fn','fp','fq','fr','fs','ft','fv','fw','fz','gb','gd','gf','gg','gh','gj','gk','gl','gm','gn','gp','gq','gr','gs','gt','gv','gw','gz','kb','kd','kf','kg','kh','kj','kk','kl','km','kn','kp','kq','kr','ks','kt','kv','kw','kz','lb','ld','lf','lg','lh','lj','lk','ll','lm','ln','lp','lq','lr','ls','lt','lv','lw','lz','mb','md','mf','mg','mh','mj','mk','ml','mm','mn','mp','mq','mr','ms','mt','mv','mw','mz','nb','nd','nf','ng','nh','nj','nk','nl','nm','nn','np','nq','nr','ns','nt','nv','nw','nz','pb','pd','pf','pg','ph','pj','pk','pl','pm','pn','pp','pq','pr','ps','pt','pv','pw','pz','qb','qd','qf','qg','qh','qj','qk','ql','qm','qn','qp','qq','qr','qs','qt','qv','qw','qz','rb','rd','rf','rg','rh','rj','rk','rl','rm','rn','rp','rq','rr','rs','rt','rv','rw','rz','sb','sc','sd','sf','sg','sh','sj','sk','sl','sm','sn','sp','sq','sr','ss','st','sv','sw','sz','tb','td','tf','tg','th','tj','tk','tl','tm','tn','tp','tq','tr','ts','tt','tv','tw','tz','vb','vd','vf','vg','vh','vj','vk','vl','vm','vn','vp','vq','vr','vs','vt','vv','vw','vz','xb','xd','xf','xg','xh','xj','xk','xl','xm','xn','xp','xq','xr','xs','xt','xv','xw','xx','xz']];
-				iSnm = 6;
-				sPsw = "";
-				iNum = 0;
+				var aLtr = [['a','e','i','o','u','y'],['aa','ai','au','ea','ee','ei','eu','ia','ie','io','iu','oa','oe','oi','ua','ui'],['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'],['bb','br','bs','cc','ch','cl','cr','db','dd','df','dg','dh','dj','dk','dl','dm','dn','dp','dq','dr','ds','dt','dv','dw','dz','fb','fd','ff','fg','fh','fj','fk','fl','fm','fn','fp','fq','fr','fs','ft','fv','fw','fz','gb','gd','gf','gg','gh','gj','gk','gl','gm','gn','gp','gq','gr','gs','gt','gv','gw','gz','kb','kd','kf','kg','kh','kj','kk','kl','km','kn','kp','kq','kr','ks','kt','kv','kw','kz','lb','ld','lf','lg','lh','lj','lk','ll','lm','ln','lp','lq','lr','ls','lt','lv','lw','lz','mb','md','mf','mg','mh','mj','mk','ml','mm','mn','mp','mq','mr','ms','mt','mv','mw','mz','nb','nd','nf','ng','nh','nj','nk','nl','nm','nn','np','nq','nr','ns','nt','nv','nw','nz','pb','pd','pf','pg','ph','pj','pk','pl','pm','pn','pp','pq','pr','ps','pt','pv','pw','pz','qb','qd','qf','qg','qh','qj','qk','ql','qm','qn','qp','qq','qr','qs','qt','qv','qw','qz','rb','rd','rf','rg','rh','rj','rk','rl','rm','rn','rp','rq','rr','rs','rt','rv','rw','rz','sb','sc','sd','sf','sg','sh','sj','sk','sl','sm','sn','sp','sq','sr','ss','st','sv','sw','sz','tb','td','tf','tg','th','tj','tk','tl','tm','tn','tp','tq','tr','ts','tt','tv','tw','tz','vb','vd','vf','vg','vh','vj','vk','vl','vm','vn','vp','vq','vr','vs','vt','vv','vw','vz','xb','xd','xf','xg','xh','xj','xk','xl','xm','xn','xp','xq','xr','xs','xt','xv','xw','xx','xz']];
+				var iSnm = 6;
+				var sPsw = "";
+				var iNum = 0;
 				for (var i=0;i<iSnm;i++) {
 					if (i==0)			iNum = rand(0,2);
 					else if (i==iSnm-1)	iNum = (iNum<2)?2:rand(0,1);
 					else				iNum = (iNum<2)?rand(0,1)+2:rand(0,1);
-					aLst = aLtr[iNum];
+					var aLst = aLtr[iNum];
 					sPsw += aLst[ rand(0,aLst.length-1) ];
 				}
 				return bCut?sPsw.substr(0,iLen):sPsw;
@@ -190,6 +187,9 @@
 
 			<p>You can download TinySort as <a href="http://code.google.com/p/tinysort/downloads">zip</a> or do a <a href="http://tinysort.googlecode.com/svn/trunk">repository checkout</a>. If you stumble upon anything out of the ordinary you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>.</p>
 
+			<a href="http://code.google.com/p/tinysort/downloads/list" class="download">download</a>
+			<div class="svn">svn: <span>http://tinysort.googlecode.com/svn/trunk/</span></div>
+
 			<p>The examples below should help getting you on your way.</p>
 
 			<h2>usage</h2>
@@ -208,10 +208,10 @@ $("ul#people&gt;li").tsort();</pre>
 $.tinysort.defaults.attr = "title";</pre>
 
 			<br/>
-			
+
 			<p>TinySort has a number of settings:</p>
 
-			<table id="properties" cellpadding="0" cellspacing="0">
+			<table id="properties">
 				<thead><tr><th>property</th><th>type</th><th>description</th><th>possible values</th><th>default</th></tr></thead>
 				<tbody>
 					<tr>
@@ -219,7 +219,7 @@ $.tinysort.defaults.attr = "title";</pre>
 						<td>String</td>
 						<td>the order of the sorting method</td>
 						<td>
-							<table cellpadding="0" cellspacing="0">
+							<table>
 								<tr><td>asc</td><td>ascending order</td></tr>
 								<tr><td>desc</td><td>descending order</td></tr>
 								<tr><td>rand</td><td>random order</td></tr>
@@ -239,7 +239,7 @@ $.tinysort.defaults.attr = "title";</pre>
 						<td>Boolean</td>
 						<td>use element value instead of text</td>
 						<td>
-							<table cellpadding="0" cellspacing="0">
+							<table>
 								<tr><td>false</td><td>use text</td></tr>
 								<tr><td>true</td><td>use value</td></tr>
 							</table>
@@ -251,7 +251,7 @@ $.tinysort.defaults.attr = "title";</pre>
 						<td>String</td>
 						<td>use the data attribute for sorting</td>
 						<td>
-							<table cellpadding="0" cellspacing="0">
+							<table>
 								<tr><td>null</td><td>use text</td></tr>
 								<tr><td>String</td><td>use data attribute</td></tr>
 							</table>
@@ -263,7 +263,7 @@ $.tinysort.defaults.attr = "title";</pre>
 						<td>String</td>
 						<td>determines the placement of the ordered elements in respect to the unordered elements filtered out by using the 'attr' setting or the first parsed 'find' string</td>
 						<td>
-							<table cellpadding="0" cellspacing="0">
+							<table>
 								<tr><td>start</td><td>sorted elements are prepended at the parent attribute</td></tr>
 								<tr><td>end</td><td>sorted elements are appended at the parent attribute</td></tr>
 								<tr><td>org</td><td>placement occurs at the positions the sortable elements are found</td></tr>
@@ -277,7 +277,7 @@ $.tinysort.defaults.attr = "title";</pre>
 						<td>Boolean</td>
 						<td>affects the returned jquery array</td>
 						<td>
-							<table cellpadding="0" cellspacing="0">
+							<table>
 								<tr><td>false</td><td>all elements are returned</td></tr>
 								<tr><td>true</td><td>only sorted elements are returned</td></tr>
 							</table>
@@ -289,7 +289,7 @@ $.tinysort.defaults.attr = "title";</pre>
 						<td>Boolean</td>
 						<td>a case sensitive sort (orders [aB,aa,ab,bb])</td>
 						<td>
-							<table cellpadding="0" cellspacing="0">
+							<table>
 								<tr><td>false</td><td>cases are ignored</td></tr>
 								<tr><td>true</td><td>case sensitive sort</td></tr>
 							</table>
@@ -302,7 +302,7 @@ $.tinysort.defaults.attr = "title";</pre>
 						<td>override the default sort function</td>
 						<td>any sort function like function(a,b){return -1,0,1;}
 						where the two parameters are objects with the following properties:
-						<table cellpadding="0" cellspacing="0">
+						<table>
 							<tr><td>e</td><td>jQuery object</td></tr>
 							<tr><td>n</td><td>original order</td></tr>
 							<tr><td>s</td><td>string to sort</td></tr>
@@ -312,9 +312,9 @@ $.tinysort.defaults.attr = "title";</pre>
 					</tr>
 				</tbody>
 			</table>
-			
+
 			<h2>examples</h2>
-			
+
 			<h3>default sorting</h3>
 			<p>The default sort is done by simply calling the 'tsort' function onto your selection.</p>
 			<pre class="example">$('ul#xdflt>li').tsort();</pre>
@@ -343,7 +343,7 @@ $.tinysort.defaults.attr = "title";</pre>
 			<h3>return only sorted elements</h3>
 			<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
 			<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
-			
+
 			<h3>sorted descending</h3>
 			<p>Sort by ascending or descending order by parsing the additional 'order="desc"/"asc"' parameter.</p>
 			<pre class="example">$('ul#xdesc>li').tsort('',{order:'desc'});</pre>
@@ -360,7 +360,6 @@ $.tinysort.defaults.attr = "title";</pre>
 			<p>TinySort also works on numbers.</p>
 			<pre class="example">$('ul#xnum>li').tsort();</pre>
 
-			<!-- todo: add custom sort -->
 			<h3>parsing a custom sort function</h3>
 			<p>Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.</p>
 			<pre class="example">$('ul#xcst li').tsort('',{sortFunction:function(a,b){
@@ -392,33 +391,26 @@ function sortTable(nr) {
 						<th><a href="javascript:addTRow()">add row</a></th>
 					</tr>
 				</thead>
-				<tbody><tr><td/></tr></tbody>
+				<tbody><tr><td></td></tr></tbody>
 			</table>
-			
-			<!--h3>animated sorting</h3>
-			<p>Adding the 'animate' property animate the elements to the new order.</p>
-			<pre class="example">
-var mParent = $("ul#xanim");
-mParent.css({position:"relative",width:mParent.width(),height:mParent.height()});
-var aLis = $("ul#xanim>li");
-var oLis = {};
-aLis.each(function(i,o){
-	var mLi = $(this);
-	oLis[this] = {el:mLi,css:mLi.position()};
+
+			<h3>animated sorting</h3>
+			<p>Tinysort has no built in animating features but it can quite easily be accomplished through regular js/jQuery.</p>
+			<pre class="example">var $Ul = $('ul#xanim');
+$Ul.css({position:'relative',height:$Ul.height(),display:'block'});
+var iLnH;
+var $Li = $('ul#xanim>li');
+$Li.each(function(i,el){
+	var iY = $(el).position().top;
+	$.data(el,'h',iY);
+	if (i===1) iLnH = iY;
 });
-aLis.tsort().each(function(){
-	var oLi = oLis[this];
-	var mLi = $(this);
-	oLi.newcss = mLi.position();
-	oLi.css[position] = "absolute";
-}).each(function(){
-	mEl = $(this);
-	var oLi = oLis[this];
-	mEl.css(oLi.css);
-	mEl.animate(oLi.newcss, "fast", null, function() {
-		$(this).css({position:"static"}).parent().css({position:"static"});
-	});
-});</pre-->
+$Li.tsort().each(function(i,el){
+	var $El = $(el);
+	var iFr = $.data(el,'h');
+	var iTo = i*iLnH;
+	$El.css({position:'absolute',top:iFr}).animate({top:iTo},500);
+});</pre>
 
 			<h2>known issues</h2>
 			<ul>
@@ -427,7 +419,7 @@ aLis.tsort().each(function(){
 			</ul>
 
 		</div>
-		<div id="footer"> 
+		<div id="footer">
 			<div>© 2008-2011 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>
 		</div>
 	</body>
