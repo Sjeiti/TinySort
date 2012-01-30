@@ -5,32 +5,24 @@
 
 		<title>TinySort</title>
 
-		<meta name="generator" content="editplus" />
 		<meta name="author" content="Ron Valstar" />
 		<meta name="keywords" content="jquery, sort, tinysort, sortby, tablesort, listsort, sort nodes, nested sort" />
 		<meta name="description" content="TinySort is a small jQuery plugin that will sort any nodetype by it's text-, attribute- or data value, or by that of one of it's children." />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<link rel="shortcut icon" href="favicon.ico">
-		<link rel="stylesheet" type="text/css" media="screen" href="style/screen.css" />
+
+		<!--<link rel="stylesheet/less" type="text/css" href="style/screen.less" />-->
+		<!--<script type="text/javascript" src="scripts/less-1.2.1.min.js"></script>-->
+		<link rel="stylesheet" type="text/css" href="style/getLess.php?screen" />
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.6.4.min.js'>\x3C/script>")</script>
+		<script type="text/javascript" src="scripts/jquery.opensource.js"></script>
 		<script type="text/javascript" src="scripts/jquery.tinysort.js"></script>
-		<script type="text/javascript">
-			var i,j;
-			$(function(){
-				$('h1').text('jQuery.'+$.tinysort.id+' '+$.tinysort.version);
-				$('#footer>div').html($.tinysort.copyright.replace('Ron Valstar','<a href="http://www.sjeiti.com/">Ron Valstar</a>'));
 
-				$('#page>table>tbody>tr:odd').addClass('odd');
-				$('#page>table>tbody>tr:even').addClass('even');
-				$('#page tbody>tr').find('td:eq(0)').addClass('property');
-				var mMenu = $('<ul id="menu" />').appendTo('#header>div');
-				$('<li><a href="#">TinySort</a></li>').appendTo(mMenu).click(function(){$(document).scrollTop(0)});
-				$('h2').each(function(i,o){
-					mMenu.append('<li><a href="#'+$(this).text()+'">'+$(this).text()+'</a></li>');
-					$(this).attr('id',$(this).text());
-				});
+		<script type="text/javascript">
+			OPENSOURCE.init($.tinysort,function(){
+				var i,j;
 				$('pre.example').each(function(){
 					var mPre = $(this);
 					var iNm = parseInt(mPre.attr('title')?mPre.attr('title'):6);
@@ -179,224 +171,240 @@
 		<script src="http://www.sjeiti.com/ga.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<div id="header">
-			<div><h1><span>TinySort</span></h1></div>
-		</div>
+		<header>
+			<div><h1><span></span></h1><nav></nav></div>
+		</header>
+		<section id="intro">
+			<div>
+				<div>
+					<p>TinySort will sort any nodetype by it's text- or attribute value, or by that of one of it's children.</p>
+					<p>If you stumble upon anything out of the ordinary you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>.</p>
+					<p>The examples below should help getting you on your way.</p>
+				</div>
+				<aside>
+					<h3>download</h3>
+					<a href="scripts/jquery.tinysort.min.js" class="button download"><span class="iconic download"></span> <span class="filesize"></span> minified<br/><small>single Javascript </small></a>
+					<a href="scripts/jquery.tinysort.min.jgz" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> gzipped<br/><small>single Javascript </small></a>
+					<a href="download/jquery.tinysort.1.1.1.zip" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> full zip<br/><small>including examples</small></a><!-- todo: zip still has .svn dirs -->
+
+					<a href="http://tinysort.googlecode.com/svn/trunk/" class="repo" data-type="svn" rel="external" target="_blank"><span>http://tinysort.googlecode.com/svn/trunk/</span></a>
+				</aside>
+				<br class="clear" />
+			</div>
+		</section>
 		<div id="page">
-			<p>TinySort will sort any nodetype by it's text- or attribute value, or by that of one of it's children.</p>
 
-			<p>You can download TinySort as <a href="http://code.google.com/p/tinysort/downloads">zip</a> or do a <a href="http://tinysort.googlecode.com/svn/trunk">repository checkout</a>. If you stumble upon anything out of the ordinary you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>.</p>
 
-			<a href="http://code.google.com/p/tinysort/downloads/list" class="download">download</a>
-			<div class="svn">svn: <span>http://tinysort.googlecode.com/svn/trunk/</span></div>
 
-			<p>The examples below should help getting you on your way.</p>
 
-			<h2>usage</h2>
-			<p>The first parse in the tsort function can either be nothing...</p>
-			<pre>$("li").tsort();
+			<section>
+				<h2>usage</h2>
+				<p>The first parse in the tsort function can either be nothing...</p>
+				<pre>$("li").tsort();
 $("ul#people&gt;li").tsort();</pre>
-			<p>a string (as you would in <a href="http://docs.jquery.com/Traversing/find#expr">find</a>)...</p>
-			<pre>$("ul#people&gt;li").tsort("span.surname");</pre>
-			<p>a 'settings' object...</p>
-			<pre>$("ul#people&gt;li").tsort({place:"end"});</pre>
-			<p>or both...</p>
-			<pre>$("ul#people&gt;li").tsort("img",{order:"desc",attr:"alt"});</pre>
+					<p>a string (as you would in <a href="http://docs.jquery.com/Traversing/find#expr">find</a>)...</p>
+					<pre>$("ul#people&gt;li").tsort("span.surname");</pre>
+					<p>a 'settings' object...</p>
+					<pre>$("ul#people&gt;li").tsort({place:"end"});</pre>
+					<p>or both...</p>
+					<pre>$("ul#people&gt;li").tsort("img",{order:"desc",attr:"alt"});</pre>
 
-			<p>Change default settings globally like so:</p>
-			<pre>$.tinysort.defaults.order = "desc";
-$.tinysort.defaults.attr = "title";</pre>
+					<p>Change default settings globally like so:</p>
+					<pre>$.tinysort.defaults.order = "desc";
+	$.tinysort.defaults.attr = "title";</pre>
 
-			<br/>
+				<br/>
 
-			<p>TinySort has a number of settings:</p>
+				<p>TinySort has a number of settings:</p>
 
-			<table id="properties">
-				<thead><tr><th>property</th><th>type</th><th>description</th><th>possible values</th><th>default</th></tr></thead>
-				<tbody>
-					<tr>
-						<td>order</td>
-						<td>String</td>
-						<td>the order of the sorting method</td>
-						<td>
+				<table id="properties">
+					<thead><tr><th>property</th><th>type</th><th>description</th><th>possible values</th><th>default</th></tr></thead>
+					<tbody>
+						<tr>
+							<td>order</td>
+							<td>String</td>
+							<td>the order of the sorting method</td>
+							<td>
+								<table>
+									<tr><td>asc</td><td>ascending order</td></tr>
+									<tr><td>desc</td><td>descending order</td></tr>
+									<tr><td>rand</td><td>random order</td></tr>
+								</table>
+							</td>
+							<td>"asc"</td>
+						</tr>
+						<tr>
+							<td>attr</td>
+							<td>String</td>
+							<td>order by attribute value (ie title, href, class)</td>
+							<td>anything</td>
+							<td>""</td>
+						</tr>
+						<tr>
+							<td>useVal</td>
+							<td>Boolean</td>
+							<td>use element value instead of text</td>
+							<td>
+								<table>
+									<tr><td>false</td><td>use text</td></tr>
+									<tr><td>true</td><td>use value</td></tr>
+								</table>
+							</td>
+							<td>false</td>
+						</tr>
+						<tr>
+							<td>data</td>
+							<td>String</td>
+							<td>use the data attribute for sorting</td>
+							<td>
+								<table>
+									<tr><td>null</td><td>use text</td></tr>
+									<tr><td>String</td><td>use data attribute</td></tr>
+								</table>
+							</td>
+							<td>null</td>
+						</tr>
+						<tr>
+							<td>place</td>
+							<td>String</td>
+							<td>determines the placement of the ordered elements in respect to the unordered elements filtered out by using the 'attr' setting or the first parsed 'find' string</td>
+							<td>
+								<table>
+									<tr><td>start</td><td>sorted elements are prepended at the parent attribute</td></tr>
+									<tr><td>end</td><td>sorted elements are appended at the parent attribute</td></tr>
+									<tr><td>org</td><td>placement occurs at the positions the sortable elements are found</td></tr>
+									<tr><td>first</td><td>elements are appended after the first occurance of a sortable element</td></tr>
+								</table>
+							</td>
+							<td>"start"</td>
+						</tr>
+						<tr>
+							<td>returns</td>
+							<td>Boolean</td>
+							<td>affects the returned jquery array</td>
+							<td>
+								<table>
+									<tr><td>false</td><td>all elements are returned</td></tr>
+									<tr><td>true</td><td>only sorted elements are returned</td></tr>
+								</table>
+							</td>
+							<td>false</td>
+						</tr>
+						<tr>
+							<td>cases</td>
+							<td>Boolean</td>
+							<td>a case sensitive sort (orders [aB,aa,ab,bb])</td>
+							<td>
+								<table>
+									<tr><td>false</td><td>cases are ignored</td></tr>
+									<tr><td>true</td><td>case sensitive sort</td></tr>
+								</table>
+							</td>
+							<td>false</td>
+						</tr>
+						<tr>
+							<td>sortFunction</td>
+							<td>function</td>
+							<td>override the default sort function</td>
+							<td>any sort function like function(a,b){return -1,0,1;}
+							where the two parameters are objects with the following properties:
 							<table>
-								<tr><td>asc</td><td>ascending order</td></tr>
-								<tr><td>desc</td><td>descending order</td></tr>
-								<tr><td>rand</td><td>random order</td></tr>
+								<tr><td>e</td><td>jQuery object</td></tr>
+								<tr><td>n</td><td>original order</td></tr>
+								<tr><td>s</td><td>string to sort</td></tr>
 							</table>
-						</td>
-						<td>"asc"</td>
-					</tr>
-					<tr>
-						<td>attr</td>
-						<td>String</td>
-						<td>order by attribute value (ie title, href, class)</td>
-						<td>anything</td>
-						<td>""</td>
-					</tr>
-					<tr>
-						<td>useVal</td>
-						<td>Boolean</td>
-						<td>use element value instead of text</td>
-						<td>
-							<table>
-								<tr><td>false</td><td>use text</td></tr>
-								<tr><td>true</td><td>use value</td></tr>
-							</table>
-						</td>
-						<td>false</td>
-					</tr>
-					<tr>
-						<td>data</td>
-						<td>String</td>
-						<td>use the data attribute for sorting</td>
-						<td>
-							<table>
-								<tr><td>null</td><td>use text</td></tr>
-								<tr><td>String</td><td>use data attribute</td></tr>
-							</table>
-						</td>
-						<td>null</td>
-					</tr>
-					<tr>
-						<td>place</td>
-						<td>String</td>
-						<td>determines the placement of the ordered elements in respect to the unordered elements filtered out by using the 'attr' setting or the first parsed 'find' string</td>
-						<td>
-							<table>
-								<tr><td>start</td><td>sorted elements are prepended at the parent attribute</td></tr>
-								<tr><td>end</td><td>sorted elements are appended at the parent attribute</td></tr>
-								<tr><td>org</td><td>placement occurs at the positions the sortable elements are found</td></tr>
-								<tr><td>first</td><td>elements are appended after the first occurance of a sortable element</td></tr>
-							</table>
-						</td>
-						<td>"start"</td>
-					</tr>
-					<tr>
-						<td>returns</td>
-						<td>Boolean</td>
-						<td>affects the returned jquery array</td>
-						<td>
-							<table>
-								<tr><td>false</td><td>all elements are returned</td></tr>
-								<tr><td>true</td><td>only sorted elements are returned</td></tr>
-							</table>
-						</td>
-						<td>false</td>
-					</tr>
-					<tr>
-						<td>cases</td>
-						<td>Boolean</td>
-						<td>a case sensitive sort (orders [aB,aa,ab,bb])</td>
-						<td>
-							<table>
-								<tr><td>false</td><td>cases are ignored</td></tr>
-								<tr><td>true</td><td>case sensitive sort</td></tr>
-							</table>
-						</td>
-						<td>false</td>
-					</tr>
-					<tr>
-						<td>sortFunction</td>
-						<td>function</td>
-						<td>override the default sort function</td>
-						<td>any sort function like function(a,b){return -1,0,1;}
-						where the two parameters are objects with the following properties:
-						<table>
-							<tr><td>e</td><td>jQuery object</td></tr>
-							<tr><td>n</td><td>original order</td></tr>
-							<tr><td>s</td><td>string to sort</td></tr>
-						</table>
-						</td>
-						<td>...</td>
-					</tr>
-				</tbody>
-			</table>
+							</td>
+							<td>...</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
 
-			<h2>examples</h2>
+			<section>
+				<h2>examples</h2>
 
-			<h3>default sorting</h3>
-			<p>The default sort is done by simply calling the 'tsort' function onto your selection.</p>
-			<pre class="example">$('ul#xdflt>li').tsort();</pre>
+				<h3>default sorting</h3>
+				<p>The default sort is done by simply calling the 'tsort' function onto your selection.</p>
+				<pre class="example">$('ul#xdflt>li').tsort();</pre>
 
-			<h3>sorted by attribute value</h3>
-			<p>Sort by attribute value by parsing the additional parameter 'attr=attributeName'. This will sort by attribute of, either the jquery selection, or of the sub-selection (if provided).</p>
-			<pre class="example">$('ul#xval>li').tsort('a[title]',{attr:'title'});</pre>
+				<h3 title="attribute value">sorted by attribute value</h3>
+				<p>Sort by attribute value by parsing the additional parameter 'attr=attributeName'. This will sort by attribute of, either the jquery selection, or of the sub-selection (if provided).</p>
+				<pre class="example">$('ul#xval>li').tsort('a[title]',{attr:'title'});</pre>
 
-			<h3>sorted by sub-selection</h3>
-			<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The returned array will be in the newly sorted order.<br/>
-			In this example the list elements are sorted to the text of the second span and a number is prepended.</p>
-			<pre class="example">$('ul#xsub>li').tsort('span:eq(1)').each(function(i){$(this).prepend(i+': ')});</pre>
+				<h3 title="sub-selection">sorted by sub-selection</h3>
+				<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The returned array will be in the newly sorted order.<br/>
+				In this example the list elements are sorted to the text of the second span and a number is prepended.</p>
+				<pre class="example">$('ul#xsub>li').tsort('span:eq(1)').each(function(i){$(this).prepend(i+': ')});</pre>
 
-			<h3>sorted with attribute</h3>
-			<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The following will only sort the non-striked elements.</p>
-			<pre class="example" title="12">$('ul#xattr>li').tsort('span[class!=striked]');</pre>
+				<h3>sorted with attribute</h3>
+				<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The following will only sort the non-striked elements.</p>
+				<pre class="example" title="12">$('ul#xattr>li').tsort('span[class!=striked]');</pre>
 
-			<h3>sorted by <a href="http://api.jquery.com/val/">.val()</a></h3>
-			<p>The .val() method is primarily used to get the values of form elements. By parsing the useVal attribute you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.</p>
-			<pre class="example">$('ul#xinp>li').tsort('>input,>select',{useVal:true}).each(function(i,el){
+				<h3>sorted by <a href="http://api.jquery.com/val/">.val()</a></h3>
+				<p>The .val() method is primarily used to get the values of form elements. By parsing the useVal attribute you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.</p>
+				<pre class="example">$('ul#xinp>li').tsort('>input,>select',{useVal:true}).each(function(i,el){
 	var $Li = $(el);
 	$Li.find('span').text(' : '+$Li.find('>input,>select').filter(':eq(0)').val());
 	console.log('$Li.find(span):',$Li.find('span').length);
 });</pre>
 
-			<h3>return only sorted elements</h3>
-			<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
-			<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
+				<h3 title="return only sorted">return only sorted elements</h3>
+				<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
+				<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
 
-			<h3>sorted descending</h3>
-			<p>Sort by ascending or descending order by parsing the additional 'order="desc"/"asc"' parameter.</p>
-			<pre class="example">$('ul#xdesc>li').tsort('',{order:'desc'});</pre>
+				<h3>sorted descending</h3>
+				<p>Sort by ascending or descending order by parsing the additional 'order="desc"/"asc"' parameter.</p>
+				<pre class="example">$('ul#xdesc>li').tsort('',{order:'desc'});</pre>
 
-			<h3>sort on any node</h3>
-			<p>TinySort works on any nodeType. The following is a div with spans.</p>
-			<pre class="example" title="12">$('div#xany>span').tsort('',{order:'desc'});</pre>
+				<h3>sort on any node</h3>
+				<p>TinySort works on any nodeType. The following is a div with spans.</p>
+				<pre class="example" title="12">$('div#xany>span').tsort('',{order:'desc'});</pre>
 
-			<h3>images sorted by title</h3>
-			<p>Sort by attribute title value.</p>
-			<pre class="example">$('span#ximg>img').tsort({attr:'title'});</pre>
+				<h3>images sorted by title</h3>
+				<p>Sort by attribute title value.</p>
+				<pre class="example">$('span#ximg>img').tsort({attr:'title'});</pre>
 
-			<h3>sorted numbers</h3>
-			<p>TinySort also works on numbers.</p>
-			<pre class="example">$('ul#xnum>li').tsort();</pre>
+				<h3>sorted numbers</h3>
+				<p>TinySort also works on numbers.</p>
+				<pre class="example">$('ul#xnum>li').tsort();</pre>
 
-			<h3>parsing a custom sort function</h3>
-			<p>Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.</p>
-			<pre class="example">$('ul#xcst li').tsort('',{sortFunction:function(a,b){
+				<h3 title="custom sort function">parsing a custom sort function</h3>
+				<p>Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.</p>
+				<pre class="example">$('ul#xcst li').tsort('',{sortFunction:function(a,b){
 	var iCalcA = parseInt(a.s)%16;
 	var iCalcB = parseInt(b.s)%16;
 	return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
 }});</pre>
 
-			<h3>randomize</h3>
-			<p>TinySort can also order randomly (or is that a contradiction).</p>
-			<pre class="example">$('ul#xrnd li').tsort('',{order:'rand'});</pre>
+				<h3>randomize</h3>
+				<p>TinySort can also order randomly (or is that a contradiction).</p>
+				<pre class="example">$('ul#xrnd li').tsort('',{order:'rand'});</pre>
 
-			<h3>sorting tables</h3>
-			<p>With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:</p>
-			<pre>var aAsc = [];
+				<h3>sorting tables</h3>
+				<p>With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:</p>
+				<pre>var aAsc = [];
 function sortTable(nr) {
 	aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
 	$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
 }</pre>
-			<p>Note that the mixed column only sorts those rows of which the td's have the abbr attribute set, and because of the default place value the non-sorted elements always remain at the bottom</p>
-			<table id="xtable" class="xmpl">
-				<thead>
-					<tr>
-						<th><a href="javascript:sortTable(0)">word</a></th>
-						<th><a href="javascript:sortTable(1)">int</a></th>
-						<th><a href="javascript:sortTable(2)">float</a></th>
-						<th><a href="javascript:sortTable(3)">mixed</a></th>
-						<th><a href="javascript:sortTable(4)">mixed</a></th>
-						<th><a href="javascript:addTRow()">add row</a></th>
-					</tr>
-				</thead>
-				<tbody><tr><td></td></tr></tbody>
-			</table>
+				<p>Note that the mixed column only sorts those rows of which the td's have the abbr attribute set, and because of the default place value the non-sorted elements always remain at the bottom</p>
+				<table id="xtable" class="xmpl">
+					<thead>
+						<tr>
+							<th><a href="javascript:sortTable(0)">word</a></th>
+							<th><a href="javascript:sortTable(1)">int</a></th>
+							<th><a href="javascript:sortTable(2)">float</a></th>
+							<th><a href="javascript:sortTable(3)">mixed</a></th>
+							<th><a href="javascript:sortTable(4)">mixed</a></th>
+							<th><a href="javascript:addTRow()">add row</a></th>
+						</tr>
+					</thead>
+					<tbody><tr><td></td></tr></tbody>
+				</table>
 
-			<h3>animated sorting</h3>
-			<p>Tinysort has no built in animating features but it can quite easily be accomplished through regular js/jQuery.</p>
-			<pre class="example">var $Ul = $('ul#xanim');
+				<h3>animated sorting</h3>
+				<p>Tinysort has no built in animating features but it can quite easily be accomplished through regular js/jQuery.</p>
+				<pre class="example">var $Ul = $('ul#xanim');
 $Ul.css({position:'relative',height:$Ul.height(),display:'block'});
 var iLnH;
 var $Li = $('ul#xanim>li');
@@ -411,16 +419,18 @@ $Li.tsort().each(function(i,el){
 	var iTo = i*iLnH;
 	$El.css({position:'absolute',top:iFr}).animate({top:iTo},500);
 });</pre>
+			</section>
 
-			<h2>known issues</h2>
-			<ul>
-				<li>Selecting from multiple parent nodes (ie. "li" in a nested tree) might have some unexpected results.</li>
-				<li>Mixed numeral and literal values sort as literal. So ["pic11","pic2","pic1"] will result in ["pic1","pic11","pic2"].</li>
-			</ul>
-
+			<section>
+				<h2>known issues</h2>
+				<ul>
+					<li>Selecting from multiple parent nodes (ie. "li" in a nested tree) might have some unexpected results.</li>
+					<li>Mixed numeral and literal values sort as literal. So ["pic11","pic2","pic1"] will result in ["pic1","pic11","pic2"].</li>
+				</ul>
+			</section>
 		</div>
-		<div id="footer">
+		<footer>
 			<div>© 2008-2011 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>
-		</div>
+		</footer>
 	</body>
 </html>

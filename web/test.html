@@ -129,43 +129,43 @@ $(function(){
 			return s==' 1 11 2 2.5 3.1 4 4.6 5 5.2 6 7.4 a b c d';
 		})(),'$Li.tsort({forceStrings:true});   mixed types');
 	});
-	test('exposed private functions', function() {
-		var o = $.tinysort.expose();
-		expect(10);
-		ok( (function(){
-			return o.toLowerCase('aSdF')=='asdf';
-		})(),'toLowerCase("aSdF");');
-		ok( (function(){
-			return o.toLowerCase(23)===23;
-		})(),'toLowerCase(23);');
-
-		ok( (function(){
-			return o.isNum(23)===true;
-		})(),'isNum(23);');
-		ok( (function(){
-			return o.isNum('23')===true;
-		})(),'isNum("23");');
-		ok( (function(){
-			return o.isNum('23a')===false;
-		})(),'isNum("23a");');
-		ok( (function(){
-			return o.isNum('b23')===false;
-		})(),'isNum("b23");');
-
-		ok( (function(){
-			return o.contains(['b23'],'a')===false;
-		})(),'isNum(["b23"],"a");');
-
-		ok( (function(){
-			return o.contains(['b23','a'],'a')===true;
-		})(),'contains(["b23","a"],"a");');
-		ok( (function(){
-			return o.contains([2,3,5,74],23)===false;
-		})(),'contains([2,3,5,74],23);');
-		ok( (function(){
-			return o.contains([2,3,5,74],74)===true;
-		})(),'contains([2,3,5,74],74);');
-	});
+//	test('exposed private functions', function() {
+//		var o = $.tinysort.expose();
+//		expect(10);
+//		ok( (function(){
+//			return o.toLowerCase('aSdF')=='asdf';
+//		})(),'toLowerCase("aSdF");');
+//		ok( (function(){
+//			return o.toLowerCase(23)===23;
+//		})(),'toLowerCase(23);');
+//
+//		ok( (function(){
+//			return o.isNum(23)===true;
+//		})(),'isNum(23);');
+//		ok( (function(){
+//			return o.isNum('23')===true;
+//		})(),'isNum("23");');
+//		ok( (function(){
+//			return o.isNum('23a')===false;
+//		})(),'isNum("23a");');
+//		ok( (function(){
+//			return o.isNum('b23')===false;
+//		})(),'isNum("b23");');
+//
+//		ok( (function(){
+//			return o.contains(['b23'],'a')===false;
+//		})(),'isNum(["b23"],"a");');
+//
+//		ok( (function(){
+//			return o.contains(['b23','a'],'a')===true;
+//		})(),'contains(["b23","a"],"a");');
+//		ok( (function(){
+//			return o.contains([2,3,5,74],23)===false;
+//		})(),'contains([2,3,5,74],23);');
+//		ok( (function(){
+//			return o.contains([2,3,5,74],74)===true;
+//		})(),'contains([2,3,5,74],74);');
+//	});
 
 	module('regression');
 	test('issue 8', function() {
