@@ -1,8 +1,8 @@
 /*
-* jQuery TinySort 1.1.1
+* jQuery TinySort 1.1.3
 * A plugin to sort child nodes by (sub) contents or attributes.
 *
-* Copyright (c) 2008-2011 Ron Valstar http://www.sjeiti.com/
+* Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
 *   http://www.opensource.org/licenses/mit-license.php
@@ -22,16 +22,11 @@
 *   $.tinysort.defaults.order = "desc";
 *
 * in this update:
-*	- better isNum
+* 	- added code for exposing private functions in unit test
+*	- tested with jQuery 1.7.1
 *
 * in last update:
-* 	- reduced minified filesize with 14% by doing
-*     - bit of code cleaning
-* 	  - removed redundant var declarations
-* 	  - predeclaring reoccuring variables
-* 	  - removed the comment for the minified version
-*	- added better documentation for custom sort function
-*	- tested with jQuery 1.6.4
+*	- better isNum
 *
 * Todos
 *   - fix mixed literal/numeral values
@@ -42,8 +37,8 @@
 	var f = false, n = null;
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.1.2'
-		,copyright: 'Copyright (c) 2008-2011 Ron Valstar'
+		,version: '1.1.3'
+		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {
 			MIT: 'http://www.opensource.org/licenses/mit-license.php'
@@ -64,7 +59,6 @@
 
 			,sortFunction: n	// override the default sort function
 		}
-//		,expose: function(){return {toLowerCase:toLowerCase,isNum:isNum,contains:contains};}
 	};
 	$.fn.extend({
 		tinysort: function(_find,_settings) {

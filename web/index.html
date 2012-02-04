@@ -12,9 +12,9 @@
 
 		<link rel="shortcut icon" href="favicon.ico">
 
-		<!--<link rel="stylesheet/less" type="text/css" href="style/screen.less" />-->
-		<!--<script type="text/javascript" src="scripts/less-1.2.1.min.js"></script>-->
-		<link rel="stylesheet" type="text/css" href="style/getLess.php?screen" />
+		<link rel="stylesheet/less" type="text/css" href="style/screen.less" />
+		<script type="text/javascript" src="scripts/less-1.2.1.min.js"></script>
+		<!--<link rel="stylesheet" type="text/css" href="style/getLess.php?screen" />-->
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.6.4.min.js'>\x3C/script>")</script>
 		<script type="text/javascript" src="scripts/jquery.opensource.js"></script>
@@ -177,15 +177,17 @@
 		<section id="intro">
 			<div>
 				<div>
-					<p>TinySort will sort any nodetype by it's text- or attribute value, or by that of one of it's children.</p>
-					<p>If you stumble upon anything out of the ordinary you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>.</p>
-					<p>The examples below should help getting you on your way.</p>
+					<p>TinySort is a small and simple jQuery plugin that will sort any nodetype by it's text- or attribute value, or by that of one of it's children.<br/>The examples below should help getting you on your way.</p>
+
+					<p>For those interested: there is a <a href="test.html">unit/regression test here</a>.</p>
+
+					<p><small>If you find a bug, have a feature request or a code improvement you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>. Please provide code examples where possible. (ps: "I can't get it to work" is not a bug)</small></p>
 				</div>
 				<aside>
 					<h3>download</h3>
 					<a href="scripts/jquery.tinysort.min.js" class="button download"><span class="iconic download"></span> <span class="filesize"></span> minified<br/><small>single Javascript </small></a>
 					<a href="scripts/jquery.tinysort.min.jgz" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> gzipped<br/><small>single Javascript </small></a>
-					<a href="download/jquery.tinysort.1.1.1.zip" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> full zip<br/><small>including examples</small></a><!-- todo: zip still has .svn dirs -->
+					<a href="download/jquery.tinysort.1.1.2.zip" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> full zip<br/><small>including examples</small></a><!-- todo: zip still has .svn dirs -->
 
 					<a href="http://tinysort.googlecode.com/svn/trunk/" class="repo" data-type="svn" rel="external" target="_blank"><span>http://tinysort.googlecode.com/svn/trunk/</span></a>
 				</aside>
@@ -345,7 +347,6 @@ $("ul#people&gt;li").tsort();</pre>
 				<pre class="example">$('ul#xinp>li').tsort('>input,>select',{useVal:true}).each(function(i,el){
 	var $Li = $(el);
 	$Li.find('span').text(' : '+$Li.find('>input,>select').filter(':eq(0)').val());
-	console.log('$Li.find(span):',$Li.find('span').length);
 });</pre>
 
 				<h3 title="return only sorted">return only sorted elements</h3>
@@ -422,11 +423,12 @@ $Li.tsort().each(function(i,el){
 			</section>
 
 			<section>
-				<h2>known issues</h2>
+				<h2>issues</h2>
 				<ul>
 					<li>Selecting from multiple parent nodes (ie. "li" in a nested tree) might have some unexpected results.</li>
 					<li>Mixed numeral and literal values sort as literal. So ["pic11","pic2","pic1"] will result in ["pic1","pic11","pic2"].</li>
 				</ul>
+				<p>File other bugs, feature requests or a code improvements <a href="http://code.google.com/p/tinysort/issues">here</a>. Please provide code examples where possible.</small></p>
 			</section>
 		</div>
 		<footer>

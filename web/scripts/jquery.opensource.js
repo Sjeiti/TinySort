@@ -20,14 +20,15 @@ var OPENSOURCE = (function($){
 	function init(project,fnc){
 		$(function(){
 			// set h1 name and version
-			$('h1').text('jQuery.'+project.id+' '+project.version);
+			$('h1').text(project.id+' '+project.version);
 			$('#footer>div').html(project.copyright.replace('Ron Valstar','<a href="http://www.sjeiti.com/">Ron Valstar</a>'));
 			//
 			// create menu
 			var $Menu = $('<ul/>').appendTo('header>div>nav');
-			$('<li><a href="#">'+project.id+'</a></li>').appendTo($Menu).click(function(){$(document).scrollTop(0)});
+			$('<li><a href="#"></a></li>').appendTo($Menu).click(function(){$(document).scrollTop(0)});
+//			$('<li><a href="#">'+project.id+'</a></li>').appendTo($Menu).click(function(){$(document).scrollTop(0)});
 			var $Li,$SubMenu;
-			$('h2,h3').each(function(i,el){
+			$('body h2,body h3').each(function(i,el){
 				var sNode = el.nodeName.toLowerCase();
 				var $Elm = $(el);
 				var sTitle = $Elm.attr('title')||$Elm.text();
@@ -40,6 +41,12 @@ var OPENSOURCE = (function($){
 					$SubMenu = $('<ul></ul>');
 				}
 				if ($SubMenu&&$SubMenu.find('li').length) $SubMenu.appendTo($Li);
+			});
+			//
+			// set latest zip
+			$('a.download[href*=".zip"]').each(function(i,el){
+				var $A = $(el);
+				$A.attr('href',$A.attr('href').replace(/\d+\.\d+\.\d+/g,project.version));
 			});
 			//
 			// calculate filesizes
@@ -85,7 +92,6 @@ var OPENSOURCE = (function($){
 				if (window.getSelection) txt = window.getSelection();
 				else if (document.getSelection) txt = document.getSelection();
 				else if (document.selection) txt = document.selection.createRange().text;
-                console.log(txt);
 
 				if (CTRL&&e.keyCode===65) {
 					return false;
@@ -93,6 +99,15 @@ var OPENSOURCE = (function($){
 			}).keyup(function(e){
 				oKeys[e.keyCode] = false;
 			});
+			//
+			// add flattr node
+			$('<span class="flattrBox"><a class="FlattrButton" href="http://'+project.id+'.sjeiti.com/"></a></span>').appendTo('#intro>div');
+			// flattr code
+			var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
+			s.type = 'text/javascript';
+			s.async = true;
+			s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
+			t.parentNode.insertBefore(s, t);
 			//
 			// init function
 			fnc();
