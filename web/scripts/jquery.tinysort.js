@@ -1,5 +1,5 @@
 /*
-* jQuery TinySort 1.2.0
+* jQuery TinySort 1.2.$WCREV$
 * A plugin to sort child nodes by (sub) contents or attributes.
 *
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
@@ -24,6 +24,7 @@
 * in this update:
 *	- removed isNum
 *   - fixed mixed literal/numeral values
+*	- refactored fn contains()
 *
 * in last update:
 * 	- added code for exposing private functions in unit test
@@ -33,22 +34,20 @@
 *
 */
 ;(function($) {
-	// default settings
 	var fls = false
 		,nll = null
 		,prsflt = parseFloat
-//		,rxLastNr = /(\d+)$/g;
 		,rxLastNr = /(\d+\.?\d*)$/g;
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.2.0'
+		,version: '1.2.$WCREV$'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {
 			MIT: 'http://www.opensource.org/licenses/mit-license.php'
 			,GPL: 'http://www.gnu.org/licenses/gpl.html'
 		}
-		,defaults: {
+		,defaults: { // default settings
 			 order: 'asc'		// order: asc, desc or rand
 
 			,attr: nll			// order by attribute value
@@ -73,15 +72,18 @@
 
 			var oSettings = $.extend({}, $.tinysort.defaults, _settings)
 				,sParent
+				,oThis = this
+				,iLen = $(this).length
 				,oElements = {} // contains sortable- and non-sortable list per parent
 				,bFind = !(!_find||_find=='')
 				,bAttr = !(oSettings.attr===nll||oSettings.attr=="")
 				,bData = oSettings.data!==nll
 				// since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
 				,bFilter = bFind&&_find[0]==':'
-				,$Filter = bFilter?this.filter(_find):this
+				,$Filter = bFilter?oThis.filter(_find):oThis
 				,fnSort = oSettings.sortFunction
-				,iAsc = oSettings.order=='asc'?1:-1;
+				,iAsc = oSettings.order=='asc'?1:-1
+				,aNewOrder = [];
 
 			if (!fnSort) fnSort = oSettings.order=='rand'?function() {
 				return Math.random()<.5?1:-1;
@@ -92,11 +94,11 @@
 				// maybe force Strings
 				if (!oSettings.forceStrings) {
 					// maybe mixed
-					var aX = x.match(rxLastNr);
-					var aY = y.match(rxLastNr);
+					var  aX = x.match(rxLastNr)
+						,aY = y.match(rxLastNr);
 					if (aX&&aY) {
-						var sXprv = x.substr(0,x.length-aX[0].length);
-						var sYprv = y.substr(0,y.length-aY[0].length);
+						var  sXprv = x.substr(0,x.length-aX[0].length)
+							,sYprv = y.substr(0,y.length-aY[0].length);
 						if (sXprv==sYprv) {
 							x = prsflt(aX[0]);
 							y = prsflt(aY[0]);
@@ -105,47 +107,44 @@
 				}
 				return iAsc*(x<y?-1:(x>y?1:0));
 			};
-
-			this.each(function(i,el) {
-				var $This = $(el)
+			oThis.each(function(i,el) {
+				var $Elm = $(el)
 					// element or sub selection
-					,mElm = bFind?(bFilter?$Filter.filter(this):$This.find(_find)):$This
+					,mElmOrSub = bFind?(bFilter?$Filter.filter(el):$Elm.find(_find)):$Elm
 					// text or attribute value
-					,sSort = bData?mElm.data(oSettings.data):(bAttr?mElm.attr(oSettings.attr):(oSettings.useVal?mElm.val():mElm.text()))
+					,sSort = bData?mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
  					// to sort or not to sort
-					,mParent = $This.parent();
-
+					,mParent = $Elm.parent();
 				if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
-				if (mElm.length>0)			oElements[mParent].s.push({s:sSort,e:$This,n:i}); // s:string, e:element, n:number
-				else						oElements[mParent].n.push({e:$This,n:i});
+				if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
+				else						oElements[mParent].n.push({e:$Elm,n:i});
 			});
 			//
 			// sort
 			for (sParent in oElements) oElements[sParent].s.sort(fnSort);
 			//
 			// order elements and fill new order
-			var aNewOrder = [];
 			for (sParent in oElements) {
 				var oParent = oElements[sParent]
 					,aOrg = [] // list for original position
-					,iLow = $(this).length;
+					,iLow = iLen
+					,aCnt = [0,0] // count how much we've sorted for retreival from either the sort list or the non-sort list (oParent.s/oParent.n)
+					,i;
 				switch (oSettings.place) {
 					case 'first':	$.each(oParent.s,function(i,obj) { iLow = Math.min(iLow,obj.n) }); break;
 					case 'org':		$.each(oParent.s,function(i,obj) { aOrg.push(obj.n) }); break;
 					case 'end':		iLow = oParent.n.length; break;
-					default: iLow = 0;
+					default:		iLow = 0;
 				}
-				var aCnt = [0,0]; // count how much we've sorted for retreival from either the sort list or the non-sort list (oParent.s/oParent.n)
-				for (var i=0;i<$(this).length;i++) {
-					var bSList = i>=iLow&&i<iLow+oParent.s.length;
-					if (contains(aOrg,i)) bSList = true;
-					var mEl = (bSList?oParent.s:oParent.n)[aCnt[bSList?0:1]].e;
+				for (i = 0;i<iLen;i++) {
+					var bSList = contains(aOrg,i)?!fls:i>=iLow&&i<iLow+oParent.s.length
+						,mEl = (bSList?oParent.s:oParent.n)[aCnt[bSList?0:1]].e;
 					mEl.parent().append(mEl);
 					if (bSList||!oSettings.returns) aNewOrder.push(mEl.get(0));
 					aCnt[bSList?0:1]++;
 				}
 			}
-			return this.pushStack(aNewOrder);
+			return oThis.pushStack(aNewOrder);
 		}
 	});
 	// toLowerCase
@@ -154,11 +153,8 @@
 	}
 	// array contains
 	function contains(a,n) {
-		var bInside = fls;
-		$.each(a,function(i,m) {
-			if (!bInside) bInside = m==n;
-		});
-		return bInside;
+		for (var i=0,l=a.length;i<l;i++) if (a[i]==n) return !fls;
+		return fls;
 	}
 	// set functions
 	$.fn.TinySort = $.fn.Tinysort = $.fn.tsort = $.fn.tinysort;
