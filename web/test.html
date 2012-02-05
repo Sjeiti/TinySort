@@ -23,7 +23,7 @@ $(function(){
 	$.ajax({
 		url:'scripts/jquery.tinysort.js'
 		,dataFilter: function(data) {
-			return data.replace(/\$\.tinysort\s*=\s*{/g,'$.tinysort={expose:function(){return{toLowerCase:toLowerCase,isNum:isNum,contains:contains};},');
+			return data.replace(/\$\.tinysort\s*=\s*{/g,'$.tinysort={expose:function(){return{toLowerCase:toLowerCase,contains:contains};},');//,isNum:isNum
 		}
 		,success: startTest
 	});
@@ -69,7 +69,7 @@ $(function(){
 
 		module('Tinysort');
 		test('default functionality', function() {
-			expect(11);
+			expect(12);
 			ok( (function(){
 				var s = '';
 				getUl(0).find('li').tsort()
@@ -136,11 +136,18 @@ $(function(){
 				.each(function(i,el){ s += ' '+$(el).text(); });
 				return s==' 1 11 2 2.5 3.1 4 4.6 5 5.2 6 7.4 a b c d';
 			})(),'$Li.tsort({forceStrings:true});   mixed types');
+			ok( (function(){
+				var s = '';
+				getUl(0,['a11','a1.1','a1','a7']).find('li').tsort()
+				.each(function(i,el){ s += ' '+$(el).text(); });
+				console.log(s);
+				return s==' a1 a1.1 a7 a11';
+			})(),'$Li.tsort();   mixed numeral/literal');
 		});
 
 		test('exposed private functions', function() {
 			var o = $.tinysort.expose();
-			expect(10);
+			expect(6);
 			ok( (function(){
 				return o.toLowerCase('aSdF')=='asdf';
 			})(),'toLowerCase("aSdF");');
@@ -149,22 +156,8 @@ $(function(){
 			})(),'toLowerCase(23);');
 
 			ok( (function(){
-				return o.isNum(23)===true;
-			})(),'isNum(23);');
-			ok( (function(){
-				return o.isNum('23')===true;
-			})(),'isNum("23");');
-			ok( (function(){
-				return o.isNum('23a')===false;
-			})(),'isNum("23a");');
-			ok( (function(){
-				return o.isNum('b23')===false;
-			})(),'isNum("b23");');
-
-			ok( (function(){
 				return o.contains(['b23'],'a')===false;
 			})(),'isNum(["b23"],"a");');
-
 			ok( (function(){
 				return o.contains(['b23','a'],'a')===true;
 			})(),'contains(["b23","a"],"a");');

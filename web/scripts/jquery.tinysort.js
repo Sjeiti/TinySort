@@ -1,5 +1,5 @@
 /*
-* jQuery TinySort 1.1.3
+* jQuery TinySort 1.2.0
 * A plugin to sort child nodes by (sub) contents or attributes.
 *
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
@@ -22,22 +22,26 @@
 *   $.tinysort.defaults.order = "desc";
 *
 * in this update:
+*	- removed isNum
+*   - fixed mixed literal/numeral values
+*
+* in last update:
 * 	- added code for exposing private functions in unit test
 *	- tested with jQuery 1.7.1
 *
-* in last update:
-*	- better isNum
-*
-* Todos
-*   - fix mixed literal/numeral values
+* Todos: none
 *
 */
 ;(function($) {
 	// default settings
-	var f = false, n = null;
+	var fls = false
+		,nll = null
+		,prsflt = parseFloat
+//		,rxLastNr = /(\d+)$/g;
+		,rxLastNr = /(\d+\.?\d*)$/g;
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.1.3'
+		,version: '1.2.0'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {
@@ -47,48 +51,59 @@
 		,defaults: {
 			 order: 'asc'		// order: asc, desc or rand
 
-			,attr: n			// order by attribute value
-			,data: n			// use the data attribute for sorting
-			,useVal: f			// use element value instead of text
+			,attr: nll			// order by attribute value
+			,data: nll			// use the data attribute for sorting
+			,useVal: fls		// use element value instead of text
 
 			,place: 'start'		// place ordered elements at position: start, end, org (original position), first
-			,returns: f			// return all elements or only the sorted ones (true/false)
+			,returns: fls		// return all elements or only the sorted ones (true/false)
 
-			,cases: f			// a case sensitive sort orders [aB,aa,ab,bb]
-			,forceStrings:f		// if false the string '2' will sort with the value 2, not the string '2'
+			,cases: fls			// a case sensitive sort orders [aB,aa,ab,bb]
+			,forceStrings:fls	// if false the string '2' will sort with the value 2, not the string '2'
 
-			,sortFunction: n	// override the default sort function
+			,sortFunction: nll	// override the default sort function
 		}
 	};
 	$.fn.extend({
 		tinysort: function(_find,_settings) {
 			if (_find&&typeof(_find)!='string') {
 				_settings = _find;
-				_find = n;
+				_find = nll;
 			}
 
 			var oSettings = $.extend({}, $.tinysort.defaults, _settings)
-				,p = parseFloat
 				,sParent
 				,oElements = {} // contains sortable- and non-sortable list per parent
 				,bFind = !(!_find||_find=='')
-				,bAttr = !(oSettings.attr===n||oSettings.attr=="")
-				,bData = oSettings.data!==n
+				,bAttr = !(oSettings.attr===nll||oSettings.attr=="")
+				,bData = oSettings.data!==nll
 				// since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
 				,bFilter = bFind&&_find[0]==':'
 				,$Filter = bFilter?this.filter(_find):this
-				,fn = oSettings.sortFunction;
+				,fnSort = oSettings.sortFunction
+				,iAsc = oSettings.order=='asc'?1:-1;
 
-			if (!fn) fn = oSettings.order=='rand'?function() {
+			if (!fnSort) fnSort = oSettings.order=='rand'?function() {
 				return Math.random()<.5?1:-1;
 			}:function(a,b) {
+				// maybe toLower
 				var x = !oSettings.cases?toLowerCase(a.s):a.s
-					,y = !oSettings.cases?toLowerCase(b.s):b.s;
-				if (!oSettings.forceStrings&&isNum(a.s)&&isNum(b.s)) {
-					x = p(a.s);
-					y = p(b.s);
+				   ,y = !oSettings.cases?toLowerCase(b.s):b.s;
+				// maybe force Strings
+				if (!oSettings.forceStrings) {
+					// maybe mixed
+					var aX = x.match(rxLastNr);
+					var aY = y.match(rxLastNr);
+					if (aX&&aY) {
+						var sXprv = x.substr(0,x.length-aX[0].length);
+						var sYprv = y.substr(0,y.length-aY[0].length);
+						if (sXprv==sYprv) {
+							x = prsflt(aX[0]);
+							y = prsflt(aY[0]);
+						}
+					}
 				}
-				return (oSettings.order=='asc'?1:-1)*(x<y?-1:(x>y?1:0));
+				return iAsc*(x<y?-1:(x>y?1:0));
 			};
 
 			this.each(function(i,el) {
@@ -106,7 +121,7 @@
 			});
 			//
 			// sort
-			for (sParent in oElements) oElements[sParent].s.sort(fn);
+			for (sParent in oElements) oElements[sParent].s.sort(fnSort);
 			//
 			// order elements and fill new order
 			var aNewOrder = [];
@@ -137,13 +152,9 @@
 	function toLowerCase(s) {
 		return s&&s.toLowerCase?s.toLowerCase():s;
 	}
-	// is numeric
-	function isNum(n) {
-		return !isNaN(parseFloat(n)) && isFinite(n);
-	}
 	// array contains
 	function contains(a,n) {
-		var bInside = f;
+		var bInside = fls;
 		$.each(a,function(i,m) {
 			if (!bInside) bInside = m==n;
 		});

@@ -43,6 +43,7 @@
 					case 'xret':	for (i=0;i<num;i++) mEl.append('<li><span'+(brnd()?'':' class="striked"')+'>'+getPassword(6)+'</span></li>'); break;
 					case 'xsub':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <span>'+getPassword(6)+'</span></li>'); break;
 					case 'xval':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#" title="'+getPassword(6)+'">'+getPassword(6)+'</a></li>'); break;
+					case 'xdta':	for (i=0;i<num;i++) { var sDta = getPassword(6); mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#" data-foo="'+sDta+'">'+sDta+'</a></li>'); } break;
 
 					case 'xinp':
 						for (i=0;i<num;i++) {
@@ -181,7 +182,7 @@
 
 					<p>For those interested: there is a <a href="test.html">unit/regression test here</a>.</p>
 
-					<p><small>If you find a bug, have a feature request or a code improvement you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>. Please provide code examples where possible. (ps: "I can't get it to work" is not a bug)</small></p>
+					<p><small>If you find a bug, have a feature request or a code improvement you can <a href="http://code.google.com/p/tinysort/issues">file them here</a>. Please provide code examples where possible.</small></p>
 				</div>
 				<aside>
 					<h3>download</h3>
@@ -202,18 +203,18 @@
 			<section>
 				<h2>usage</h2>
 				<p>The first parse in the tsort function can either be nothing...</p>
-				<pre>$("li").tsort();
-$("ul#people&gt;li").tsort();</pre>
+				<pre>$('li').tsort();
+$('ul#people&gt;li').tsort();</pre>
 					<p>a string (as you would in <a href="http://docs.jquery.com/Traversing/find#expr">find</a>)...</p>
-					<pre>$("ul#people&gt;li").tsort("span.surname");</pre>
+					<pre>$('ul#people&gt;li').tsort('span.surname');</pre>
 					<p>a 'settings' object...</p>
-					<pre>$("ul#people&gt;li").tsort({place:"end"});</pre>
+					<pre>$('ul#people&gt;li').tsort({place:'end'});</pre>
 					<p>or both...</p>
-					<pre>$("ul#people&gt;li").tsort("img",{order:"desc",attr:"alt"});</pre>
+					<pre>$('ul#people&gt;li').tsort('img',{order:'desc',attr:'alt'});</pre>
 
 					<p>Change default settings globally like so:</p>
-					<pre>$.tinysort.defaults.order = "desc";
-	$.tinysort.defaults.attr = "title";</pre>
+					<pre>$.tinysort.defaults.order = 'desc';
+	$.tinysort.defaults.attr = 'title';</pre>
 
 				<br/>
 
@@ -349,6 +350,10 @@ $("ul#people&gt;li").tsort();</pre>
 	$Li.find('span').text(' : '+$Li.find('>input,>select').filter(':eq(0)').val());
 });</pre>
 
+				<h3 title="data attribute">sorted by data attribute</h3>
+				<p>Sort by data attribute by parsing the additional parameter 'data=dataName'.</p>
+				<pre class="example">$('ul#xdta>li').tsort('a[data-foo]',{data:'foo'});</pre>
+
 				<h3 title="return only sorted">return only sorted elements</h3>
 				<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
 				<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
@@ -422,14 +427,14 @@ $Li.tsort().each(function(i,el){
 });</pre>
 			</section>
 
-			<section>
+			<!--<section>
 				<h2>issues</h2>
 				<ul>
 					<li>Selecting from multiple parent nodes (ie. "li" in a nested tree) might have some unexpected results.</li>
 					<li>Mixed numeral and literal values sort as literal. So ["pic11","pic2","pic1"] will result in ["pic1","pic11","pic2"].</li>
 				</ul>
-				<p>File other bugs, feature requests or a code improvements <a href="http://code.google.com/p/tinysort/issues">here</a>. Please provide code examples where possible.</small></p>
-			</section>
+				<p>File other bugs, feature requests or a code improvements <a href="http://code.google.com/p/tinysort/issues">here</a>. Please provide code examples where possible. (ps: "I can't get it to work" is not a bug)</small></p>
+			</section>-->
 		</div>
 		<footer>
 			<div>© 2008-2011 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>

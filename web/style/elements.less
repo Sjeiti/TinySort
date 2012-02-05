@@ -28,13 +28,14 @@
 .gradientVerticalThree( @startColor:#00b3ee, @midColor:#7a43b6, @endColor:#c3325f, @startPoint:0, @midPoint:0.5, @endPoint:100%) {
 	background-color: @endColor;
 	background-repeat: repeat-x;
-	background: -moz-linear-gradient(top,  @startColor @startPoint, @midColor @midPoint, @endColor  @endPoint); /* FF3.6+ */
+	background:    -moz-linear-gradient(top,  @startColor @startPoint, @midColor @midPoint, @endColor  @endPoint); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@startColor), color-stop(@midPoint,@midColor), color-stop( @endPoint,@endColor)); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(top,  @startColor @startPoint,@midColor @midPoint,@endColor  @endPoint); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  @startColor @startPoint,@midColor @midPoint,@endColor  @endPoint); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  @startColor @startPoint,@midColor @midPoint,@endColor  @endPoint); /* IE10+ */
-	background: linear-gradient(top,  @startColor @startPoint,@midColor @midPoint,@endColor  @endPoint); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='@startColor', endColorstr='@endColor',GradientType=0 ); /* IE6-8 */
+	background:      -o-linear-gradient(top,  @startColor @startPoint,@midColor @midPoint,@endColor  @endPoint); /* Opera 11.10+ */
+	background:     -ms-linear-gradient(top,  @startColor @startPoint,@midColor @midPoint,@endColor  @endPoint); /* IE10+ */
+	background:         linear-gradient(top,  @startColor @startPoint,@midColor @midPoint,@endColor  @endPoint); /* W3C */
+	filter:		e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', midColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@midColor,@endColor)); /* IE6 & IE7 */
+	-ms-filter:	  %("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', midColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@midColor,@endColor); /* IE8+ */
 }
 .gradientDirectional (@startColor: #555, @endColor: #333, @deg: 45deg) {
 	background-color: @endColor;
