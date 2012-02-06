@@ -146,7 +146,6 @@ $(function(){
 				var s = '';
 				getUl(0,['a11','a1.1','a1','a7']).find('li').tsort()
 				.each(function(i,el){ s += ' '+$(el).text(); });
-				console.log(s);
 				return s==' a1 a1.1 a7 a11';
 			})(),'$Li.tsort();   mixed numeral/literal');
 		});
