@@ -69,7 +69,7 @@ $(function(){
 
 		module('Tinysort');
 		test('default functionality', function() {
-			expect(12);
+			expect(13);
 			ok( (function(){
 				var s = '';
 				getUl(0).find('li').tsort()
@@ -100,6 +100,12 @@ $(function(){
 				.each(function(i,el){ s += $(el).find('>*').val(); });
 				return s==sJoin;
 			})(),'$Li.tsort(\'>input,>select\',{useVal:true})');
+			ok( (function(){
+				var s = '';
+				getUl(5).find('li').tsort({data:'foo'})
+				.each(function(i,el){ s += $(el).data('foo'); });
+				return s==sJoin;
+			})(),'$Li.tsort(\'li\',{data:\'foo\'})');
 			ok( (function(){
 				var s = '';
 				getUl(0).find('li').tsort(':lt(4)',{returns:true})
@@ -157,7 +163,7 @@ $(function(){
 
 			ok( (function(){
 				return o.contains(['b23'],'a')===false;
-			})(),'isNum(["b23"],"a");');
+			})(),'contains(["b23"],"a");');
 			ok( (function(){
 				return o.contains(['b23','a'],'a')===true;
 			})(),'contains(["b23","a"],"a");');

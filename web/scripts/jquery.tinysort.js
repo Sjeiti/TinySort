@@ -1,5 +1,5 @@
 /*
-* jQuery TinySort 1.2.$WCREV$
+* jQuery TinySort 1.2.16
 * A plugin to sort child nodes by (sub) contents or attributes.
 *
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
@@ -25,6 +25,7 @@
 *	- removed isNum
 *   - fixed mixed literal/numeral values
 *	- refactored fn contains()
+*	- revision number now corresponds to svn revision
 *
 * in last update:
 * 	- added code for exposing private functions in unit test
@@ -40,7 +41,7 @@
 		,rxLastNr = /(\d+\.?\d*)$/g;
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.2.$WCREV$'
+		,version: '1.2.16'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {
