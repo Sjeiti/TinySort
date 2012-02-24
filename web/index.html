@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>TinySort</title>
+		<title>jQuery TinySort - a tiny sorting plugin</title>
 
 		<meta name="author" content="Ron Valstar" />
 		<meta name="keywords" content="jquery, sort, tinysort, sortby, tablesort, listsort, sort nodes, nested sort" />
@@ -17,7 +17,8 @@
 		<!--<link rel="stylesheet" type="text/css" href="style/getLess.php?screen" />-->
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.6.4.min.js'>\x3C/script>")</script>
-		<script type="text/javascript" src="scripts/jquery.opensource.js"></script>
+		<!--<script type="text/javascript" src="../../opensource/web/scripts/jquery.opensource.js"></script>-->
+		<script type="text/javascript" src="scripts/jquery.opensource.min.js"></script>
 		<script type="text/javascript" src="scripts/jquery.tinysort.js"></script>
 
 		<script type="text/javascript">
@@ -220,7 +221,7 @@ $('ul#people&gt;li').tsort();</pre>
 
 				<p>TinySort has a number of settings:</p>
 
-				<table id="properties">
+				<table class="props" id="properties">
 					<thead><tr><th>property</th><th>type</th><th>description</th><th>possible values</th><th>default</th></tr></thead>
 					<tbody>
 						<tr>
@@ -394,7 +395,7 @@ function sortTable(nr) {
 	$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
 }</pre>
 				<p>Note that the mixed column only sorts those rows of which the td's have the abbr attribute set, and because of the default place value the non-sorted elements always remain at the bottom</p>
-				<table id="xtable" class="xmpl">
+				<table class="props xmpl" id="xtable">
 					<thead>
 						<tr>
 							<th><a href="javascript:sortTable(0)">word</a></th>

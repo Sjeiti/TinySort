@@ -87,7 +87,7 @@ ul {
 	lh { font-weight: bold; }
 }
 
-table {
+table.props {
 	border: 1px solid #CCC;
 	background-color: #FAFAFA;
 	border-spacing: 0;
@@ -215,7 +215,10 @@ pre, code {
 		.gradientVertical(#7db9e8,#1e5799);
 		border: 1px solid #A00;
 		text-align: center;
-		&:hover { .gradientVertical(#6190B3,#1e5799); }
+		&:hover {
+		    .gradientVertical(#6190B3,#1e5799);
+			border: 1px solid #F00;
+	    }
 	}
 	&.wordpress:before {
 	    font-family: 'vonRalstar';
@@ -305,6 +308,7 @@ pre, code {
 		.shadowBox(2px 2px 6px 0 @colorShade);
 		.cornerRadius(0,0,5px,5px);
 	}
+	&:after { content: attr(href); }
 	&:hover { overflow: visible; width: auto!important; }
 }
 
@@ -349,6 +353,7 @@ header {
 		background: url(logo.png) 0 1px no-repeat;
 		cursor: hand;
 		cursor: pointer;
+		small { font-size: 0.55em; }
 	}
 	nav {
 		float: right;
@@ -400,6 +405,13 @@ header {
 							white-space: nowrap;
 							font-size: .9em;
 							&:hover { .gradientVertical(#525252,#2f3130); }
+/* no cigar in IE
+border:3px solid green;
+color: #000;
+background-color: #FFF;
+.opacity(1);
+height: 10px;
+*/
 						}
 					}
 				}

@@ -1,6 +1,7 @@
 @echo off
 
 SET project=tinysort
+SET title=TinySort
 SET version=1.2.
 
 SET exeYui=java -jar C:\wamp\www\libs\yuicompressor-2.4.1.jar -o
@@ -28,7 +29,7 @@ echo ----- FIND REVISION -----
 for /f "tokens=5" %%i in ('CALL %exeRev% %base%^|find "Last committed at revision"') do set revision=%%i
 
 echo ----- ADD VERSION TO MAIN SCRIPT -----
-CALL %exeUUSed% -i "s/TinySort[[:space:]][0-9]\+\.[0-9]\+\.[0-9]\+/TinySort %version%%revision%/g" %fileSrc%
+CALL %exeUUSed% -i "s/%title%[[:space:]][0-9]\+\.[0-9]\+\.[0-9]\+/%title% %version%%revision%/g" %fileSrc%
 CALL %exeUUSed% -i "s/'[0-9]\+\.[0-9]\+\.[0-9]\+/'%version%%revision%/g" %fileSrc%
 
 echo ----- MINIFY -----
@@ -41,8 +42,8 @@ echo ----- GZIP -----
 CALL %exe7zG% %fileGzp% %fileMin%
 
 echo ----- START COMPRESSION -----
-SET fileZip=%base%\web\download\jquery.tinysort.1.2.%revision%.zip
+SET fileZip=%base%\web\download\jquery.%project%.%version%%revision%.zip
 DEL %fileZip%
-CALL %exe7zZ% %fileZip% %base%\web\* -x!%web%download -x!%web%data -xr!?svn
+CALL %exe7zZ% %fileZip% %web%* -x!download -x!data -x!style\vonRalstar -x!style\screen.css -xr!?svn -xr!?*.php
 
 echo ----- END -----
