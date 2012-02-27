@@ -1,5 +1,5 @@
 /*
-* jQuery TinySort 1.2.19
+* jQuery TinySort 1.3.19
 * A plugin to sort child nodes by (sub) contents or attributes.
 *
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
@@ -23,6 +23,7 @@
 *
 * in this update:
 *	- replaced pushStack with actual replace so initial jQ object is reordered (not only the returned object)
+* 	- fixed non-latin character ordering
 *
 * in last update:
 *	- removed isNum
@@ -31,6 +32,8 @@
 *	- revision number now corresponds to svn revision
 *
 * Todos:
+* 	- todo: uppercase vs lowercase
+* 	- todo: 'foobar' != 'foobars' in non-latin
 *
 */
 ;(function($) {
@@ -60,7 +63,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.2.19'
+		,version: '1.3.19'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {
@@ -84,6 +87,7 @@
 			,sortFunction: nll		// override the default sort function
 
 			,charOrder: sCharOrder	// the order of non-latin characters
+
 		}
 	};
 	$.fn.extend({
@@ -127,32 +131,47 @@
 				} else {
 					aOrderChar = aAllChars.slice(0); // first set to entire 32-255 charlist
 					bDoubles = false;
+					// then loop through the sCharOrder rule
 					for (var
 						 aCharNotLatin = []
+						,fnAddNonLatinChar = function(key,nonLatin){
+								aCharNotLatin.push(nonLatin);
+								oReplace[oSettings.cases?key:key.toLowerCase()] = nonLatin;
+							}
 						,sAllCharNotLatin = ''
 						,sCharLatin = 'z' // if oSettings.charOrder has no [a-z] characters are appended to z
 						,l = sCharOrder.length
+						,j,m // init
 					,i=0;i<l;i++) { // loop through chars to set 'rxNotLatin' and 'sOrderChar'
 						var  sChar = sCharOrder[i]
 							,iChar = sChar.charCodeAt()
 							,bIsLatin = iChar>96&&iChar<123; // 'a'.charCodeAt()===97 'z'.charCodeAt()===122
-						//
 						if (!bIsLatin){
-							if (sChar=='{') {// find double or replaced chars
-								// replace the double with Unicode 0x2500+
-								var sCombine = sCharOrder.substr(i+1).match(/[^}]*/)[0]
-									,aRplc = sCombine.split('=')
-									,sMtch = oSettings.cases?aRplc[0]:aRplc[0].toLowerCase()
-									,sRplc = aRplc.length>1?aRplc[1]:frCrCd(iReplace++);
-								aCharNotLatin.push(sRplc);
-								oReplace[sMtch] = sRplc;
-								i += sCombine.length+1;
+							if (sChar=='[') { // find replace chars: ë will sort similar to e
+								var iCharNotLatin = aCharNotLatin.length
+									,sLastChar = iCharNotLatin?aCharNotLatin[iCharNotLatin-1]:sCharLatin
+									,sReplaces = sCharOrder.substr(i+1).match(/[^\]]*/)[0]
+									,aDoubles = sReplaces.match(/{[^}]*}/g); // find doubles: dž, ss, lj ...
+								if (aDoubles) {
+									for (j=0,m=aDoubles.length;j<m;j++) {
+										var sCode = aDoubles[j];
+										i += sCode.length; // increment i because of .replace(...
+										sReplaces = sReplaces.replace(sCode,'');
+										fnAddNonLatinChar(sCode.replace(/[{}]/g,''),sLastChar);
+										bDoubles = true;
+									}
+								}
+								for (j=0,m=sReplaces.length;j<m;j++) fnAddNonLatinChar(sLastChar,sReplaces[j]);
+								i += sReplaces.length+1;
+							} else if (sChar=='{') { // find doubles: dž, ss, lj ...
+								var sDouble = sCharOrder.substr(i+1).match(/[^}]*/)[0];
+								fnAddNonLatinChar(sDouble,frCrCd(iReplace++)); // replace the double with single Unicode 0x2500+
+								i += sDouble.length+1;
 								bDoubles = true;
 							} else {
 								aCharNotLatin.push(sChar);
 							}
 						}
-						//
 						if (aCharNotLatin.length&&(bIsLatin||i===l-1)) {
 							var sCharNotLatin = aCharNotLatin.join('');
 							sAllCharNotLatin += sCharNotLatin;

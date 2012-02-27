@@ -43,7 +43,7 @@
 					case 'xattr':
 					case 'xret':	for (i=0;i<num;i++) mEl.append('<li><span'+(brnd()?'':' class="striked"')+'>'+getPassword(6)+'</span></li>'); break;
 					case 'xsub':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <span>'+getPassword(6)+'</span></li>'); break;
-					case 'xval':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#" title="'+getPassword(6)+'">'+getPassword(6)+'</a></li>'); break;
+					case 'xval':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#'+getPassword(3,true)+'" title="'+getPassword(6)+'">'+getPassword(6)+'</a></li>'); break;
 					case 'xdta':	for (i=0;i<num;i++) { var sDta = getPassword(6); mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#" data-foo="'+sDta+'">'+sDta+'</a></li>'); } break;
 
 					case 'xinp':
@@ -99,6 +99,14 @@
 					break;
 					case 'xcst':	for (i=0;i<num;i++) mEl.append('<li>'+rand(0,999)+'</li>'); break;
 					case 'xnum':	for (i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
+					case 'xmix':
+						var sBase1 = getPassword(3,true);
+						var sBase2 = getPassword(3,true);
+						var sNum = rand(0,150);
+						for (i=0;i<num/2;i++) mEl.append('<li>'+(getPassword(3,true)+rand(0,150)+getPassword(3,true)+rand(0,150))+'</li>');
+						for (i=0;i<num/2;i++) mEl.append('<li>'+(sBase1+rand(0,150)+sBase2+rand(0,150))+'</li>');
+						for (i=0;i<num/2;i++) mEl.append('<li>'+(sBase1+sNum+sBase2+rand(0,150))+'</li>');
+					break;
 					case 'xrnd':
 						for (i=0;i<num;i++) {
 							if (i>0) {
@@ -109,6 +117,10 @@
 								refill(sId,6);
 							}
 						}
+					break;
+					case 'greek':	mEl.append('<li>'+('άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+					case 'danish':	mEl.append('<li>'+('København,Æble,Øresund,Åben,Aarhus,Åse'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+					case 'serb':	mEl.append('<li>'+('coga,čega,čovjek,džep,godina,gospodin,liljana,luđak,ljubav,muškarac,muž,nož,njuška,zec'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
 					break;
 					default:  for (i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
 				}
@@ -331,49 +343,91 @@ $('ul#people&gt;li').tsort();</pre>
 				<p>The default sort is done by simply calling the 'tsort' function onto your selection.</p>
 				<pre class="example">$('ul#xdflt>li').tsort();</pre>
 
+				<h3>sort on any node</h3>
+				<p>TinySort works on any nodeType. The following is a div with spans.</p>
+				<pre class="example" title="12">$('div#xany>span').tsort('',{order:'desc'});</pre>
+
+				<h3>sorted numbers</h3>
+				<p>TinySort also works on numbers.</p>
+				<pre class="example">$('ul#xnum>li').tsort();</pre>
+
+				<h3 title="literal vs numeral">mixed literal and numeral</h3>
+				<p>In a normal sort the order would be a1,a11,a2 while you'd really want it to be a1,a2,a11. TinySort corrects this:</p>
+				<pre class="example">$('ul#xmix>li').tsort();</pre>
+
 				<h3 title="attribute value">sorted by attribute value</h3>
-				<p>Sort by attribute value by parsing the additional parameter 'attr=attributeName'. This will sort by attribute of, either the jquery selection, or of the sub-selection (if provided).</p>
-				<pre class="example">$('ul#xval>li').tsort('a[title]',{attr:'title'});</pre>
+				<p>Sort by attribute value by parsing the additional parameter 'attr=attributeName'. This will sort by attribute of, either the jquery selection, or of the sub-selection (if provided). In this case sort is by href on the anchor sub-selection.</p>
+				<pre class="example">$('ul#xval>li').tsort('a',{attr:'href'});</pre>
+				<p>Another example: images sorted by attribute title value.</p>
+				<pre class="example">$('span#ximg>img').tsort({attr:'title'});</pre>
 
 				<h3 title="sub-selection">sorted by sub-selection</h3>
 				<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The returned array will be in the newly sorted order.<br/>
-				In this example the list elements are sorted to the text of the second span and a number is prepended.</p>
-				<pre class="example">$('ul#xsub>li').tsort('span:eq(1)').each(function(i){$(this).prepend(i+': ')});</pre>
-
-				<h3>sorted with attribute</h3>
-				<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The following will only sort the non-striked elements.</p>
+				In this example the list elements are sorted to the text of the second span.</p>
+				<pre class="example">$('ul#xsub>li').tsort('span:eq(1)');</pre>
+				<p>The following example will only sort the non-striked elements.</p>
 				<pre class="example" title="12">$('ul#xattr>li').tsort('span[class!=striked]');</pre>
 
-				<h3>sorted by <a href="http://api.jquery.com/val/">.val()</a></h3>
+				<h3 title="return only sorted">return only sorted elements</h3>
+				<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
+				<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
+
+				<h3>non-latin characters</h3>
+				<p>A normal array sorts according to <a href="http://en.wikipedia.org/wiki/Unicode">Unicode</a>, which is wrong for most languages. For correct ordering you can parse a rule with the 'charOrder' parameter. This is a string that consist of exceptions, not the entire alfabet. For characters that should sort equally use brackets. For characters that consist of multiple characters use curly braces. For example: </p>
+				<ul>
+					<li><p><strong>cčć</strong> sorts c č and ć in that order</p></li>
+					<li><p><strong>æøå</strong> in absence of a latin character æ ø and å are sorted after z</p></li>
+					<li><p><strong>ι[ίϊΐ]</strong> ί ϊ and ΐ are sorted equally to ι</p></li>
+					<li><p><strong>d{dž}</strong> dž is sorted as one character after d</p></li>
+					<li><p><strong>å[{Aa}]</strong> Aa is sorted as one character, equal to å, after z</p></li>
+				</ul>
+				<p>Here some real examples:</p>
+				<pre class="example">$('ul#greek li').tsort({charOrder:'α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]'});</pre>
+				<pre class="example">$('ul#danish li').tsort({charOrder:'æøå[{Aa}]'});</pre>
+				<pre class="example">$('ul#serb li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});</pre>
+				<p>Here are some example languages:
+				<table class="props">
+					<thead><tr>
+						<th>Language</th>
+						<th>charOrder</th>
+					</tr></thead>
+					<tfoot><tr>
+						<td colspan="2">since only one of these is my native language please feel free to contact me if you think corrections are in order</td>
+					</tr></tfoot>
+					<tbody>
+						<tr><td>Cyrilic</td><td>абвгдђежзијклљмнњопрстћуфхцчџш</td></tr>
+						<tr><td>Danish and Norwegian</td><td>æøå[{Aa}]</td></tr>
+						<tr><td>Dutch</td><td>e[éëê]i[ï]o[óöô]u[ü]</td></tr>
+						<tr><td>French</td><td>a[àâ]c[ç]e[éèêë]i[ïî]o[ôœ]u[ûù]</td></tr>
+						<tr><td>German</td><td>a[ä]o[ö]s{ss}u[ü]</td></tr>
+						<tr><td>Greek</td><td>α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]</td></tr>
+						<tr><td>Icelandic</td><td>a[á]dðe[é]i[í]o[ó]u[ú]y[ý]zþæö</td></tr>
+						<tr><td>Polish</td><td>aąbcćeęlłnńoósśuúzźż</td></tr>
+						<tr><td>Serbo-Croatian</td><td>cčćd{dž}đl{lj}n{nj}sšzž</td></tr>
+						<tr><td>Spanish</td><td>a[á]c{ch}e[é]i[í]l{ll}nño[ó]u[ú]y[ý]</td></tr>
+						<tr><td>Swedish</td><td>åäö</td></tr>
+					</tbody>
+				</table>
+				</p>
+
+				<h3>sort <a href="http://api.jquery.com/val/">$.val()</a></h3>
 				<p>The .val() method is primarily used to get the values of form elements. By parsing the useVal attribute you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.</p>
 				<pre class="example">$('ul#xinp>li').tsort('>input,>select',{useVal:true}).each(function(i,el){
 	var $Li = $(el);
 	$Li.find('span').text(' : '+$Li.find('>input,>select').filter(':eq(0)').val());
 });</pre>
 
-				<h3 title="data attribute">sorted by data attribute</h3>
+				<h3>sort <a href="http://api.jquery.com/data/">$.data()</a></h3>
 				<p>Sort by data attribute by parsing the additional parameter 'data=dataName'.</p>
-				<pre class="example">$('ul#xdta>li').tsort('a[data-foo]',{data:'foo'});</pre>
-
-				<h3 title="return only sorted">return only sorted elements</h3>
-				<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
-				<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
+				<pre class="example">$('ul#xdta>li').tsort('a',{data:'foo'});</pre>
 
 				<h3>sorted descending</h3>
 				<p>Sort by ascending or descending order by parsing the additional 'order="desc"/"asc"' parameter.</p>
 				<pre class="example">$('ul#xdesc>li').tsort('',{order:'desc'});</pre>
 
-				<h3>sort on any node</h3>
-				<p>TinySort works on any nodeType. The following is a div with spans.</p>
-				<pre class="example" title="12">$('div#xany>span').tsort('',{order:'desc'});</pre>
-
-				<h3>images sorted by title</h3>
-				<p>Sort by attribute title value.</p>
-				<pre class="example">$('span#ximg>img').tsort({attr:'title'});</pre>
-
-				<h3>sorted numbers</h3>
-				<p>TinySort also works on numbers.</p>
-				<pre class="example">$('ul#xnum>li').tsort();</pre>
+				<h3>randomize</h3>
+				<p>TinySort can also order randomly (or is that a contradiction).</p>
+				<pre class="example">$('ul#xrnd li').tsort({order:'rand'});</pre>
 
 				<h3 title="custom sort function">parsing a custom sort function</h3>
 				<p>Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.</p>
@@ -382,10 +436,6 @@ $('ul#people&gt;li').tsort();</pre>
 	var iCalcB = parseInt(b.s)%16;
 	return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
 }});</pre>
-
-				<h3>randomize</h3>
-				<p>TinySort can also order randomly (or is that a contradiction).</p>
-				<pre class="example">$('ul#xrnd li').tsort('',{order:'rand'});</pre>
 
 				<h3>sorting tables</h3>
 				<p>With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:</p>

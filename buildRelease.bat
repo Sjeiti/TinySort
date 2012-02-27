@@ -2,7 +2,7 @@
 
 SET project=tinysort
 SET title=TinySort
-SET version=1.2.
+SET version=1.3.
 
 SET exeYui=java -jar C:\wamp\www\libs\yuicompressor-2.4.1.jar -o
 SET exe7z="C:\Program Files\7-Zip\7z.exe"
