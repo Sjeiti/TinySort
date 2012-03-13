@@ -1,5 +1,5 @@
 /*
-* jQuery TinySort 1.3.21
+* jQuery TinySort 1.3.24
 * A plugin to sort child nodes by (sub) contents or attributes.
 *
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
@@ -63,7 +63,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.3.21'
+		,version: '1.3.24'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {
