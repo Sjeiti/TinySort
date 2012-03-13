@@ -1,5 +1,5 @@
 /*
-* jQuery TinySort 1.3.19
+* jQuery TinySort 1.3.21
 * A plugin to sort child nodes by (sub) contents or attributes.
 *
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
@@ -43,7 +43,7 @@
 		,prsflt = parseFloat				// minify placeholder
 		,frCrCd = String.fromCharCode		// minify placeholder
 		,mathmn = Math.min					// minify placeholder
-		,rxLastNr = /(\d+\.?\d*)$/g			// regex for testing strings ending on numbers
+		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		//
 		// character specific ordering is off by default for speed
 		,sCharOrder							// equals the input oSettings.charOrder so we can test any changes
@@ -56,14 +56,14 @@
 	;
 	// create basic latin string chars 32-255
 	for (var i=32,s=frCrCd(i),len=255;i<len;i++,s=frCrCd(i).toLowerCase()) { // using lowerCase instead of upperCase so _ will sort before
-		if (!~aAllChars.indexOf(s)) aAllChars.push(s);
+		if (aAllChars.indexOf(s)!==-1) aAllChars.push(s);
 	}
 	aAllChars.sort();
 	//
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.3.19'
+		,version: '1.3.21'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {

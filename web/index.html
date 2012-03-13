@@ -12,13 +12,13 @@
 
 		<link rel="shortcut icon" href="favicon.ico">
 
-		<link rel="stylesheet/less" type="text/css" href="style/screen.less" />
-		<script type="text/javascript" src="scripts/less-1.2.1.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="style/screen.css" />
+		<!--<script type="text/javascript" src="scripts/less-1.2.1.min.js"></script>-->
 		<!--<link rel="stylesheet" type="text/css" href="style/getLess.php?screen" />-->
 
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.6.4.min.js'>\x3C/script>")</script>
-		<!--<script type="text/javascript" src="../../opensource/web/scripts/jquery.opensource.js"></script>-->
-		<script type="text/javascript" src="scripts/jquery.opensource.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script><script>window.jQuery||document.write("<script src='scripts/jquery-1.7.1.min.js'>\x3C/script>")</script>
+		<script type="text/javascript" src="../../opensource/web/scripts/jquery.opensource.js"></script>
+		<!--<script type="text/javascript" src="scripts/jquery.opensource.min.js"></script>-->
 		<script type="text/javascript" src="scripts/jquery.tinysort.js"></script>
 
 		<script type="text/javascript">
@@ -185,7 +185,7 @@
 		<script src="http://www.sjeiti.com/ga.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<header>
+		<header class="main">
 			<div><h1><span></span></h1><nav></nav></div>
 		</header>
 		<section id="intro">
@@ -270,6 +270,18 @@ $('ul#people&gt;li').tsort();</pre>
 						</tr>
 						<tr>
 							<td>data</td>
+							<td>String</td>
+							<td>use the data attribute for sorting</td>
+							<td>
+								<table>
+									<tr><td>null</td><td>use text</td></tr>
+									<tr><td>String</td><td>use data attribute</td></tr>
+								</table>
+							</td>
+							<td>null</td>
+						</tr>
+						<tr>
+							<td>charOrder</td>
 							<td>String</td>
 							<td>use the data attribute for sorting</td>
 							<td>
@@ -382,9 +394,9 @@ $('ul#people&gt;li').tsort();</pre>
 					<li><p><strong>å[{Aa}]</strong> Aa is sorted as one character, equal to å, after z</p></li>
 				</ul>
 				<p>Here some real examples:</p>
-				<pre class="example">$('ul#greek li').tsort({charOrder:'α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]'});</pre>
-				<pre class="example">$('ul#danish li').tsort({charOrder:'æøå[{Aa}]'});</pre>
-				<pre class="example">$('ul#serb li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});</pre>
+				<pre class="example">$('ul#greek>li').tsort({charOrder:'α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]'});</pre>
+				<pre class="example">$('ul#danish>li').tsort({charOrder:'æøå[{Aa}]'});</pre>
+				<pre class="example">$('ul#serb>li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});</pre>
 				<p>Here are some example languages:
 				<table class="props">
 					<thead><tr>

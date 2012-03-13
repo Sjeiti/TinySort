@@ -238,20 +238,15 @@ $(function(){
 				return s=='010010aaba'; // not 001010aaba
 			})(),'implementation of forceStrings');
 		});
-	/*	test('IE woes', function() {
+		test('issue 24', function() {
 			expect(1);
 			ok( (function(){
-				var i = 0;
-				var ss='';
-				var s = (['01','001','a','0a','ba']).sort(function(a,b){
-					ss += i+' '+a+' '+b+"\n";
-					i++;
-					var aa = a[0], bb = b[0];
-					return aa==bb?0:(aa>bb?1:-1);
-				}).join('');
-				return s=='010010aaba';
-			})(),'asdf');
-		});*/
+				var s = '';
+				getUl(0,[20,0,-30,40,-120]).find('li').tsort({forceStrings:false})
+				.each(function(i,el){ s += $(el).text(); });
+				return s=='-120-3002040'; // not -30-12002040
+			})(),'negative numeral value bug');
+		});
 
 	}
 });
