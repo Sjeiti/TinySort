@@ -58,7 +58,7 @@ $(function(){
 				break;
 				case 5:
 					$.each(list,function(i,s){
-						sUl += '<li data-foo="'+s+'">a</li>';
+						sUl += '<li data-foo="'+s+'">_'+s+'</li>';
 					});
 					sUl += '</ul>';
 				break;
@@ -246,6 +246,15 @@ $(function(){
 				.each(function(i,el){ s += $(el).text(); });
 				return s=='-120-3002040'; // not -30-12002040
 			})(),'negative numeral value bug');
+		});
+		test('issue 27', function() {
+			expect(1);
+			ok( (function(){
+				var s = '';
+				foo=getUl(5,[20,0,-30,20.5,'a','a01',40,-120]).find('li').tsort({forceStrings:false})
+				.each(function(i,el){ s += $(el).text(); });
+				return s=='_-120_-30_0_20_20.5_40_a_a01';
+			})(),'data integer bug');
 		});
 
 	}

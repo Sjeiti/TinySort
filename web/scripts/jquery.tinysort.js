@@ -1,5 +1,5 @@
 /*
-* jQuery TinySort 1.3.24
+* jQuery TinySort 1.3.25
 * A plugin to sort child nodes by (sub) contents or attributes.
 *
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
@@ -54,6 +54,13 @@
 		,oReplace = {}						// replacement object
 		,rxNotLatin							// regular expression to test for non-latin chars
 	;
+	// fix IE8 indexOf (issue 26)
+	if (!Array.indexOf) {
+		Array.prototype.indexOf = function (o) {
+			for (var i=0,l=this.length;i<l;i++) if (this[i]==o) return i;
+			return -1;
+		}
+	}
 	// create basic latin string chars 32-255
 	for (var i=32,s=frCrCd(i),len=255;i<len;i++,s=frCrCd(i).toLowerCase()) { // using lowerCase instead of upperCase so _ will sort before
 		if (aAllChars.indexOf(s)!==-1) aAllChars.push(s);
@@ -63,7 +70,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.3.24'
+		,version: '1.3.25'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licenced: {
@@ -200,6 +207,11 @@
 					,sA = !oSettings.cases?toLowerCase(a.s):a.s
 					,sB = !oSettings.cases?toLowerCase(b.s):b.s;
 				// maybe force Strings
+//				var bAString = typeof(sA)=='string';
+//				var bBString = typeof(sB)=='string';
+//				if (!oSettings.forceStrings&&(bAString||bBString)) {
+//					if (!bAString) sA = ''+sA;
+//					if (!bBString) sB = ''+sB;
 				if (!oSettings.forceStrings) {
 					// maybe mixed
 					var  aAnum = sA&&sA.match(rxLastNr)
@@ -242,7 +254,7 @@
 					// element or sub selection
 					,mElmOrSub = bFind?(bFilter?$Filter.filter(el):$Elm.find(_find)):$Elm
 					// text or attribute value
-					,sSort = bData?mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
+					,sSort = bData?''+mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
  					// to sort or not to sort
 					,mParent = $Elm.parent();
 				if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
