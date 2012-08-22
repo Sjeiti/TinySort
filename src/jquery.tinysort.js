@@ -1,4 +1,4 @@
-/*! TinySort 1.3.25
+/*! TinySort 1.3.27
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
@@ -61,17 +61,17 @@
 	}
 	// create basic latin string chars 32-255
 	for (var i=32,s=frCrCd(i),len=255;i<len;i++,s=frCrCd(i).toLowerCase()) { // using lowerCase instead of upperCase so _ will sort before
-		if (aAllChars.indexOf(s)!==-1) aAllChars.push(s);
+		if (aAllChars.indexOf(s)===-1) aAllChars.push(s);
 	}
 	aAllChars.sort();
 	//
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.3.25'
+		,version: '1.3.27'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
-		,licenced: {
+		,licensed: {
 			MIT: 'http://www.opensource.org/licenses/mit-license.php'
 			,GPL: 'http://www.gnu.org/licenses/gpl.html'
 		}
