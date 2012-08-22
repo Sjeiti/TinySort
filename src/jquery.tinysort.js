@@ -1,14 +1,14 @@
-/*
-* jQuery TinySort 1.3.25
-* A plugin to sort child nodes by (sub) contents or attributes.
-*
+/*! TinySort 1.3.25
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
 *   http://www.opensource.org/licenses/mit-license.php
 *   http://www.gnu.org/licenses/gpl.html
+*//*
+* Description:
+*   A jQuery plugin to sort child nodes by (sub) contents or attributes.
 *
-* contributors:
+* Contributors:
 *	brian.gibson@gmail.com
 *	michael.thornberry@gmail.com
 *
@@ -22,14 +22,12 @@
 *   $.tinysort.defaults.order = "desc";
 *
 * in this update:
-*	- replaced pushStack with actual replace so initial jQ object is reordered (not only the returned object)
-* 	- fixed non-latin character ordering
+*   - header comment no longer stripped in minified version
+*	- revision number no longer corresponds to svn revision since it's now git
 *
 * in last update:
-*	- removed isNum
-*   - fixed mixed literal/numeral values
-*	- refactored fn contains()
-*	- revision number now corresponds to svn revision
+*	- replaced pushStack with actual replace so initial jQ object is reordered (not only the returned object)
+* 	- fixed non-latin character ordering
 *
 * Todos:
 * 	- todo: uppercase vs lowercase
@@ -303,3 +301,17 @@
 	// set functions
 	$.fn.TinySort = $.fn.Tinysort = $.fn.tsort = $.fn.tinysort;
 })(jQuery);
+
+/*! Array.prototype.indexOf for IE (issue #26) */
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function(elt /*, from*/) {
+		var len = this.length
+			,from = Number(arguments[1])||0;
+		from = from<0?Math.ceil(from):Math.floor(from);
+		if (from<0) from += len;
+		for (;from<len;from++){
+			if (from in this && this[from]===elt) return from;
+		}
+		return -1;
+	};
+}
