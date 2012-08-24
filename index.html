@@ -13,10 +13,13 @@
 		<link rel="shortcut icon" href="style/favicon.ico">
 
 		<link rel="stylesheet" type="text/css" href="style/screen.css" />
+		<!--<link rel="stylesheet" type="text/css" href="../opensource/web/style/opensource.css" />-->
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script><script>window.jQuery||document.write("<script src='libs/jquery-1.8.0.min.js'>\x3C/script>")</script>
 		<script type="text/javascript" src="libs/jquery.opensource.min.js"></script>
+		<!--<script type="text/javascript" src="../opensource/web/scripts/jquery.opensource.js"></script>-->
 		<script type="text/javascript" src="src/jquery.tinysort.js"></script>
+		<script type="text/javascript" src="src/jquery.tinysort.charorder.js"></script>
 
 		<script type="text/javascript">
 			OPENSOURCE.init($.tinysort,function(){
@@ -192,12 +195,44 @@
 
 					<p>For those interested: there is a <a href="test">unit/regression test here</a>.</p>
 
-					<p><small>If you find a bug, have a feature request or a code improvement you can <a href="https://github.com/Sjeiti/TinySort/issues">file them here</a>. Please <a href="http://jsfiddle.net/">provide code examples</a> where possible.</small></p>
+					<p><small>If you find a bug, have a feature request or a code improvement you can <a href="https://github.com/Sjeiti/TinySort/issues">file them here</a>. Please <a href="http://jsfiddle.net/">provide code examples</a> where applicable.</small></p>
 				</div>
 				<aside>
 					<h3>download</h3>
-					<a href="src/jquery.tinysort.min.js" class="button download"><span class="iconic download"></span> <span class="filesize"></span> minified<br/><small>single Javascript </small></a>
-					<a href="src/jquery.tinysort.min.jgz" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> gzipped<br/><small>single Javascript </small></a>
+
+					<!--<button class="button download">
+						<label for="tts1"><input type="radio" id="tts1" name="tts" value="src/jquery.tinysort.js" /><span class="filesize"></span> source</label><br/>
+						<label for="tts2"><input type="radio" id="tts2" name="tts" value="src/jquery.tinysort.min.js" checked /><span class="filesize"></span> minified</label><br/>
+						<label for="tts3"><input type="radio" id="tts3" name="tts" value="src/jquery.tinysort.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
+						<a href="src/jquery.tinysort.min.js"><span class="iconic download"></span>TinySort</a>
+					</button>-->
+
+					<!--<button class="button download">
+						<label for="pco1"><input type="radio" id="pco1" name="pco" value="src/jquery.tinysort.charorder.js" /><span class="filesize"></span> source</label><br/>
+						<label for="pco2"><input type="radio" id="pco2" name="pco" value="src/jquery.tinysort.charorder.min.js" checked /><span class="filesize"></span> minified</label><br/>
+						<label for="pco3"><input type="radio" id="pco3" name="pco" value="src/jquery.tinysort.charorder.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
+						<a href="src/jquery.tinysort.charorder.min.js"><span class="iconic download"></span> charorder plugin</a>
+					</button>-->
+
+					<a class="button download choosehref" href="src/jquery.tinysort.min.js">
+						<label for="tts1"><input type="radio" id="tts1" name="tts" value="src/jquery.tinysort.js" /><span class="filesize"></span> source</label><br/>
+						<label for="tts2"><input type="radio" id="tts2" name="tts" value="src/jquery.tinysort.min.js" checked /><span class="filesize"></span> minified</label><br/>
+						<label for="tts3"><input type="radio" id="tts3" name="tts" value="src/jquery.tinysort.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
+						<span class="iconic download"></span>TinySort
+					</a>
+
+					<a class="button download choosehref" href="src/jquery.tinysort.charorder.min.js">
+						<label for="pco1"><input type="radio" id="pco1" name="pco" value="src/jquery.tinysort.charorder.js" /><span class="filesize"></span> source</label><br/>
+						<label for="pco2"><input type="radio" id="pco2" name="pco" value="src/jquery.tinysort.charorder.min.js" checked /><span class="filesize"></span> minified</label><br/>
+						<label for="pco3"><input type="radio" id="pco3" name="pco" value="src/jquery.tinysort.charorder.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
+						<span class="iconic download"></span> CharOrder plugin
+					</a>
+
+
+					<!--<a href="src/jquery.tinysort.min.js" class="button download"><span class="iconic download"></span> <span class="filesize"></span> minified<br/><small>single Javascript </small></a>-->
+					<!--<a href="src/jquery.tinysort.min.jgz" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> gzipped<br/><small>single Javascript </small></a>-->
+					<!--<a href="src/jquery.tinysort.charorder.min.js" class="button download small"><span class="iconic download"></span> charorder plugin <span class="filesize"></span> minified<br/><small>single Javascript </small></a>-->
+					<!--<a href="src/jquery.tinysort.charorder.min.jgz" class="button download small"><span class="iconic download"></span> charorder plugin <span class="filesize"></span> gzipped<br/><small>single Javascript </small></a>-->
 					<a href="https://github.com/Sjeiti/TinySort/zipball/master" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> full zip<br/><small>including examples</small></a>
 
 					<a href="https://github.com/Sjeiti/TinySort.git" class="repo" data-type="git" rel="external" target="_blank"></a>
@@ -382,7 +417,7 @@ $('ul#people&gt;li').tsort();</pre>
 				<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
 
 				<h3>non-latin characters</h3>
-				<p>A normal array sorts according to <a href="http://en.wikipedia.org/wiki/Unicode">Unicode</a>, which is wrong for most languages. For correct ordering you can parse a rule with the 'charOrder' parameter. This is a string that consist of exceptions, not the entire alfabet. For characters that should sort equally use brackets. For characters that consist of multiple characters use curly braces. For example: </p>
+				<p>A normal array sorts according to <a href="http://en.wikipedia.org/wiki/Unicode">Unicode</a>, which is wrong for most languages. For correct ordering you can use the charorder plugin to parse a rule with the 'charOrder' parameter. This is a string that consist of exceptions, not the entire alfabet. For characters that should sort equally use brackets. For characters that consist of multiple characters use curly braces. For example: </p>
 				<ul>
 					<li><p><strong>cčć</strong> sorts c č and ć in that order</p></li>
 					<li><p><strong>æøå</strong> in absence of a latin character æ ø and å are sorted after z</p></li>
