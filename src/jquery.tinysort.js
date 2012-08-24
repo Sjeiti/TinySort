@@ -1,4 +1,4 @@
-/*! TinySort 1.3.28
+/*! TinySort 1.4.29
 * Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
@@ -22,12 +22,12 @@
 *   $.tinysort.defaults.order = "desc";
 *
 * in this update:
-*   - header comment no longer stripped in minified version
-*	- revision number no longer corresponds to svn revision since it's now git
+* 	- added plugin hook
+*   - stripped non-latin character ordering and turned it into a plugin
 *
 * in last update:
-*	- replaced pushStack with actual replace so initial jQ object is reordered (not only the returned object)
-* 	- fixed non-latin character ordering
+*   - header comment no longer stripped in minified version
+*	- revision number no longer corresponds to svn revision since it's now git
 *
 * Todos:
 * 	- todo: uppercase vs lowercase
@@ -39,23 +39,26 @@
 	var fls = !1							// minify placeholder
 		,nll = null							// minify placeholder
 		,prsflt = parseFloat				// minify placeholder
-		,frCrCd = String.fromCharCode		// minify placeholder
 		,mathmn = Math.min					// minify placeholder
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
+		,aPluginPrepare = []
+		,aPluginSort = []
 	;
 	//
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.3.28'
+		,version: '1.4.29'
 		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licensed: {
 			MIT: 'http://www.opensource.org/licenses/mit-license.php'
 			,GPL: 'http://www.gnu.org/licenses/gpl.html'
 		}
-		,prepare: []
-		,sort: []
+		,plugin: function(prepare,sort){
+			aPluginPrepare.push(prepare);	// function(settings){doStuff();}
+			aPluginSort.push(sort);			// function(valuesAreNumeric,sA,sB,iReturn){doStuff();return iReturn;}
+		}
 		,defaults: { // default settings
 
 			 order: 'asc'			// order: asc, desc or rand
@@ -96,7 +99,7 @@
 				,aNewOrder = []
 			;
 
-			$.each($.tinysort.prepare,function(i,fn){
+			$.each(aPluginPrepare,function(i,fn){
 				fn.call(fn,oSettings);
 			});
 
@@ -131,7 +134,7 @@
 				// return sort-integer
 				var iReturn = iAsc*(sA<sB?-1:(sA>sB?1:0));
 
-				$.each($.tinysort.sort,function(i,fn){
+				$.each(aPluginSort,function(i,fn){
 					iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
 				});
 

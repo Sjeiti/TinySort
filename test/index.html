@@ -22,7 +22,12 @@
 			,dataFilter: function(data) {
 				return data.replace(/\$\.tinysort\s*=\s*{/g,'$.tinysort={expose:function(){return{toLowerCase:toLowerCase,contains:contains};},');//,isNum:isNum
 			}
-			,success: startTest
+			,success: function(){
+				$.ajax({
+					url:'../src/jquery.tinysort.charorder.js'
+					,success: startTest
+				});
+			}
 		});
 
 		// start test
@@ -30,11 +35,12 @@
 		function startTest(){
 			function rnd(){ return Math.floor(1000*Math.random()); }
 
-			var aList = ['eek-','oif-','myr-','aar-','oac-','eax-'];
-			var sJoin = aList.slice(0).sort().join('');
-			var sHfJn = aList.slice(0,4).sort().join('');
-			var sSRvr = aList.slice(0).sort().reverse().join('');
-			var sRvrs = aList.slice(0).reverse().join('');
+			var aList = ['eek-','oif-','myr-','aar-','oac-','eax-']
+				,sJoin = aList.slice(0).sort().join('')
+				,sHfJn = aList.slice(0,4).sort().join('')
+				,sSRvr = aList.slice(0).sort().reverse().join('')
+				,sRvrs = aList.slice(0).reverse().join('')
+			;
 
 			function getUl(nr,list){
 				if (list===undefined) list = aList;
@@ -170,6 +176,23 @@
 				ok( (function(){
 					return o.contains([2,3,5,74],74)===true;
 				})(),'contains([2,3,5,74],74);');
+			});
+
+			test('non latin characters plugin', function() {
+				//$('ul#danish>li').tsort({charOrder:'æøå[{Aa}]'});
+				expect(2);
+				ok( (function(){
+					var s = '';
+					getUl(0,['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']).find('li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'})
+					.each(function(i,el){ s += ' '+$(el).text(); });
+					return s==' coga čega čovjek džep godina gospodin liljana luđak ljubav muškarac nož njuška zec';
+				})(),'$Li.tsort({charOrder:\'cčćd{dž}đl{lj}n{nj}sšzž\'});   Serbo-Croatian');
+				ok( (function(){
+					var s = '';
+					getUl(0,['Åben','Æble','Åse','København','Aarhus','Øresund']).find('li').tsort({charOrder:'æøå[{Aa}]'})
+					.each(function(i,el){ s += ' '+$(el).text(); });
+					return s==' København Æble Øresund Åben Aarhus Åse';
+				})(),'$Li.tsort({charOrder:\'æøå[{Aa}]\'});   Danisch');
 			});
 
 			module('regression');
