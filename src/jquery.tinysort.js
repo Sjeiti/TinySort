@@ -40,7 +40,6 @@
 		,nll = null							// minify placeholder
 		,prsflt = parseFloat				// minify placeholder
 		,mathmn = Math.min					// minify placeholder
-		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,aPluginPrepare = []
 		,aPluginSort = []
 	;
@@ -74,6 +73,8 @@
 			,forceStrings:fls		// if false the string '2' will sort with the value 2, not the string '2'
 
 			,sortFunction: nll		// override the default sort function
+            
+            		,reMatchNumber: nll     	// regex to sort by a match number in string
 		}
 	};
 	$.fn.extend({
@@ -119,8 +120,8 @@
 //					if (!bBString) sB = ''+sB;
 				if (!oSettings.forceStrings) {
 					// maybe mixed
-					var  aAnum = sA&&sA.match(rxLastNr)
-						,aBnum = sB&&sB.match(rxLastNr);
+					var  aAnum = sA&&sA.match(oSettings.reMatchNumber)
+						,aBnum = sB&&sB.match(oSettings.reMatchNumber);
 					if (aAnum&&aBnum) {
 						var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
 							,sBprv = sB.substr(0,sB.length-aBnum[0].length);
