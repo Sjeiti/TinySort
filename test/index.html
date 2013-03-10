@@ -8,13 +8,12 @@
 		<link href="qunit/qunit.css" type="text/css" rel="stylesheet" />
 		<style>html,body{padding:0;margin:0;}</style>
 
-		<script type="text/javascript" src="../libs/jquery-1.8.0.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script><script>window.jQuery||document.write("<script src='libs/jquery-1.9.1.js'>\x3C/script>")</script>
 		<script type="text/javascript" src="qunit/qunit.js"></script>
 		<script type="text/javascript">
 (function($){
 	$(function(){
 		var $Body = $('body');
-		function trace(){try{console.log.apply(console,arguments);}catch(e){};}
 
 		// load tinysort and hack source to expose private functions for testing
 		$.ajax({
@@ -65,6 +64,19 @@
 						});
 						sUl += '</ul>';
 					break;
+					case 6:
+						$.each(list,function(i,s){
+							sUl += '<li value="'+s+'">_'+s+'</li>';
+						});
+						sUl += '</ul>';
+					break;
+					case 7:
+						$.each(list,function(i,a){
+							sUl += '<li value="'+a[1]+'">'+a[0]+'</li>';
+						});
+						sUl += '</ul>';
+							console.log(sUl); // log
+					break;
 				}
 				return $(sUl);
 			}
@@ -73,7 +85,7 @@
 
 			module('Tinysort');
 			test('default functionality', function() {
-				expect(13);
+				expect(14);
 				ok( (function(){
 					var s = '';
 					getUl(0).find('li').tsort()
@@ -152,6 +164,13 @@
 					.each(function(i,el){ s += ' '+$(el).text(); });
 					return s==' a1 a1.1 a7 a11';
 				})(),'$Li.tsort();   mixed numeral/literal');
+				ok( (function(){
+					var s = '';
+					getUl(7,[['bb',12],['aa',4],['cc',2],['aa',3],['bb',5],['aa',1],['aa',11],['cc',6]]).find('li').tsort({},{useVal:true})
+					.each(function(i,el){ s += ' '+$(el).text()+'_'+$(el).value(); });
+					console.log('sssssssssss',s); // log
+					return s==' a1 a1.1 a7 a11';
+				})(),'$Li.tsort({},{});   multiple sort rules');
 			});
 
 			test('exposed private functions', function() {
@@ -236,7 +255,6 @@
 						return aa==bb?0:(aa>bb?1:-1);
 					}})
 					.each(function(i,el){ s += $(el).text(); });
-					trace(s);
 					return s=='eek-oif-myr-aar-oac-eax-';
 				})(),'custom sort function');
 			});
@@ -271,10 +289,19 @@
 				expect(1);
 				ok( (function(){
 					var s = '';
-					foo=getUl(5,[20,0,-30,20.5,'a','a01',40,-120]).find('li').tsort({forceStrings:false})
+					getUl(5,[20,0,-30,20.5,'a','a01',40,-120]).find('li').tsort({forceStrings:false})
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='_-120_-30_0_20_20.5_40_a_a01';
 				})(),'data integer bug');
+			});
+			test('issue 39', function() {
+				expect(1);
+				ok( (function(){
+					var s = '';
+					getUl(6,[0,5,1,4,2,3]).find('li').tsort({attr:"value"})
+					.each(function(i,el){ s += $(el).text(); });
+					return s=='_0_1_2_3_4_5';
+				})(),'regexp match onto number bug');
 			});
 
 		}

@@ -15,7 +15,7 @@
 		<link rel="stylesheet" type="text/css" href="style/screen.css" />
 		<!--<link rel="stylesheet" type="text/css" href="../opensource/web/style/opensource.css" />-->
 
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script><script>window.jQuery||document.write("<script src='libs/jquery-1.8.0.min.js'>\x3C/script>")</script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script><script>window.jQuery||document.write("<script src='libs/jquery-1.9.1.js'>\x3C/script>")</script>
 		<script type="text/javascript" src="libs/jquery.opensource.min.js"></script>
 		<!--<script type="text/javascript" src="../opensource/web/scripts/jquery.opensource.js"></script>-->
 		<script type="text/javascript" src="src/jquery.tinysort.js"></script>
@@ -121,6 +121,18 @@
 					case 'greek':	mEl.append('<li>'+('άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
 					case 'danish':	mEl.append('<li>'+('København,Æble,Øresund,Åben,Aarhus,Åse'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
 					case 'serb':	mEl.append('<li>'+('coga,čega,čovjek,džep,godina,gospodin,liljana,luđak,ljubav,muškarac,muž,nož,njuška,zec'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+					case 'xmul':
+						var aNames = [];
+						for (i=0;i<(num/2<<0);i++) aNames.push(getPassword(6));
+
+						for (i=0;i<num;i++) {
+							var iTimestamp = rand(1145925286604,1345925286604)
+								,oDate = new Date(iTimestamp)
+								,iMonth = oDate.getMonth()+1
+								,iDay = oDate.getDate()
+								,sDate = (iDay<10?'0':'')+iDay+'-'+(iMonth<10?'0':'')+iMonth+'-'+oDate.getFullYear();
+							mEl.append('<li><span class="name" style="display:inline-block;width:100px;">'+aNames[rand(0,aNames.length)]+'</span> <span class="date" style="font-family:monospace;" data-timestamp="'+iTimestamp+'">'+sDate+'</span> </li>');
+						}
 					break;
 					default:  for (i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
 				}
@@ -182,7 +194,20 @@
 				return (n%1)==0;
 			}
 		</script>
-		<script src="http://www.sjeiti.com/ga.js" type="text/javascript"></script>
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-37777223-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+
+		</script>
+		<!--<script src="http://www.sjeiti.com/ga.js" type="text/javascript"></script>-->
 	</head>
 	<body>
 		<header class="main">
@@ -416,6 +441,10 @@ $('ul#people&gt;li').tsort();</pre>
 				<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
 				<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
 
+				<h3>multiple sort rules</h3>
+				<p>Sometimes multiple sorting criteria are required. For instance: when two similarly named items are sorted alfabetically you might want to sort them by date.</p>
+				<p>For multiple sorting rules you can just append the parameters. So tsort(selector,object) becomes tsort(selector1,object1,selector2,object2,selector3,object3...). You can also leave out either the selector or the object if it's not needed: tsort(selector1,selector2,object2,object3...).</p>
+				<pre class="example" title="12">$('ul#xmul>li').tsort('span.name','span.date',{data:'timestamp'});</pre>
 				<h3>non-latin characters</h3>
 				<p>A normal array sorts according to <a href="http://en.wikipedia.org/wiki/Unicode">Unicode</a>, which is wrong for most languages. For correct ordering you can use the charorder plugin to parse a rule with the 'charOrder' parameter. This is a string that consist of exceptions, not the entire alfabet. For characters that should sort equally use brackets. For characters that consist of multiple characters use curly braces. For example: </p>
 				<ul>
