@@ -167,9 +167,8 @@
 				ok( (function(){
 					var s = '';
 					getUl(7,[['bb',12],['aa',4],['cc',2],['aa',3],['bb',5],['aa',1],['aa',11],['cc',6]]).find('li').tsort({},{useVal:true})
-					.each(function(i,el){ s += ' '+$(el).text()+'_'+$(el).value(); });
-					console.log('sssssssssss',s); // log
-					return s==' a1 a1.1 a7 a11';
+					.each(function(i,el){ s += ' '+$(el).text()+'_'+$(el).val(); });
+					return s==' aa_1 aa_3 aa_4 aa_11 bb_5 bb_12 cc_2 cc_6';
 				})(),'$Li.tsort({},{});   multiple sort rules');
 			});
 

@@ -1,4 +1,4 @@
-/*! TinySort 1.4.30
+/*! TinySort 1.5.0
 * Copyright (c) 2008-2013 Ron Valstar http://www.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
@@ -40,7 +40,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.4.30'
+		,version: '1.5.0'
 		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licensed: {
@@ -146,9 +146,9 @@
 					,$Filter: $Filter
 					,fnSort: fnSort
 					,iAsc: iAsc
+//					,oElements: {} // <-- this 'll never work // contains sortable- and non-sortable list per parent
 				});
 			}
-			if (aPoints.length>1) console.log('aPoints',iPointerMax,aPoints);
 			///////////////////////////////////////////////////////
 			///////////////////////////////////////////////////////
 			///////////////////////////////////////////////////////
@@ -157,40 +157,60 @@
 			// prepare oElements for sorting
 			oThis.each(function(i,el) {
 				var $Elm = $(el)
-					// element or sub selection
-					,mElmOrSub = bFind?(bFilter?$Filter.filter(el):$Elm.find(sFind)):$Elm
+					,mParent = $Elm.parent()
+					,mFirstElmOrSub
+					,aSort = []
+				;
+				for (j=0;j<iPointerMax;j++) {
+					var oPoint = aPoints[j]
+						// element or sub selection
+						,mElmOrSub = oPoint.bFind?(oPoint.bFilter?oPoint.$Filter.filter(el):$Elm.find(oPoint.sFind)):$Elm;
 					// text or attribute value
-					,sSort = bData?mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
-					// to sort or not to sort
-					,mParent = $Elm.parent();
-				if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
-				if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
-				else						oElements[mParent].n.push({e:$Elm,n:i});
-//				var $Elm = $(el)
-//				for (var i=0,l=iPointerMax;i<l;i++) {
-//
-//					// element or sub selection
-//					,mElmOrSub = bFind?(bFilter?$Filter.filter(el):$Elm.find(oFind)):$Elm
-//					// text or attribute value
-//					,sSort = bData?mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
-// 					// to sort or not to sort
-//					,mParent = $Elm.parent();
-//				if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
-//				if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
-//				else						oElements[mParent].n.push({e:$Elm,n:i});
+					aSort.push(oPoint.bData?mElmOrSub.data(oPoint.oSettings.data):(oPoint.bAttr?mElmOrSub.attr(oPoint.oSettings.attr):(oPoint.oSettings.useVal?mElmOrSub.val():mElmOrSub.text())));
+					if (mFirstElmOrSub===undefined) mFirstElmOrSub = mElmOrSub;
+				}
+				// todo: oElements[mParent] is plain wrong!!! Can't believe I didn't see this before.
+				// to sort or not to sort
+				if (!oElements[mParent])		oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
+				if (mFirstElmOrSub.length>0)	oElements[mParent].s.push({s:aSort,e:$Elm,n:i}); // s:string/pointer, e:element, n:number
+				else							oElements[mParent].n.push({e:$Elm,n:i});
+				//###################################################################################
+//				var $Elm = $(el);
+//				for (j=0;j<iPointerMax;j++) {
+//					var oPoint = aPoints[j]
+//						,oElements = oPoint.oElements
+//						// element or sub selection
+//						,mElmOrSub = oPoint.bFind?(oPoint.bFilter?oPoint.$Filter.filter(el):$Elm.find(oPoint.sFind)):$Elm
+//						// text or attribute value
+//						,sSort = oPoint.bData?mElmOrSub.data(oPoint.oSettings.data):(oPoint.bAttr?mElmOrSub.attr(oPoint.oSettings.attr):(oPoint.oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
+//						// to sort or not to sort
+//						,mParent = $Elm.parent();
+//					if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
+//					if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
+//					else						oElements[mParent].n.push({e:$Elm,n:i});
+//				}
 			});
+			//
+			//
+			//
+//			var oPoint = aPoints[0];
+//			for (sParent in oElements) oElements[sParent].s.sort(fnSort);
+
+			//
+			//
+			//
 			//
 			////////////////////////////////////////////
 			////////////////////////////////////////////
 			////////////////////////////////////////////
 			////////////////////////////////////////////////////////////////////////
-			if (_find&&!isString(_find)) {
-				_settings = _find;
-				_find = nll;
-			}
+//			if (_find&&!isString(_find)) {
+//				_settings = _find;
+//				_find = nll;
+//			}
 
-			if (aPoints.length>1) console.log('aPoints',iPointer,iPointerMax,aPoints);
-
+//			if (aPoints.length>1) console.log('aPoints',iPointer,iPointerMax,aPoints);
+					//for (s in oPoint) this[s] = oPoint[s];
 //			var oSettings = $.extend({}, $.tinysort.defaults, _settings)
 //				,sParent
 //				,oThis = this
@@ -206,64 +226,116 @@
 //				,iAsc = oSettings.order=='asc'?1:-1
 //				,aNewOrder = []
 //			;
-
-			$.each(aPluginPrepare,function(i,fn){
-				fn.call(fn,oSettings);
-			});
+			var fnPluginPrepare = function(_settings){
+				$.each(aPluginPrepare,function(i,fn){
+					fn.call(fn,_settings);
+				});
+			}
+//			fnPluginPrepare(oSettings);
 
 
 			if (!fnSort) fnSort = oSettings.order=='rand'?function() {
 				return Math.random()<.5?1:-1;
 			}:function(a,b) {
-				var bNumeric = fls
-				// maybe toLower
-					,sA = !oSettings.cases?toLowerCase(a.s):a.s
-					,sB = !oSettings.cases?toLowerCase(b.s):b.s;
-				// maybe force Strings
-//				var bAString = typeof(sA)=='string';
-//				var bBString = typeof(sB)=='string';
-//				if (!oSettings.forceStrings&&(bAString||bBString)) {
-//					if (!bAString) sA = ''+sA;
-//					if (!bBString) sB = ''+sB;
-				if (!oSettings.forceStrings) {
-					// maybe mixed
-					var  aAnum = isString(sA)?sA&&sA.match(rxLastNr):fls
-						,aBnum = isString(sB)?sB&&sB.match(rxLastNr):fls;
-					if (aAnum&&aBnum) {
-						var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
-							,sBprv = sB.substr(0,sB.length-aBnum[0].length);
-						if (sAprv==sBprv) {
-							bNumeric = !fls;
-							sA = prsflt(aAnum[0]);
-							sB = prsflt(aBnum[0]);
+				var iReturn = 0;
+
+				if (iPointer!==0) {
+					iPointer = 0;
+				}
+				while (iReturn===0&&iPointer<iPointerMax) {
+					var oPoint = aPoints[iPointer];
+					fnPluginPrepare(oPoint.oSettings); // erhm
+					//
+					var bNumeric = fls
+					// maybe toLower
+						,sA = !oPoint.oSettings.cases?toLowerCase(a.s[iPointer]):a.s[iPointer]
+						,sB = !oPoint.oSettings.cases?toLowerCase(b.s[iPointer]):b.s[iPointer];
+					// maybe force Strings
+					if (!oSettings.forceStrings) {
+						// maybe mixed
+//						console.log(sA,sB); // log
+						var  aAnum = isString(sA)?sA&&sA.match(rxLastNr):fls
+							,aBnum = isString(sB)?sB&&sB.match(rxLastNr):fls;
+						if (aAnum&&aBnum) {
+							var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
+								,sBprv = sB.substr(0,sB.length-aBnum[0].length);
+							if (sAprv==sBprv) {
+								bNumeric = !fls;
+								sA = prsflt(aAnum[0]);
+								sB = prsflt(aBnum[0]);
+							}
 						}
 					}
-				}
-				// return sort-integer
-				var iReturn = iAsc*(sA<sB?-1:(sA>sB?1:0));
+					// return sort-integer
+					iReturn = iAsc*(sA<sB?-1:(sA>sB?1:0));
 
-				$.each(aPluginSort,function(i,fn){
-					iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
-				});
+					$.each(aPluginSort,function(i,fn){
+						iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
+					});
+
+					if (iReturn===0) iPointer++;
+				}
 
 				return iReturn;
 			};
-
-			oThis.each(function(i,el) {
-				var $Elm = $(el)
-					// element or sub selection
-					,mElmOrSub = bFind?(bFilter?$Filter.filter(el):$Elm.find(_find)):$Elm
-					// text or attribute value
-					,sSort = bData?''+mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
- 					// to sort or not to sort
-					,mParent = $Elm.parent();
-				if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
-				if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
-				else						oElements[mParent].n.push({e:$Elm,n:i});
-			});
+			//
+			//
+			//
+			//
+			//
+//			console.log('oThis',oThis.length); // log
+//			console.log('oElements',oElements); // log
+//			for (sParent in oElements) console.log('oElements[sParent]',oElements[sParent].s.length); // log;
+//			oThis.each(function(i,el) {
+//				console.log(i); // log
+//				var $Elm = $(el)
+//					// element or sub selection
+//					,mElmOrSub = bFind?(bFilter?$Filter.filter(el):$Elm.find(sFind)):$Elm
+//					// text or attribute value
+//					,sSort = bData?''+mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
+// 					// to sort or not to sort
+//					,mParent = $Elm.parent();
+//				//console.log('mParent',mParent.get(0),mParent); // log
+//				// todo: oElements[mParent] is plain wrong!!! Can't believe I didn't see this before.
+//				if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
+//				if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
+//				else						oElements[mParent].n.push({e:$Elm,n:i});
+//			});
+//			console.log('oElements',oElements); // log
+			//
+			//
+			//
+			/*console.log('aPoints',iPointer,iPointerMax,aPoints);
+			console.log(
+				"\n\t sFind",sFind
+				,"\n\t oSettings",oSettings
+				,"\n\t bFind",bFind
+				,"\n\t bAttr",bAttr
+				,"\n\t bData",bData
+				,"\n\t bFilter",bFilter
+				,"\n\t $Filter",$Filter
+				,"\n\t fnSort",fnSort
+				,"\n\t iAsc",iAsc
+			);*/
+			//
+			//
 			//
 			// sort
 			for (sParent in oElements) oElements[sParent].s.sort(fnSort);
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+			//
 			//
 			// order elements and fill new order
 			for (sParent in oElements) {
