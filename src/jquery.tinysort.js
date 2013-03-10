@@ -20,9 +20,6 @@
 *
 * Change default like so:
 *   $.tinysort.defaults.order = "desc";
-* Todos:
-* 	- todo: uppercase vs lowercase
-* 	- todo: 'foobar' != 'foobars' in non-latin
 *
 */
 ;(function($) {
@@ -70,41 +67,18 @@
 	};
 	$.fn.extend({
 		tinysort: function(_find,_settings) {
-			var i,l,s
-				,sFind
-				,oSettings
+			var i,l
 				,sParent
 				,oThis = this
-				,iLen = $(this).length
+				,iLen = $(oThis).length
 				,oElements = {} // contains sortable- and non-sortable list per parent
 				,aNewOrder = []
-				// has find, attr or data
-				,bFind,bAttr,bData
-				// since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
-				,bFilter,$Filter
-				//
-				,fnSort
-				,iAsc
 				// multiple sort options (sort===0?iPointer++:iPointer=0)
 				,aPoints = []
 				,iPointer = 0
 				,iPointerMax
 				,aFind = []
 				,aSettings = []
-				,fnSetVars = function(){
-					// todo: doesn't work when minifying
-					var oPoint = aPoints[iPointer];
-					sFind = oPoint.sFind;
-					oSettings = oPoint.oSettings;
-					bFind = oPoint.bFind;
-					bAttr = oPoint.bAttr;
-					bData = oPoint.bData;
-					bFilter = oPoint.bFilter;
-					$Filter = oPoint.$Filter;
-					fnSort = oPoint.fnSort;
-					iAsc = oPoint.iAsc;
-					//for (s in oPoint) this[s] = oPoint[s];
-				}
 			;
 			// fill aFind and aSettings but keep length pairing up
 			for (i=0,l=arguments.length;i<l;i++){
@@ -116,27 +90,28 @@
 				}
 			}
 			if (aFind.length>aSettings.length) aSettings.length = aFind.length;
-//			console.log('aFind',aFind,'aSettings',aSettings);
+
 			iPointerMax = aFind.length;
 			if (iPointerMax===0) {
 				iPointerMax = aFind.length = 1;
 				aSettings.push($.extend({}, $.tinysort. defaults));
 			}
-			///////////////////////////////////////////////////////
-			///////////////////////////////////////////////////////
-			///////////////////////////////////////////////////////
+
 			// todo: fix iPointerMax can be 0
 			for (i=0,l=iPointerMax;i<l;i++) {
-				sFind = aFind[i];
-				oSettings = $.extend({}, $.tinysort. defaults, aSettings[i]);
-				bFind = !(!sFind||sFind=='');
-				bAttr = !(oSettings.attr===nll||oSettings.attr=='');
-				bData = oSettings.data!==nll;
-				bFilter = bFind&&sFind[0]==':'; // since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
-				$Filter = bFilter?oThis.filter(sFind):oThis;
-				fnSort = oSettings.sortFunction;
-				iAsc = oSettings.order=='asc'?1:-1;
-				aPoints.push({
+				var sFind = aFind[i]
+					,oSettings = $.extend({}, $.tinysort. defaults, aSettings[i])
+					// has find, attr or data
+					,bFind = !(!sFind||sFind=='')
+					,bAttr = !(oSettings.attr===nll||oSettings.attr=='')
+					,bData = oSettings.data!==nll
+					// since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
+					,bFilter = bFind&&sFind[0]==':' // since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
+					,$Filter = bFilter?oThis.filter(sFind):oThis
+					,fnSort = oSettings.sortFunction
+					,iAsc = oSettings.order=='asc'?1:-1
+				;
+				aPoints.push({ // todo: only used locally, find a way to minify properties
 					 sFind: sFind
 					,oSettings: oSettings
 					,bFind: bFind
@@ -146,19 +121,14 @@
 					,$Filter: $Filter
 					,fnSort: fnSort
 					,iAsc: iAsc
-//					,oElements: {} // <-- this 'll never work // contains sortable- and non-sortable list per parent
 				});
 			}
-			///////////////////////////////////////////////////////
-			///////////////////////////////////////////////////////
-			///////////////////////////////////////////////////////
-			fnSetVars();
 			//
 			// prepare oElements for sorting
 			oThis.each(function(i,el) {
 				var $Elm = $(el)
 					,mParent = $Elm.parent()
-					,mFirstElmOrSub
+					,mFirstElmOrSub // we still need to distinguish between sortable and non-sortable elements (might have unexpected results for multiple criteria)
 					,aSort = []
 				;
 				for (j=0;j<iPointerMax;j++) {
@@ -174,66 +144,17 @@
 				if (!oElements[mParent])		oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
 				if (mFirstElmOrSub.length>0)	oElements[mParent].s.push({s:aSort,e:$Elm,n:i}); // s:string/pointer, e:element, n:number
 				else							oElements[mParent].n.push({e:$Elm,n:i});
-				//###################################################################################
-//				var $Elm = $(el);
-//				for (j=0;j<iPointerMax;j++) {
-//					var oPoint = aPoints[j]
-//						,oElements = oPoint.oElements
-//						// element or sub selection
-//						,mElmOrSub = oPoint.bFind?(oPoint.bFilter?oPoint.$Filter.filter(el):$Elm.find(oPoint.sFind)):$Elm
-//						// text or attribute value
-//						,sSort = oPoint.bData?mElmOrSub.data(oPoint.oSettings.data):(oPoint.bAttr?mElmOrSub.attr(oPoint.oSettings.attr):(oPoint.oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
-//						// to sort or not to sort
-//						,mParent = $Elm.parent();
-//					if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
-//					if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
-//					else						oElements[mParent].n.push({e:$Elm,n:i});
-//				}
 			});
 			//
 			//
-			//
-//			var oPoint = aPoints[0];
-//			for (sParent in oElements) oElements[sParent].s.sort(fnSort);
-
-			//
-			//
-			//
-			//
-			////////////////////////////////////////////
-			////////////////////////////////////////////
-			////////////////////////////////////////////
-			////////////////////////////////////////////////////////////////////////
-//			if (_find&&!isString(_find)) {
-//				_settings = _find;
-//				_find = nll;
-//			}
-
-//			if (aPoints.length>1) console.log('aPoints',iPointer,iPointerMax,aPoints);
-					//for (s in oPoint) this[s] = oPoint[s];
-//			var oSettings = $.extend({}, $.tinysort.defaults, _settings)
-//				,sParent
-//				,oThis = this
-//				,iLen = $(this).length
-//				,oElements = {} // contains sortable- and non-sortable list per parent
-//				,bFind = !(!_find||_find=='')
-//				,bAttr = !(oSettings.attr===nll||oSettings.attr=="")
-//				,bData = oSettings.data!==nll
-//				// since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
-//				,bFilter = bFind&&_find[0]==':'
-//				,$Filter = bFilter?oThis.filter(_find):oThis
-//				,fnSort = oSettings.sortFunction
-//				,iAsc = oSettings.order=='asc'?1:-1
-//				,aNewOrder = []
-//			;
 			var fnPluginPrepare = function(_settings){
 				$.each(aPluginPrepare,function(i,fn){
 					fn.call(fn,_settings);
 				});
-			}
-//			fnPluginPrepare(oSettings);
-
-
+			};
+			//fnPluginPrepare(oSettings);
+			//
+			// todo: fix so works with parsed sort function (wrap fn, but not pointer stuff)
 			if (!fnSort) fnSort = oSettings.order=='rand'?function() {
 				return Math.random()<.5?1:-1;
 			}:function(a,b) {
@@ -279,63 +200,8 @@
 				return iReturn;
 			};
 			//
-			//
-			//
-			//
-			//
-//			console.log('oThis',oThis.length); // log
-//			console.log('oElements',oElements); // log
-//			for (sParent in oElements) console.log('oElements[sParent]',oElements[sParent].s.length); // log;
-//			oThis.each(function(i,el) {
-//				console.log(i); // log
-//				var $Elm = $(el)
-//					// element or sub selection
-//					,mElmOrSub = bFind?(bFilter?$Filter.filter(el):$Elm.find(sFind)):$Elm
-//					// text or attribute value
-//					,sSort = bData?''+mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
-// 					// to sort or not to sort
-//					,mParent = $Elm.parent();
-//				//console.log('mParent',mParent.get(0),mParent); // log
-//				// todo: oElements[mParent] is plain wrong!!! Can't believe I didn't see this before.
-//				if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
-//				if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
-//				else						oElements[mParent].n.push({e:$Elm,n:i});
-//			});
-//			console.log('oElements',oElements); // log
-			//
-			//
-			//
-			/*console.log('aPoints',iPointer,iPointerMax,aPoints);
-			console.log(
-				"\n\t sFind",sFind
-				,"\n\t oSettings",oSettings
-				,"\n\t bFind",bFind
-				,"\n\t bAttr",bAttr
-				,"\n\t bData",bData
-				,"\n\t bFilter",bFilter
-				,"\n\t $Filter",$Filter
-				,"\n\t fnSort",fnSort
-				,"\n\t iAsc",iAsc
-			);*/
-			//
-			//
-			//
 			// sort
 			for (sParent in oElements) oElements[sParent].s.sort(fnSort);
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-			//
 			//
 			// order elements and fill new order
 			for (sParent in oElements) {
@@ -343,14 +209,14 @@
 					,aOrg = [] // list for original position
 					,iLow = iLen
 					,aCnt = [0,0] // count how much we've sorted for retreival from either the sort list or the non-sort list (oParent.s/oParent.n)
-					,i;
+				;
 				switch (oSettings.place) {
 					case 'first':	$.each(oParent.s,function(i,obj) { iLow = mathmn(iLow,obj.n) }); break;
 					case 'org':		$.each(oParent.s,function(i,obj) { aOrg.push(obj.n) }); break;
 					case 'end':		iLow = oParent.n.length; break;
 					default:		iLow = 0;
 				}
-				for (i = 0;i<iLen;i++) {
+				for (i=0;i<iLen;i++) {
 					var bSList = contains(aOrg,i)?!fls:i>=iLow&&i<iLow+oParent.s.length
 						,mEl = (bSList?oParent.s:oParent.n)[aCnt[bSList?0:1]].e;
 					mEl.parent().append(mEl);
@@ -375,17 +241,3 @@
 	// set functions
 	$.fn.TinySort = $.fn.Tinysort = $.fn.tsort = $.fn.tinysort;
 })(jQuery);
-
-/*! Array.prototype.indexOf for IE (issue #26) */
-if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = function(elt /*, from*/) {
-		var len = this.length
-			,from = Number(arguments[1])||0;
-		from = from<0?Math.ceil(from):Math.floor(from);
-		if (from<0) from += len;
-		for (;from<len;from++){
-			if (from in this && this[from]===elt) return from;
-		}
-		return -1;
-	};
-}
