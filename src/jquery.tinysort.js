@@ -1,5 +1,5 @@
-/*! TinySort 1.4.29
-* Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
+/*! TinySort 1.5.0
+* Copyright (c) 2008-2013 Ron Valstar http://tinysort.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
 *   http://www.opensource.org/licenses/mit-license.php
@@ -17,24 +17,13 @@
 *   $("ul#people>li").tsort("span.surname");
 *   $("ul#people>li").tsort("span.surname",{order:"desc"});
 *   $("ul#people>li").tsort({place:"end"});
+*   $("ul#people>li").tsort("span.surname",{order:"desc"},span.name");
 *
 * Change default like so:
 *   $.tinysort.defaults.order = "desc";
 *
-* in this update:
-* 	- added plugin hook
-*   - stripped non-latin character ordering and turned it into a plugin
-*
-* in last update:
-*   - header comment no longer stripped in minified version
-*	- revision number no longer corresponds to svn revision since it's now git
-*
-* Todos:
-* 	- todo: uppercase vs lowercase
-* 	- todo: 'foobar' != 'foobars' in non-latin
-*
 */
-;(function($) {
+;(function($,undefined) {
 	// private vars
 	var fls = !1							// minify placeholder
 		,nll = null							// minify placeholder
@@ -43,13 +32,25 @@
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,aPluginPrepare = []
 		,aPluginSort = []
+		,isString = function(o){return typeof o=='string';}
+		// Array.prototype.indexOf for IE (issue #26) (local variable to prevent unwanted prototype pollution)
+		,fnIndexOf = Array.prototype.indexOf||function(elm) {
+			var len = this.length
+				,from = Number(arguments[1])||0;
+			from = from<0?Math.ceil(from):Math.floor(from);
+			if (from<0) from += len;
+			for (;from<len;from++){
+				if (from in this && this[from]===elm) return from;
+			}
+			return -1;
+		}
 	;
 	//
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.4.29'
-		,copyright: 'Copyright (c) 2008-2012 Ron Valstar'
+		,version: '1.5.0'
+		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licensed: {
 			MIT: 'http://www.opensource.org/licenses/mit-license.php'
@@ -77,100 +78,157 @@
 		}
 	};
 	$.fn.extend({
-		tinysort: function(_find,_settings) {
-			if (_find&&typeof(_find)!='string') {
-				_settings = _find;
-				_find = nll;
+		tinysort: function() {
+			var i,l
+				,oThis = this
+				,iLen = $(oThis).length
+				,aNewOrder = []
+				// sortable- and non-sortable list per parent
+				,aElements = []
+				,aElementsParent = [] // index reference for parent to aElements
+				// multiple sort criteria (sort===0?iCriteria++:iCriteria=0)
+				,aCriteria = []
+				,iCriteria = 0
+				,iCriteriaMax
+				//
+				,aFind = []
+				,aSettings = []
+				//
+				,fnPluginPrepare = function(_settings){
+					$.each(aPluginPrepare,function(i,fn){
+						fn.call(fn,_settings);
+					});
+				}
+				//
+				,fnSort = function(a,b) {
+					var iReturn = 0;
+					if (iCriteria!==0) iCriteria = 0;
+					while (iReturn===0&&iCriteria<iCriteriaMax) {
+						var oPoint = aCriteria[iCriteria]
+							,oSett = oPoint.oSettings;
+						//
+						fnPluginPrepare(oSett);
+						//
+						if (oSett.sortFunction) { // custom sort
+							iReturn = oSett.sortFunction(a,b);
+						} else if (oSett.order=='rand') { // random sort
+							iReturn = Math.random()<.5?1:-1;
+						} else { // regular sort
+							var bNumeric = fls
+							// maybe toLower
+								,sA = !oSett.cases?toLowerCase(a.s[iCriteria]):a.s[iCriteria]
+								,sB = !oSett.cases?toLowerCase(b.s[iCriteria]):b.s[iCriteria];
+							// maybe force Strings
+							if (!oSettings.forceStrings) {
+								// maybe mixed
+								var  aAnum = isString(sA)?sA&&sA.match(rxLastNr):fls
+									,aBnum = isString(sB)?sB&&sB.match(rxLastNr):fls;
+								if (aAnum&&aBnum) {
+									var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
+										,sBprv = sB.substr(0,sB.length-aBnum[0].length);
+									if (sAprv==sBprv) {
+										bNumeric = !fls;
+										sA = prsflt(aAnum[0]);
+										sB = prsflt(aBnum[0]);
+									}
+								}
+							}
+							iReturn = oPoint.iAsc*(sA<sB?-1:(sA>sB?1:0));
+						}
+
+						$.each(aPluginSort,function(i,fn){
+							iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
+						});
+
+						if (iReturn===0) iCriteria++;
+					}
+
+					return iReturn;
+				}
+			;
+			// fill aFind and aSettings but keep length pairing up
+			for (i=0,l=arguments.length;i<l;i++){
+				var o = arguments[i];
+				if (isString(o))	{
+					if (aFind.push(o)-1>aSettings.length) aSettings.length = aFind.length-1;
+				} else {
+					if (aSettings.push(o)>aFind.length) aFind.length = aSettings.length;
+				}
+			}
+			if (aFind.length>aSettings.length) aSettings.length = aFind.length; // todo: and other way around?
+
+			// fill aFind and aSettings for arguments.length===0
+			iCriteriaMax = aFind.length;
+			if (iCriteriaMax===0) {
+				iCriteriaMax = aFind.length = 1;
+				aSettings.push({});
 			}
 
-			var oSettings = $.extend({}, $.tinysort.defaults, _settings)
-				,sParent
-				,oThis = this
-				,iLen = $(this).length
-				,oElements = {} // contains sortable- and non-sortable list per parent
-				,bFind = !(!_find||_find=='')
-				,bAttr = !(oSettings.attr===nll||oSettings.attr=="")
-				,bData = oSettings.data!==nll
-				// since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
-				,bFilter = bFind&&_find[0]==':'
-				,$Filter = bFilter?oThis.filter(_find):oThis
-				,fnSort = oSettings.sortFunction
-				,iAsc = oSettings.order=='asc'?1:-1
-				,aNewOrder = []
-			;
-
-			$.each(aPluginPrepare,function(i,fn){
-				fn.call(fn,oSettings);
-			});
-
-
-			if (!fnSort) fnSort = oSettings.order=='rand'?function() {
-				return Math.random()<.5?1:-1;
-			}:function(a,b) {
-				var bNumeric = fls
-				// maybe toLower
-					,sA = !oSettings.cases?toLowerCase(a.s):a.s
-					,sB = !oSettings.cases?toLowerCase(b.s):b.s;
-				// maybe force Strings
-//				var bAString = typeof(sA)=='string';
-//				var bBString = typeof(sB)=='string';
-//				if (!oSettings.forceStrings&&(bAString||bBString)) {
-//					if (!bAString) sA = ''+sA;
-//					if (!bBString) sB = ''+sB;
-				if (!oSettings.forceStrings) {
-					// maybe mixed
-					var  aAnum = sA&&sA.match(rxLastNr)
-						,aBnum = sB&&sB.match(rxLastNr);
-					if (aAnum&&aBnum) {
-						var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
-							,sBprv = sB.substr(0,sB.length-aBnum[0].length);
-						if (sAprv==sBprv) {
-							bNumeric = !fls;
-							sA = prsflt(aAnum[0]);
-							sB = prsflt(aBnum[0]);
-						}
-					}
-				}
-				// return sort-integer
-				var iReturn = iAsc*(sA<sB?-1:(sA>sB?1:0));
-
-				$.each(aPluginSort,function(i,fn){
-					iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
+			for (i=0,l=iCriteriaMax;i<l;i++) {
+				var sFind = aFind[i]
+					,oSettings = $.extend({}, $.tinysort. defaults, aSettings[i])
+					// has find, attr or data
+					,bFind = !(!sFind||sFind=='')
+					// since jQuery's filter within each works on array index and not actual index we have to create the filter in advance
+					,bFilter = bFind&&sFind[0]==':'
+				;
+				aCriteria.push({ // todo: only used locally, find a way to minify properties
+					 sFind: sFind
+					,oSettings: oSettings
+					// has find, attr or data
+					,bFind: bFind
+					,bAttr: !(oSettings.attr===nll||oSettings.attr=='')
+					,bData: oSettings.data!==nll
+					// filter
+					,bFilter: bFilter
+					,$Filter: bFilter?oThis.filter(sFind):oThis
+					,fnSort: oSettings.sortFunction
+					,iAsc: oSettings.order=='asc'?1:-1
 				});
-
-				return iReturn;
-			};
-
+			}
+			//
+			// prepare oElements for sorting
 			oThis.each(function(i,el) {
 				var $Elm = $(el)
-					// element or sub selection
-					,mElmOrSub = bFind?(bFilter?$Filter.filter(el):$Elm.find(_find)):$Elm
+					,mParent = $Elm.parent().get(0)
+					,mFirstElmOrSub // we still need to distinguish between sortable and non-sortable elements (might have unexpected results for multiple criteria)
+					,aSort = []
+				;
+				for (j=0;j<iCriteriaMax;j++) {
+					var oPoint = aCriteria[j]
+						// element or sub selection
+						,mElmOrSub = oPoint.bFind?(oPoint.bFilter?oPoint.$Filter.filter(el):$Elm.find(oPoint.sFind)):$Elm;
 					// text or attribute value
-					,sSort = bData?''+mElmOrSub.data(oSettings.data):(bAttr?mElmOrSub.attr(oSettings.attr):(oSettings.useVal?mElmOrSub.val():mElmOrSub.text()))
- 					// to sort or not to sort
-					,mParent = $Elm.parent();
-				if (!oElements[mParent])	oElements[mParent] = {s:[],n:[]};	// s: sort, n: not sort
-				if (mElmOrSub.length>0)		oElements[mParent].s.push({s:sSort,e:$Elm,n:i}); // s:string, e:element, n:number
-				else						oElements[mParent].n.push({e:$Elm,n:i});
+					aSort.push(oPoint.bData?mElmOrSub.data(oPoint.oSettings.data):(oPoint.bAttr?mElmOrSub.attr(oPoint.oSettings.attr):(oPoint.oSettings.useVal?mElmOrSub.val():mElmOrSub.text())));
+					if (mFirstElmOrSub===undefined) mFirstElmOrSub = mElmOrSub;
+				}
+				// to sort or not to sort
+				var iElmIndex = fnIndexOf.call(aElementsParent,mParent);
+				if (iElmIndex<0) {
+					iElmIndex = aElementsParent.push(mParent) - 1;
+					aElements[iElmIndex] = {s:[],n:[]};	// s: sort, n: not sort
+				}
+				if (mFirstElmOrSub.length>0)	aElements[iElmIndex].s.push({s:aSort,e:$Elm,n:i}); // s:string/pointer, e:element, n:number
+				else							aElements[iElmIndex].n.push({e:$Elm,n:i});
 			});
 			//
 			// sort
-			for (sParent in oElements) oElements[sParent].s.sort(fnSort);
+			for (j in aElements) aElements[j].s.sort(fnSort);
 			//
 			// order elements and fill new order
-			for (sParent in oElements) {
-				var oParent = oElements[sParent]
+			for (j in aElements) {
+				var oParent = aElements[j]
 					,aOrg = [] // list for original position
 					,iLow = iLen
 					,aCnt = [0,0] // count how much we've sorted for retreival from either the sort list or the non-sort list (oParent.s/oParent.n)
-					,i;
+				;
 				switch (oSettings.place) {
 					case 'first':	$.each(oParent.s,function(i,obj) { iLow = mathmn(iLow,obj.n) }); break;
 					case 'org':		$.each(oParent.s,function(i,obj) { aOrg.push(obj.n) }); break;
 					case 'end':		iLow = oParent.n.length; break;
 					default:		iLow = 0;
 				}
-				for (i = 0;i<iLen;i++) {
+				for (i=0;i<iLen;i++) {
 					var bSList = contains(aOrg,i)?!fls:i>=iLow&&i<iLow+oParent.s.length
 						,mEl = (bSList?oParent.s:oParent.n)[aCnt[bSList?0:1]].e;
 					mEl.parent().append(mEl);
@@ -195,17 +253,3 @@
 	// set functions
 	$.fn.TinySort = $.fn.Tinysort = $.fn.tsort = $.fn.tinysort;
 })(jQuery);
-
-/*! Array.prototype.indexOf for IE (issue #26) */
-if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = function(elt /*, from*/) {
-		var len = this.length
-			,from = Number(arguments[1])||0;
-		from = from<0?Math.ceil(from):Math.floor(from);
-		if (from<0) from += len;
-		for (;from<len;from++){
-			if (from in this && this[from]===elt) return from;
-		}
-		return -1;
-	};
-}
