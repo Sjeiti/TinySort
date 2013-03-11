@@ -2,15 +2,13 @@
 <html>
 	<head>
 		<title>Tinysort unit test</title>
-
 		<meta charset="utf-8" />
-
 		<link href="qunit/qunit.css" type="text/css" rel="stylesheet" />
 		<style>html,body{padding:0;margin:0;}</style>
-
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script><script>window.jQuery||document.write("<script src='libs/jquery-1.9.1.js'>\x3C/script>")</script>
-		<script type="text/javascript" src="qunit/qunit.js"></script>
-		<script type="text/javascript">
+		<script src="../libs/jquery.zen.min.js"></script>
+		<script src="qunit/qunit.js"></script>
+		<script>
 (function($){
 	$(function(){
 		var $Body = $('body');
@@ -30,7 +28,6 @@
 		});
 
 		// start test
-		// todo: add test for non-latin sort: {charOrder:'æøå{Aa=å}'}
 		function startTest(){
 			function rnd(){ return Math.floor(1000*Math.random()); }
 
@@ -41,132 +38,98 @@
 				,sRvrs = aList.slice(0).reverse().join('')
 			;
 
-			function getUl(nr,list){
-				if (list===undefined) list = aList;
-				var sUl = '<ul>';
-				switch (nr) {
-					case 0:		sUl = '<ul><li>'+list.join('</li><li>')+'</li></ul>'; break;
-					case 1:		sUl = '<ul><li id="'+list.join('">a</li><li id="')+'">a</li></ul>'; break;
-					case 2:
-						$.each(list,function(i,s){ sUl += '<li><p>'+rnd()+'</p><p>'+s+'</p></li>'; });
-						sUl += '</ul>';
-					break;
-					case 3:		sUl = '<ul><li><p title="'+list.join('">a</p></li><li><p title="')+'">a</p></li></ul>'; break;
-					case 4:
-						$.each(list,function(i,s){
-							sUl += '<li>'+(i%2?'<select><option value="'+s+'" /></select>':'<input value="'+s+'" />')+'</li>';
-						});
-						sUl += '</ul>';
-					break;
-					case 5:
-						$.each(list,function(i,s){
-							sUl += '<li data-foo="'+s+'">_'+s+'</li>';
-						});
-						sUl += '</ul>';
-					break;
-					case 6:
-						$.each(list,function(i,s){
-							sUl += '<li value="'+s+'">_'+s+'</li>';
-						});
-						sUl += '</ul>';
-					break;
-					case 7:
-						$.each(list,function(i,a){
-							sUl += '<li value="'+a[1]+'">'+a[0]+'</li>';
-						});
-						sUl += '</ul>';
-							console.log(sUl); // log
-					break;
-				}
-				return $(sUl);
-			}
-
 			$('#qunit-header').text($.tinysort.id+' '+$.tinysort.version);
 
 			module('Tinysort');
 			test('default functionality', function() {
-				expect(14);
+				expect(13);
 				ok( (function(){
 					var s = '';
-					getUl(0).find('li').tsort()
+					$zen('ul>li{a$}*6',{a:aList}).find('li').tsort()
 					.each(function(i,el){ s += $(el).text(); });
 					return s==sJoin;
 				})(),'$Li.tsort();');
 				ok( (function(){
 					var s = '';
-					getUl(1).find('li').tsort({attr:'id'})
+					$zen('ul>li#a${a}*6',{a:aList}).find('li').tsort({attr:'id'})
 					.each(function(i,el){ s += $(el).attr('id'); });
 					return s==sJoin;
 				})(),'$Li.tsort({attr:\'id\'});');
 				ok( (function(){
 					var s = '';
-					getUl(2).find('li').tsort('p:eq(1)')
+					$zen('ul>li*6>(p{$}+p{a$})',{a:aList}).find('li').tsort('p:eq(1)')
 					.each(function(i,el){ s += $(el).find('>p:eq(1)').text(); });
 					return s==sJoin;
 				})(),'$Li.tsort(\'p:eq(1)\');');
 				ok( (function(){
 					var s = '';
-					getUl(3).find('li').tsort('p[title]',{attr:'title'})
+					$zen('ul>li*6>p[title=a$]{a}',{a:aList}).find('li').tsort('p[title]',{attr:'title'})
 					.each(function(i,el){ s += $(el).find('>p').attr('title'); });
 					return s==sJoin;
 				})(),'$Li.tsort(\'p[title]\',{attr:\'title\'});');
 				ok( (function(){
 					var s = '';
-					getUl(4).find('li').tsort('>input,>select',{useVal:true})
+					$zen('ul>(li>input[value=a$]+li>select>option[value=b$])*3',{a:aList.slice(0,3),b:aList.slice(3)}).find('li').tsort('>input,>select',{useVal:true})
 					.each(function(i,el){ s += $(el).find('>*').val(); });
-					return s==sJoin;
+					return s=='aar-eax-eek-myr-oac-oif-';
 				})(),'$Li.tsort(\'>input,>select\',{useVal:true})');
 				ok( (function(){
 					var s = '';
-					getUl(5).find('li').tsort({data:'foo'})
+					$zen('ul>li[data-foo=a$]{_a$}*6',{a:aList}).find('li').tsort({data:'foo'})
 					.each(function(i,el){ s += $(el).data('foo'); });
 					return s==sJoin;
 				})(),'$Li.tsort(\'li\',{data:\'foo\'})');
 				ok( (function(){
 					var s = '';
-					getUl(0).find('li').tsort(':lt(4)',{returns:true})
+					$zen('ul>li{a$}*6',{a:aList}).find('li').tsort(':lt(4)',{returns:true})
 					.each(function(i,el){ s += $(el).text(); });
 					return s==sHfJn;
 				})(),'$Li.tsort({returns:true});');
 				ok( (function(){
 					var s = '';
-					getUl(0).find('li').tsort({order:'desc'})
+					$zen('ul>li{a$}*6',{a:aList}).find('li').tsort({order:'desc'})
 					.each(function(i,el){ s += $(el).text(); });
 					return s==sSRvr;
 				})(),'$Li.tsort({order:\'desc\'});');
 				ok( (function(){
 					var s = '';
-					getUl(0,[6,1,5,2,4]).find('li').tsort()
+					$zen('ul>li{a$}*5',{a:[6,1,5,2,4]}).find('li').tsort()
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='12456';
 				})(),'$Li.tsort(); with integers');
 				ok( (function(){
 					var s = '';
-					getUl(0,[4.6,3.1,2.5,5.2,7.4]).find('li').tsort()
+					$zen('ul>li{a$}*5',{a:[4.6,3.1,2.5,5.2,7.4]}).find('li').tsort()
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='2.53.14.65.27.4';
 				})(),'$Li.tsort();   with floats');
 				ok( (function(){
 					var s = '';
-					getUl(0,[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]).find('li').tsort()
+					$zen('ul>li{a$}*15',{a:[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]}).find('li').tsort()
 					.each(function(i,el){ s += ' '+$(el).text(); });
 					return s==' 1 2 2.5 3.1 4 4.6 5 5.2 6 7.4 11 a b c d';
 				})(),'$Li.tsort();   mixed types');
 				ok( (function(){
 					var s = '';
-					getUl(0,[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]).find('li').tsort({forceStrings:true})
+					$zen('ul>li{a$}*15',{a:[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]}).find('li').tsort({forceStrings:true})
 					.each(function(i,el){ s += ' '+$(el).text(); });
 					return s==' 1 11 2 2.5 3.1 4 4.6 5 5.2 6 7.4 a b c d';
 				})(),'$Li.tsort({forceStrings:true});   mixed types');
 				ok( (function(){
 					var s = '';
-					getUl(0,['a11','a1.1','a1','a7']).find('li').tsort()
+					$zen('ul>li{b$}*4',{b:['a11','a1.1','a1','a7']}).find('li').tsort()
 					.each(function(i,el){ s += ' '+$(el).text(); });
 					return s==' a1 a1.1 a7 a11';
 				})(),'$Li.tsort();   mixed numeral/literal');
+			});
+
+			test('multiple criteria: default functionality', function() {
 				ok( (function(){
 					var s = '';
-					getUl(7,[['bb',12],['aa',4],['cc',2],['aa',3],['bb',5],['aa',1],['aa',11],['cc',6]]).find('li').tsort({},{useVal:true})
+					$zen('ul>li[value=a$]{b$}*8',{
+						a:[12,4,2,3,5,1,11,6]
+						,b:['bb','aa','cc','aa','bb','aa','aa','cc']
+					}).find('li').tsort({},{useVal:true})
 					.each(function(i,el){ s += ' '+$(el).text()+'_'+$(el).val(); });
 					return s==' aa_1 aa_3 aa_4 aa_11 bb_5 bb_12 cc_2 cc_6';
 				})(),'$Li.tsort({},{});   multiple sort rules');
@@ -196,18 +159,18 @@
 				})(),'contains([2,3,5,74],74);');
 			});
 
+			$zen('ul>li{a$}*13',{a:['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']}).find('li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});
 			test('non latin characters plugin', function() {
-				//$('ul#danish>li').tsort({charOrder:'æøå[{Aa}]'});
 				expect(2);
 				ok( (function(){
 					var s = '';
-					getUl(0,['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']).find('li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'})
+					$zen('ul>li{a$}*13',{a:['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']}).find('li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'})
 					.each(function(i,el){ s += ' '+$(el).text(); });
 					return s==' coga čega čovjek džep godina gospodin liljana luđak ljubav muškarac nož njuška zec';
 				})(),'$Li.tsort({charOrder:\'cčćd{dž}đl{lj}n{nj}sšzž\'});   Serbo-Croatian');
 				ok( (function(){
 					var s = '';
-					getUl(0,['Åben','Æble','Åse','København','Aarhus','Øresund']).find('li').tsort({charOrder:'æøå[{Aa}]'})
+					$zen('ul>li{a$}*6',{a:['Åben','Æble','Åse','København','Aarhus','Øresund']}).find('li').tsort({charOrder:'æøå[{Aa}]'})
 					.each(function(i,el){ s += ' '+$(el).text(); });
 					return s==' København Æble Øresund Åben Aarhus Åse';
 				})(),'$Li.tsort({charOrder:\'æøå[{Aa}]\'});   Danisch');
@@ -218,7 +181,7 @@
 				expect(1);
 				ok( (function(){
 					var s = '';
-					getUl(0,['Q','R','S','T','U','V','W','X','Y','Z','Å','Ä','Ö']).find('li').tsort({cases:true})
+					$zen('ul>li{a$}*13',{a:['Q','R','S','T','U','V','W','X','Y','Z','Å','Ä','Ö']}).find('li').tsort({cases:true})
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='QRSTUVWXYZÄÅÖ';
 				})(),'fixed using new');
@@ -227,7 +190,7 @@
 				expect(1);
 				ok( (function(){
 					var s = '';
-					var $Li = getUl(1).find('li');
+					var $Li = $zen('ul>li#a${a}*6',{a:aList}).find('li');
 					$Li.filter(':eq(2)')[0].removeAttribute('id');
 					$Li.tsort().each(function(i,el){ s += $(el).attr('id')||''; });
 					return s=='eek-oif-aar-oac-eax-';
@@ -237,19 +200,19 @@
 				expect(3);
 				ok( (function(){
 					var s = '';
-					getUl(0,['eEk-','oif-','myr-','aar-','oac-','eax-']).find('li').tsort()
+					$zen('ul>li{a$}*6',{a:['eEk-','oif-','myr-','aar-','oac-','eax-']}).find('li').tsort()
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='aar-eax-eEk-myr-oac-oif-';
 				})(),'regular order');
 				ok( (function(){
 					var s = '';
-					getUl(0,['eEk-','oif-','myr-','aar-','oac-','eax-']).find('li').tsort({cases:true})
+					$zen('ul>li{a$}*6',{a:['eEk-','oif-','myr-','aar-','oac-','eax-']}).find('li').tsort({cases:true})
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='aar-eEk-eax-myr-oac-oif-';
 				})(),'case sensitive order');
 				ok( (function(){
 					var s = '';
-					getUl(0).find('li').tsort({sortFunction:function(a,b){
+					$zen('ul>li{a$}*6',{a:aList}).find('li').tsort({sortFunction:function(a,b){
 						var aa = a[0], bb = b[0];
 						return aa==bb?0:(aa>bb?1:-1);
 					}})
@@ -261,7 +224,7 @@
 				expect(1);
 				ok( (function(){
 					var s = '';
-					getUl(5).find('li').tsort({data:'foo'})
+					$zen('ul>li[data-foo=a$]{_a$}*6',{a:aList}).find('li').tsort({data:'foo'})
 					.each(function(i,el){ s += $(el).data('foo'); });
 					return s==sJoin;
 				})(),'implement data-attribute support');
@@ -270,7 +233,7 @@
 				expect(1);
 				ok( (function(){
 					var s = '';
-					getUl(0,['01','001','a','0a','ba']).find('li').tsort({forceStrings:false})
+					$zen('ul>li{a$}*5',{a:['01','001','a','0a','ba']}).find('li').tsort()
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='010010aaba'; // not 001010aaba
 				})(),'implementation of forceStrings');
@@ -279,7 +242,7 @@
 				expect(1);
 				ok( (function(){
 					var s = '';
-					getUl(0,[20,0,-30,40,-120]).find('li').tsort({forceStrings:false})
+					$zen('ul>li{a$}*5',{a:[20,0,-30,40,-120]}).find('li').tsort()
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='-120-3002040'; // not -30-12002040
 				})(),'negative numeral value bug');
@@ -288,7 +251,7 @@
 				expect(1);
 				ok( (function(){
 					var s = '';
-					getUl(5,[20,0,-30,20.5,'a','a01',40,-120]).find('li').tsort({forceStrings:false})
+					$zen('ul>li[data-foo=a$]{_a$}*8',{a:[20,0,-30,20.5,'a','a01',40,-120]}).find('li').tsort()
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='_-120_-30_0_20_20.5_40_a_a01';
 				})(),'data integer bug');
@@ -297,7 +260,7 @@
 				expect(1);
 				ok( (function(){
 					var s = '';
-					getUl(6,[0,5,1,4,2,3]).find('li').tsort({attr:"value"})
+					$zen('ul>li[value=a$]{_a$}*6',{a:[0,5,1,4,2,3]}).find('li').tsort({attr:"value"})
 					.each(function(i,el){ s += $(el).text(); });
 					return s=='_0_1_2_3_4_5';
 				})(),'regexp match onto number bug');
@@ -306,9 +269,6 @@
 		}
 	})
 })(jQuery);
-;
-
-
 		</script>
 	</head>
 	<body>

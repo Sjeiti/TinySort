@@ -272,15 +272,17 @@
 
 			<section>
 				<h2>usage</h2>
-				<p>The first parse in the tsort function can either be nothing...</p>
+				<p>The first argumnet in the tsort function can either be nothing...</p>
 				<pre>$('li').tsort();
 $('ul#people&gt;li').tsort();</pre>
 					<p>a string (as you would in <a href="http://docs.jquery.com/Traversing/find#expr">find</a>)...</p>
 					<pre>$('ul#people&gt;li').tsort('span.surname');</pre>
 					<p>a 'settings' object...</p>
 					<pre>$('ul#people&gt;li').tsort({place:'end'});</pre>
-					<p>or both...</p>
+					<p>both...</p>
 					<pre>$('ul#people&gt;li').tsort('img',{order:'desc',attr:'alt'});</pre>
+					<p>or more if you want multiple sort criteria...</p>
+					<pre>$('ul#people&gt;li').tsort('span.surname',{order:'desc'},'span.name',{order:'desc'});</pre>
 
 					<p>Change default settings globally like so:</p>
 					<pre>$.tinysort.defaults.order = 'desc';
@@ -441,10 +443,11 @@ $('ul#people&gt;li').tsort();</pre>
 				<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
 				<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
 
-				<h3>multiple sort rules</h3>
-				<p>Sometimes multiple sorting criteria are required. For instance: when two similarly named items are sorted alfabetically you might want to sort them by date.</p>
-				<p>For multiple sorting rules you can just append the parameters. So tsort(selector,object) becomes tsort(selector1,object1,selector2,object2,selector3,object3...). You can also leave out either the selector or the object if it's not needed: tsort(selector1,selector2,object2,object3...).</p>
+				<h3>multiple sort criteria</h3>
+				<p>Sometimes multiple sorting criteria are required. For instance: you might want to sort a list of people first by surname then by name.</p>
+				<p>For multiple sorting rules you can just append the parameters. So tsort(selector,object) becomes tsort(selector1,object1,selector2,object2,selector3,object3...). You can also leave out either the selector or the object if it's not needed: tsort(selector1,selector2,object2,object3...). Keep in mind that tsort will look for selector-object pairs and if no applicable pair is formed it will use default values. In this example three arguments are two criteria: the first argument uses the default options object, the second argument uses the third argument as options object.</p>
 				<pre class="example" title="12">$('ul#xmul>li').tsort('span.name','span.date',{data:'timestamp'});</pre>
+
 				<h3>non-latin characters</h3>
 				<p>A normal array sorts according to <a href="http://en.wikipedia.org/wiki/Unicode">Unicode</a>, which is wrong for most languages. For correct ordering you can use the charorder plugin to parse a rule with the 'charOrder' parameter. This is a string that consist of exceptions, not the entire alfabet. For characters that should sort equally use brackets. For characters that consist of multiple characters use curly braces. For example: </p>
 				<ul>

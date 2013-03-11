@@ -119,7 +119,7 @@
 							var sCharNotLatin = aCharNotLatin.join('');
 							sAllCharNotLatin += sCharNotLatin;
 							// first remove non latin chars
-							$.each(sCharNotLatin,function(j,s){
+							$.each(sCharNotLatin.split(''),function(j,s){
 								aOrderChar.splice(aOrderChar.indexOf(s),1);
 							});
 							// then append chars to latin char
