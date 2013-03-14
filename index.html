@@ -37,7 +37,8 @@
 			});
 
 			function refill(s,num) {
-				var mEl = $('#'+s);
+				var mEl = $('#'+s)
+						,i;
 				mEl.children().remove();
 				switch (s) {
 					case 'xattr':
@@ -137,10 +138,14 @@
 					default:  for (i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
 				}
 			}
-			var aAsc = [];
+			var aAsc = []
+				,$XTable = $('#xtable')
+				,$XTableTB = $XTable.find('>tbody')
+				,$XTableTR = $XTableTB.find('>tr')
+				,$XTableTD = $XTableTR.find('>td');
 			function sortTable(nr) {
 				aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
-				$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
+				$XTableTR.tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
 			}
 			function addTRow() {
 				var sName = getPassword(6);
@@ -156,8 +161,8 @@
 				sRow += '<td'+(sSome!=''?' abbr="'+sSome+'"':'')+'>'+sSome+'</td>';
 				sRow += '<td><a onclick="deleteTRow(this)">x</a></td>';
 				sRow += '</tr>';
-				if ($('#xtable>tbody>tr>td').length==1) $('#xtable>tbody').html('');
-				$('#xtable>tbody').append(sRow);
+				if ($XTableTD.length==1) $XTableTB.html('');
+				$XTableTB.append(sRow);
 			}
 			function deleteTRow(e) {
 				$(e).parent().parent().remove();
