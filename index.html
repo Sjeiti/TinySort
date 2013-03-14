@@ -207,7 +207,6 @@
 		  })();
 
 		</script>
-		<!--<script src="http://www.sjeiti.com/ga.js" type="text/javascript"></script>-->
 	</head>
 	<body>
 		<header class="main">
@@ -224,21 +223,6 @@
 				</div>
 				<aside>
 					<h3>download</h3>
-
-					<!--<button class="button download">
-						<label for="tts1"><input type="radio" id="tts1" name="tts" value="src/jquery.tinysort.js" /><span class="filesize"></span> source</label><br/>
-						<label for="tts2"><input type="radio" id="tts2" name="tts" value="src/jquery.tinysort.min.js" checked /><span class="filesize"></span> minified</label><br/>
-						<label for="tts3"><input type="radio" id="tts3" name="tts" value="src/jquery.tinysort.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
-						<a href="src/jquery.tinysort.min.js"><span class="iconic download"></span>TinySort</a>
-					</button>-->
-
-					<!--<button class="button download">
-						<label for="pco1"><input type="radio" id="pco1" name="pco" value="src/jquery.tinysort.charorder.js" /><span class="filesize"></span> source</label><br/>
-						<label for="pco2"><input type="radio" id="pco2" name="pco" value="src/jquery.tinysort.charorder.min.js" checked /><span class="filesize"></span> minified</label><br/>
-						<label for="pco3"><input type="radio" id="pco3" name="pco" value="src/jquery.tinysort.charorder.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
-						<a href="src/jquery.tinysort.charorder.min.js"><span class="iconic download"></span> charorder plugin</a>
-					</button>-->
-
 					<a class="button download choosehref" href="src/jquery.tinysort.min.js">
 						<label for="tts1"><input type="radio" id="tts1" name="tts" value="src/jquery.tinysort.js" /><span class="filesize"></span> source</label><br/>
 						<label for="tts2"><input type="radio" id="tts2" name="tts" value="src/jquery.tinysort.min.js" checked /><span class="filesize"></span> minified</label><br/>
@@ -252,12 +236,6 @@
 						<label for="pco3"><input type="radio" id="pco3" name="pco" value="src/jquery.tinysort.charorder.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
 						<span class="iconic download"></span> CharOrder plugin
 					</a>
-
-
-					<!--<a href="src/jquery.tinysort.min.js" class="button download"><span class="iconic download"></span> <span class="filesize"></span> minified<br/><small>single Javascript </small></a>-->
-					<!--<a href="src/jquery.tinysort.min.jgz" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> gzipped<br/><small>single Javascript </small></a>-->
-					<!--<a href="src/jquery.tinysort.charorder.min.js" class="button download small"><span class="iconic download"></span> charorder plugin <span class="filesize"></span> minified<br/><small>single Javascript </small></a>-->
-					<!--<a href="src/jquery.tinysort.charorder.min.jgz" class="button download small"><span class="iconic download"></span> charorder plugin <span class="filesize"></span> gzipped<br/><small>single Javascript </small></a>-->
 					<a href="https://github.com/Sjeiti/TinySort/zipball/master" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> full zip<br/><small>including examples</small></a>
 
 					<a href="https://github.com/Sjeiti/TinySort.git" class="repo" data-type="git" rel="external" target="_blank"></a>
@@ -385,6 +363,18 @@ $('ul#people&gt;li').tsort();</pre>
 								<table>
 									<tr><td>false</td><td>cases are ignored</td></tr>
 									<tr><td>true</td><td>case sensitive sort</td></tr>
+								</table>
+							</td>
+							<td>false</td>
+						</tr>
+						<tr>
+							<td>forceStrings</td>
+							<td>Boolean</td>
+							<td>use string value for numerals</td>
+							<td>
+								<table>
+									<tr><td>false</td><td>numbers sorted by numeric value</td></tr>
+									<tr><td>true</td><td>everything sorted as string</td></tr>
 								</table>
 							</td>
 							<td>false</td>
@@ -554,15 +544,6 @@ $Li.tsort().each(function(i,el){
 	$El.css({position:'absolute',top:iFr}).animate({top:iTo},500);
 });</pre>
 			</section>
-
-			<!--<section>
-				<h2>issues</h2>
-				<ul>
-					<li>Selecting from multiple parent nodes (ie. "li" in a nested tree) might have some unexpected results.</li>
-					<li>Mixed numeral and literal values sort as literal. So ["pic11","pic2","pic1"] will result in ["pic1","pic11","pic2"].</li>
-				</ul>
-				<p>File other bugs, feature requests or a code improvements <a href="http://code.google.com/p/tinysort/issues">here</a>. Please provide code examples where possible. (ps: "I can't get it to work" is not a bug)</small></p>
-			</section>-->
 		</div>
 		<footer>
 			<div>© 2008-2013 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>
