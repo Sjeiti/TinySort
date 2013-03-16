@@ -1,4 +1,4 @@
-<img src="master/style/logo.svg" width="32" alt="TinySort" style="vertical-align:middle;" /> TinySort
+<img src="http://tinysort.sjeiti.com/style/logo.svg" width="32" alt="TinySort" style="vertical-align:middle;" /> TinySort
 =======
 
 TinySort is a small and simple jQuery plugin that will sort any nodetype by it's text- or attribute value, or by that of one of it's children.
