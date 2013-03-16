@@ -1,4 +1,4 @@
-/*! TinySort 1.5.1
+/*! TinySort 1.5.2
 * Copyright (c) 2008-2013 Ron Valstar http://tinysort.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
@@ -30,6 +30,7 @@
 		,prsflt = parseFloat				// minify placeholder
 		,mathmn = Math.min					// minify placeholder
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
+		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
 	/*
 	issue #44... maybe first match this
 		,rxSplitNrs = /-?\d+|-*\D*[^-\d]/g      makes	["eiw", "-73", "-ewe", "-133"]
@@ -61,7 +62,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.5.1'
+		,version: '1.5.2'
 		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licensed: {
@@ -86,6 +87,8 @@
 			,cases: fls				// a case sensitive sort orders [aB,aa,ab,bb]
 			,forceStrings:fls		// if false the string '2' will sort with the value 2, not the string '2'
 
+			,ignoreDashes:fls		// ignores dashes when looking for numerals
+
 			,sortFunction: nll		// override the default sort function
 		}
 	};
@@ -93,7 +96,6 @@
 		tinysort: function() {
 			var i,l
 				,oThis = this
-				,iLen = $(oThis).length
 				,aNewOrder = []
 				// sortable- and non-sortable list per parent
 				,aElements = []
@@ -117,7 +119,9 @@
 					if (iCriteria!==0) iCriteria = 0;
 					while (iReturn===0&&iCriteria<iCriteriaMax) {
 						var oPoint = aCriteria[iCriteria]
-							,oSett = oPoint.oSettings;
+							,oSett = oPoint.oSettings
+							,rxLast = oSett.ignoreDashes?rxLastNrNoDash:rxLastNr
+						;
 						//
 						fnPluginPrepare(oSett);
 						//
@@ -133,8 +137,8 @@
 							// maybe force Strings
 							if (!oSettings.forceStrings) {
 								// maybe mixed
-								var  aAnum = isString(sA)?sA&&sA.match(rxLastNr):fls
-									,aBnum = isString(sB)?sB&&sB.match(rxLastNr):fls;
+								var  aAnum = isString(sA)?sA&&sA.match(rxLast):fls
+									,aBnum = isString(sB)?sB&&sB.match(rxLast):fls;
 								if (aAnum&&aBnum) {
 									var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
 										,sBprv = sB.substr(0,sB.length-aBnum[0].length);

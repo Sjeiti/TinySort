@@ -42,7 +42,7 @@
 
 			module('Tinysort');
 			test('default functionality', function() {
-				expect(14);
+				expect(15);
 				ok( (function(){
 					var s = '';
 					$zen('ul>li{a$}*6',{a:aList}).find('li').tsort()
@@ -127,6 +127,12 @@
 					.each(function(i,el){ s += ' '+$(el).text(); });
 					return s==' a2 a3 a7 a9 a1 a1.1 a7 a11';
 				})(),'$Li.tsort(); multiple parents');
+				ok( (function(){
+					var s = '';
+					$zen('ul>li{a$}*5',{a:['a-2','a-5','a-6','a-4','a-1']}).find('li').tsort({ignoreDashes:true})
+					.each(function(i,el){ s += $(el).text(); });
+					return s=='a-1a-2a-4a-5a-6';
+				})(),'$Li.tsort({ignoreDashes:true}); ignore dashes');
 			});
 
 			test('multiple criteria: default functionality', function() {
