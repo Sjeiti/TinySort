@@ -1,4 +1,4 @@
-/*! TinySort 1.5.0
+/*! TinySort 1.5.1
 * Copyright (c) 2008-2013 Ron Valstar http://tinysort.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
@@ -30,6 +30,18 @@
 		,prsflt = parseFloat				// minify placeholder
 		,mathmn = Math.min					// minify placeholder
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
+	/*
+	issue #44... maybe first match this
+		,rxSplitNrs = /-?\d+|-*\D*[^-\d]/g      makes	["eiw", "-73", "-ewe", "-133"]
+	or
+		,rxSplitPosNrs = /\D+|\d+/g				makes	["eiw-", "73", "-ewe-", "133"]
+	then on each
+		/\d/
+	and check if both comparing strings have same order of \d , ^\d
+	then make \d of equal length by pre-padding 0
+	...
+	sort
+	*/
 		,aPluginPrepare = []
 		,aPluginSort = []
 		,isString = function(o){return typeof o=='string';}
@@ -49,7 +61,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.5.0'
+		,version: '1.5.1'
 		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licensed: {
@@ -218,8 +230,9 @@
 			// order elements and fill new order
 			for (j in aElements) {
 				var oParent = aElements[j]
+					,iNumElm = oParent.s.length
 					,aOrg = [] // list for original position
-					,iLow = iLen
+					,iLow = iNumElm
 					,aCnt = [0,0] // count how much we've sorted for retreival from either the sort list or the non-sort list (oParent.s/oParent.n)
 				;
 				switch (oSettings.place) {
@@ -228,7 +241,7 @@
 					case 'end':		iLow = oParent.n.length; break;
 					default:		iLow = 0;
 				}
-				for (i=0;i<iLen;i++) {
+				for (i=0;i<iNumElm;i++) {
 					var bSList = contains(aOrg,i)?!fls:i>=iLow&&i<iLow+oParent.s.length
 						,mEl = (bSList?oParent.s:oParent.n)[aCnt[bSList?0:1]].e;
 					mEl.parent().append(mEl);
