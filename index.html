@@ -22,6 +22,7 @@
 		<script type="text/javascript" src="src/jquery.tinysort.charorder.js"></script>
 
 		<script type="text/javascript">
+			var aAsc = [],$XTable ,$XTableTB ,$XTableTR ,$XTableTD;
 			OPENSOURCE.init($.tinysort,function(){
 				var i,j;
 				$('pre.example').each(function(){
@@ -33,9 +34,12 @@
 					mPre.after('<'+sTg+' id=\''+sId+'\' class=\'xmpl\'></'+sTg+'>').after('<p>test: <a onclick="'+mPre.text().replace(/\n/g,'')+'">sort</a> or <a onclick=\'refill("'+sId+'",'+iNm+')\'>refill</a></p>');
 					refill(sId,iNm);
 				});
+				$XTable = $('#xtable');
+				$XTableTB = $XTable.find('>tbody').html('');
+				$XTableTR = $XTableTB.find('>tr');
+				$XTableTD = $XTableTR.find('>td');
 				for (i=0;i<6;i++) addTRow();
 			});
-
 			function refill(s,num) {
 				var mEl = $('#'+s)
 						,i;
@@ -138,14 +142,9 @@
 					default:  for (i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
 				}
 			}
-			var aAsc = []
-				,$XTable = $('#xtable')
-				,$XTableTB = $XTable.find('>tbody')
-				,$XTableTR = $XTableTB.find('>tr')
-				,$XTableTD = $XTableTR.find('>td');
 			function sortTable(nr) {
 				aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
-				$XTableTR.tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
+				$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
 			}
 			function addTRow() {
 				var sName = getPassword(6);
@@ -161,7 +160,6 @@
 				sRow += '<td'+(sSome!=''?' abbr="'+sSome+'"':'')+'>'+sSome+'</td>';
 				sRow += '<td><a onclick="deleteTRow(this)">x</a></td>';
 				sRow += '</tr>';
-				if ($XTableTD.length==1) $XTableTB.html('');
 				$XTableTB.append(sRow);
 			}
 			function deleteTRow(e) {
@@ -525,6 +523,7 @@ $('ul#people&gt;li').tsort();</pre>
 				<p>With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:</p>
 				<pre>var aAsc = [];
 function sortTable(nr) {
+	console.log('sortTable',nr);
 	aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
 	$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
 }</pre>

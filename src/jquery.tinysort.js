@@ -1,4 +1,4 @@
-/*! TinySort 1.5.2
+/*! TinySort 1.5.3
 * Copyright (c) 2008-2013 Ron Valstar http://tinysort.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
@@ -27,22 +27,10 @@
 	// private vars
 	var fls = !1							// minify placeholder
 		,nll = null							// minify placeholder
-		,prsflt = parseFloat				// minify placeholder
+		,prsflt = parseFloat				// minify	 placeholder
 		,mathmn = Math.min					// minify placeholder
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
-	/*
-	issue #44... maybe first match this
-		,rxSplitNrs = /-?\d+|-*\D*[^-\d]/g      makes	["eiw", "-73", "-ewe", "-133"]
-	or
-		,rxSplitPosNrs = /\D+|\d+/g				makes	["eiw-", "73", "-ewe-", "133"]
-	then on each
-		/\d/
-	and check if both comparing strings have same order of \d , ^\d
-	then make \d of equal length by pre-padding 0
-	...
-	sort
-	*/
 		,aPluginPrepare = []
 		,aPluginSort = []
 		,isString = function(o){return typeof o=='string';}
@@ -69,10 +57,15 @@
 			MIT: 'http://www.opensource.org/licenses/mit-license.php'
 			,GPL: 'http://www.gnu.org/licenses/gpl.html'
 		}
-		,plugin: function(prepare,sort){
-			aPluginPrepare.push(prepare);	// function(settings){doStuff();}
-			aPluginSort.push(sort);			// function(valuesAreNumeric,sA,sB,iReturn){doStuff();return iReturn;}
-		}
+		,plugin: (function(){
+			var fn = function(prepare,sort){
+				aPluginPrepare.push(prepare);	// function(settings){doStuff();}
+				aPluginSort.push(sort);			// function(valuesAreNumeric,sA,sB,iReturn){doStuff();return iReturn;}
+			};
+			// expose stuff to plugins
+			fn.indexOf = fnIndexOf;
+			return fn;
+		})()
 		,defaults: { // default settings
 
 			 order: 'asc'			// order: asc, desc or rand
@@ -229,12 +222,12 @@
 			});
 			//
 			// sort
-			for (j in aElements) aElements[j].s.sort(fnSort);
+			$.each(aElements, function(j,oParent) { oParent.s.sort(fnSort); });
 			//
 			// order elements and fill new order
-			for (j in aElements) {
-				var oParent = aElements[j]
-					,iNumElm = oParent.s.length
+			$.each(aElements, function(j,oParent) {
+//				var oParent = aElements[j]
+				var iNumElm = oParent.s.length
 					,aOrg = [] // list for original position
 					,iLow = iNumElm
 					,aCnt = [0,0] // count how much we've sorted for retreival from either the sort list or the non-sort list (oParent.s/oParent.n)
@@ -252,7 +245,7 @@
 					if (bSList||!oSettings.returns) aNewOrder.push(mEl.get(0));
 					aCnt[bSList?0:1]++;
 				}
-			}
+			});
 			oThis.length = 0;
 			Array.prototype.push.apply(oThis,aNewOrder);
 			return oThis;

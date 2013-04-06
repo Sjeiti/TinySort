@@ -1,5 +1,5 @@
-/*! TinySort CharOrder 1.1.0
-* Copyright (c) 2008-2012 Ron Valstar http://www.sjeiti.com/
+/*! TinySort CharOrder 1.1.1
+* Copyright (c) 2008-2013 Ron Valstar http://www.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
 *   http://www.opensource.org/licenses/mit-license.php
@@ -11,11 +11,8 @@
 * Usage:
 *   $('ul#danish>li').tsort({charOrder:'æøå[{Aa}]'});
 *
-* in this update:
-*   - Since this code took up almost half of the Tinysort plugin I've decided to separate it into a plugin
-*
 */
-;(function($) {
+;(function($,tinysort) {
 	// private vars
 	var sCharOrder							// equals the input oSettings.charOrder so we can test any changes
 		,aAllChars = []						// all latin chars 32-255
@@ -29,15 +26,17 @@
 		,mathmn = Math.min					// minify placeholder
 		,nll = null							// minify placeholder
 
+		,fnIndexOf = tinysort.plugin.indexOf
+
 		,oSettings
 		,iAsc
 	;
 	// create basic latin string chars 32-255
 	for (var i=32,s=frCrCd(i),len=255;i<len;i++,s=frCrCd(i).toLowerCase()) { // using lowerCase instead of upperCase so _ will sort before
-		if (aAllChars.indexOf(s)===-1) aAllChars.push(s);
+		if (fnIndexOf.call(aAllChars,s)===-1) aAllChars.push(s);
 	}
 	aAllChars.sort();
-	$.tinysort.charorder = {
+	tinysort.charorder = {
 		 id: 'TinySort CharOrder'
 		,version: '1.1.0'
 		,requires: 'TinySort 1.4'
@@ -47,11 +46,11 @@
 			MIT: 'http://www.opensource.org/licenses/mit-license.php'
 			,GPL: 'http://www.gnu.org/licenses/gpl.html'
 		}
-	}
+	};
 	// add charOrder to defaults
-	$.tinysort.defaults.charOrder = sCharOrder;
+	tinysort.defaults.charOrder = sCharOrder; // todo: check this
 	//
-	$.tinysort.plugin(
+	tinysort.plugin(
 		function(settings){
 			oSettings = settings;
 			iAsc = oSettings.order=='asc'?1:-1;
@@ -120,11 +119,11 @@
 							sAllCharNotLatin += sCharNotLatin;
 							// first remove non latin chars
 							$.each(sCharNotLatin.split(''),function(j,s){
-								aOrderChar.splice(aOrderChar.indexOf(s),1);
+								aOrderChar.splice(fnIndexOf.call(aOrderChar,s),1);
 							});
 							// then append chars to latin char
 							var aParse = aCharNotLatin.slice(0);
-							aParse.splice(0,0,aOrderChar.indexOf(sCharLatin)+1,0);
+							aParse.splice(0,0,fnIndexOf.call(aOrderChar,sCharLatin)+1,0);
 							Array.prototype.splice.apply(aOrderChar,aParse);
 							//
 							aCharNotLatin.length = 0;
@@ -139,18 +138,17 @@
 		,function(bNumeric,sA,sB,iReturn){
 			if (!bNumeric&&oSettings.charOrder) {
 				if (bDoubles) { // first replace doubles
-					for (var s in oReplace) {
-						var o = oReplace[s];
+					$.each(oReplace,function(s,o){
 						sA = sA.replace(s,o);
 						sB = sB.replace(s,o);
-					}
+					});
 				}
 				// then test if either word has non latin chars
 				// we're using the slower string.match because strangely regex.test sometimes fails
 				if (sA.match(rxNotLatin)!==nll||sB.match(rxNotLatin)!==nll) {
 					for (var k=0,l=mathmn(sA.length,sB.length);k<l;k++) {
-						var iAchr = aOrderChar.indexOf(sA[k])
-							,iBchr = aOrderChar.indexOf(sB[k]);
+						var iAchr = fnIndexOf.call(aOrderChar,sA[k])
+							,iBchr = fnIndexOf.call(aOrderChar,sB[k]);
 						if (iReturn=iAsc*(iAchr<iBchr?-1:(iAchr>iBchr?1:0))) break;
 					}
 				}
@@ -158,4 +156,4 @@
 			return iReturn;
 		}
 	);
-})(jQuery);
+})(jQuery,jQuery.tinysort);
