@@ -127,6 +127,9 @@
 							// maybe toLower
 								,sA = !oSett.cases?toLowerCase(a.s[iCriteria]):a.s[iCriteria]
 								,sB = !oSett.cases?toLowerCase(b.s[iCriteria]):b.s[iCriteria];
+							//strip leading and trailing whitespaces
+								sA=sA.replace(/^\s*/i,'').replace(/\s*$/i,'');
+								sB=sB.replace(/^\s*/i,'').replace(/\s*$/i,'');
 							// maybe force Strings
 							if (!oSettings.forceStrings) {
 								// maybe mixed
