@@ -296,6 +296,15 @@
 					return s=='_0_1_2_3_4_5';
 				})(),'regexp match onto number bug');
 			});
+			test('issue 51', function() {
+				expect(1);
+				ok( (function(){
+					var s = '';
+					$zen('ul>li{_a$}*6',{a:[' 0 ',' 5 ',' 1 ',' 4 ',' 2 ',' 3 ']}).find('li').tsort()
+					.each(function(i,el){ s += $(el).text(); });
+					return s=='_ 0 _ 1 _ 2 _ 3 _ 4 _ 5 ';
+				})(),'numeral values with leading and trailing spaces');
+			});
 
 		}
 	})

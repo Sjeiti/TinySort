@@ -1,4 +1,4 @@
-/*! TinySort 1.5.3
+/*! TinySort 1.5.4
 * Copyright (c) 2008-2013 Ron Valstar http://tinysort.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
@@ -27,7 +27,7 @@
 	// private vars
 	var fls = !1							// minify placeholder
 		,nll = null							// minify placeholder
-		,prsflt = parseFloat				// minify	 placeholder
+		,prsflt = parseFloat				// minify placeholder
 		,mathmn = Math.min					// minify placeholder
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
@@ -50,7 +50,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.5.2'
+		,version: '1.5.4'
 		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licensed: {
@@ -107,6 +107,15 @@
 					});
 				}
 				//
+				,fnPrepareSortElement = function(settings,element){
+					if (typeof element=='string') {
+						// if !settings.cases
+						if (!settings.cases) element = toLowerCase(element);
+						element = element.replace(/^\s*(.*?)\s*$/i, '$1');
+					}
+					return element;
+				}
+				//
 				,fnSort = function(a,b) {
 					var iReturn = 0;
 					if (iCriteria!==0) iCriteria = 0;
@@ -124,14 +133,12 @@
 							iReturn = Math.random()<.5?1:-1;
 						} else { // regular sort
 							var bNumeric = fls
-							// maybe toLower
-								,sA = !oSett.cases?toLowerCase(a.s[iCriteria]):a.s[iCriteria]
-								,sB = !oSett.cases?toLowerCase(b.s[iCriteria]):b.s[iCriteria];
-							//strip leading and trailing whitespaces
-								sA=sA.replace(/^\s*/i,'').replace(/\s*$/i,'');
-								sB=sB.replace(/^\s*/i,'').replace(/\s*$/i,'');
+								// prepare sort elements
+								,sA = fnPrepareSortElement(oSett,a.s[iCriteria])
+								,sB = fnPrepareSortElement(oSett,b.s[iCriteria])
+							;
 							// maybe force Strings
-							if (!oSettings.forceStrings) {
+							if (!oSett.forceStrings) {
 								// maybe mixed
 								var  aAnum = isString(sA)?sA&&sA.match(rxLast):fls
 									,aBnum = isString(sB)?sB&&sB.match(rxLast):fls;

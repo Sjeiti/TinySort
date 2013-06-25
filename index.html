@@ -16,12 +16,12 @@
 		<!--<link rel="stylesheet" type="text/css" href="../opensource/web/style/opensource.css" />-->
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script><script>window.jQuery||document.write("<script src='libs/jquery-1.9.1.js'>\x3C/script>")</script>
-		<script type="text/javascript" src="libs/jquery.opensource.min.js"></script>
-		<!--<script type="text/javascript" src="../opensource/web/scripts/jquery.opensource.js"></script>-->
-		<script type="text/javascript" src="src/jquery.tinysort.js"></script>
-		<script type="text/javascript" src="src/jquery.tinysort.charorder.js"></script>
+		<script src="libs/jquery.opensource.min.js"></script>
+		<!--<script src="../opensource/web/scripts/jquery.opensource.js"></script>-->
+		<script src="src/jquery.tinysort.js"></script>
+		<script src="src/jquery.tinysort.charorder.js"></script>
 
-		<script type="text/javascript">
+		<script>
 			var aAsc = [],$XTable ,$XTableTB ,$XTableTR ,$XTableTD;
 			OPENSOURCE.init($.tinysort,function(){
 				var i,j;
@@ -197,11 +197,13 @@
 				return (n%1)==0;
 			}
 		</script>
-		<script type="text/javascript">
+		<script>
 
 		  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', 'UA-37777223-1']);
 		  _gaq.push(['_trackPageview']);
+
+		  setTimeout("_gaq.push(['_trackEvent', '15_seconds', 'read'])", 15000);
 
 		  (function() {
 		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
