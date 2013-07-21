@@ -5,23 +5,25 @@
 		<meta charset="utf-8" />
 		<link href="qunit/qunit.css" type="text/css" rel="stylesheet" />
 		<style>html,body{padding:0;margin:0;}</style>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script><script>window.jQuery||document.write("<script src='../libs/jquery-1.9.1.js'>\x3C/script>")</script>
-		<script src="../libs/jquery.zen.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+		<script>window.jQuery||document.write("<script src='../../libs/jquery-2.0.3.js'>\x3C/script>")</script>
+		<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>-->
+		<!--<script>window.jQuery||document.write("<script src='../../libs/jquery-1.10.2.js'>\x3C/script>")</script>-->
+		<script src="../../libs/jquery.zen.min.js"></script>
 		<script src="qunit/qunit.js"></script>
 		<script>
 (function($){
 	$(function(){
-		var $Body = $('body');
 
 		// load tinysort and hack source to expose private functions for testing
 		$.ajax({
-			url:'../src/jquery.tinysort.js'
+			url:'../../src/jquery.tinysort.js'
 			,dataFilter: function(data) {
 				return data.replace(/\$\.tinysort\s*=\s*{/g,'$.tinysort={expose:function(){return{toLowerCase:toLowerCase,contains:contains};},');//,isNum:isNum
 			}
 			,success: function(){
 				$.ajax({
-					url:'../src/jquery.tinysort.charorder.js'
+					url:'../../src/jquery.tinysort.charorder.js'
 					,success: startTest
 				});
 			}
@@ -29,20 +31,18 @@
 
 		// start test
 		function startTest(){
-			function rnd(){ return Math.floor(1000*Math.random()); }
 
 			var aList = ['eek-','oif-','myr-','aar-','oac-','eax-']
 				,sJoin = aList.slice(0).sort().join('')
 				,sHfJn = aList.slice(0,4).sort().join('')
 				,sSRvr = aList.slice(0).sort().reverse().join('')
-				,sRvrs = aList.slice(0).reverse().join('')
 			;
 
 			$('#qunit-header').text($.tinysort.id+' '+$.tinysort.version);
 
 			module('Tinysort');
 			test('default functionality', function() {
-				expect(15);
+				expect(16);
 				ok( (function(){
 					var s = '';
 					$zen('ul>li{a$}*6',{a:aList}).find('li').tsort()
@@ -121,6 +121,10 @@
 					.each(function(i,el){ s += ' '+$(el).text(); });
 					return s==' a1 a1.1 a7 a11';
 				})(),'$Li.tsort(); mixed numeral/literal');
+				ok( (function(){
+                    var $s = $zen('ul>(li>span{a$}+li>span.striked{b$})*3',{a:aList.slice(0,3),b:aList.slice(3)}).find('li').tsort('span[class!=striked]',{returns:true,place:'org'});
+					return $s.parent().text()+$s.length=='eek-aar-myr-oac-oif-eax-3';
+				})(),'$Li.tsort(\'span[class!=striked]\',{returns:true,place:\'org\'}); return only sorted at original position');
 				ok( (function(){
 					var s = '';
 					$zen('div>((ul>li{a$}*4)+ul>li{b$}*4)',{a:['a9','a2','a3','a7'],b:['a11','a1.1','a1','a7']}).find('li').tsort()

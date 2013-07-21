@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tinysort performance tests</title>
+		<meta charset="utf-8" />
+		<style>html,body{padding:0;margin:0;}</style>
+		<script src="libs/lodash.js"></script>
+		<script src="libs/benchmark.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+		<script>window.jQuery||document.write("<script src='../../libs/jquery-2.0.3.js'>\x3C/script>")</script>
+		<script src="src/testVersions.js"></script>
+		<script src="src/testSize.js"></script>
+		<script>
+			$(function(){
+				$('#testVersions').find('a').on('click',perfomance.testVersions);
+				$('#testSize').find('a').on('click',perfomance.testSize);
+			});
+		</script>
+	</head>
+	<body>
+	<h1>Tinysort performance tests</h1>
+	<ul>
+		<li id="testVersions"><a href="#">Difference with latest version</a></li>
+		<li id="testSize"><a href="#">Test differently sized lists</a></li>
+	</ul>
+	</body>
+</html>

@@ -1,4 +1,4 @@
-/*! TinySort 1.5.5
+/*! TinySort 1.5.4
 * Copyright (c) 2008-2013 Ron Valstar http://tinysort.sjeiti.com/
 *
 * Dual licensed under the MIT and GPL licenses:
@@ -24,7 +24,6 @@
 *
 */
 ;(function($,undefined) {
-
 	// private vars
 	var fls = !1							// minify placeholder
 		,nll = null							// minify placeholder
@@ -35,15 +34,6 @@
 		,aPluginPrepare = []
 		,aPluginSort = []
 		,isString = function(o){return typeof o=='string';}
-		,loop = function(array,func){
-            var l = array.length
-                ,i = l
-                ,j;
-            while (i--) {
-                j = l-i-1;
-                func(array[j],j);
-            }
-		}
 		// Array.prototype.indexOf for IE (issue #26) (local variable to prevent unwanted prototype pollution)
 		,fnIndexOf = Array.prototype.indexOf||function(elm) {
 			var len = this.length
@@ -60,7 +50,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '1.5.5'
+		,version: '1.5.4'
 		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licensed: {
@@ -112,7 +102,7 @@
 				,aSettings = []
 				//
 				,fnPluginPrepare = function(_settings){
-					loop(aPluginPrepare,function(fn){
+					$.each(aPluginPrepare,function(i,fn){
 						fn.call(fn,_settings);
 					});
 				}
@@ -165,7 +155,7 @@
 							iReturn = oPoint.iAsc*(sA<sB?-1:(sA>sB?1:0));
 						}
 
-						loop(aPluginSort,function(fn){
+						$.each(aPluginSort,function(i,fn){
 							iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
 						});
 
@@ -242,32 +232,28 @@
 			});
 			//
 			// sort
-			loop(aElements, function(oParent) { oParent.s.sort(fnSort); });
+			$.each(aElements, function(j,oParent) { oParent.s.sort(fnSort); });
 			//
 			// order elements and fill new order
-			loop(aElements, function(oParent) {
-				var aSorted = oParent.s
-                    ,aUnsorted = oParent.n
-                    ,iSorted = aSorted.length
-                    ,iUnsorted = aUnsorted.length
-                    ,iNumElm = iSorted+iUnsorted
-					,aOriginal = [] // list for original position
+			$.each(aElements, function(j,oParent) {
+//				var oParent = aElements[j]
+				var iNumElm = oParent.s.length
+					,aOrg = [] // list for original position
 					,iLow = iNumElm
-					,aCount = [0,0] // count how much we've sorted for retrieval from either the sort list or the non-sort list (oParent.s/oParent.n)
+					,aCnt = [0,0] // count how much we've sorted for retreival from either the sort list or the non-sort list (oParent.s/oParent.n)
 				;
 				switch (oSettings.place) {
-					case 'first':	loop(aSorted,function(obj) { iLow = mathmn(iLow,obj.n) }); break;
-					case 'org':		loop(aSorted,function(obj) { aOriginal.push(obj.n) }); break;
-					case 'end':		iLow = iUnsorted; break;
+					case 'first':	$.each(oParent.s,function(i,obj) { iLow = mathmn(iLow,obj.n) }); break;
+					case 'org':		$.each(oParent.s,function(i,obj) { aOrg.push(obj.n) }); break;
+					case 'end':		iLow = oParent.n.length; break;
 					default:		iLow = 0;
 				}
 				for (i=0;i<iNumElm;i++) {
-					var bFromSortList = contains(aOriginal,i)?!fls:i>=iLow&&i<iLow+iSorted
-                        ,iCountIndex = bFromSortList?0:1
-						,mEl = (bFromSortList?aSorted:aUnsorted)[aCount[iCountIndex]].e;
+					var bSList = contains(aOrg,i)?!fls:i>=iLow&&i<iLow+oParent.s.length
+						,mEl = (bSList?oParent.s:oParent.n)[aCnt[bSList?0:1]].e;
 					mEl.parent().append(mEl);
-					if (bFromSortList||!oSettings.returns) aNewOrder.push(mEl.get(0));
-					aCount[iCountIndex]++;
+					if (bSList||!oSettings.returns) aNewOrder.push(mEl.get(0));
+					aCnt[bSList?0:1]++;
 				}
 			});
 			oThis.length = 0;
