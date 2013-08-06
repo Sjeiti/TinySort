@@ -1,7 +1,12 @@
-(function($){
-	var performance = window.perfomance = window.perfomance||{};
-	performance.testVersions = function(e){
+(function($,tinysort){
+	'use strict';
+	var sTestName = 'Difference with latest version';
+	$(function(){
+		tinysort.add(sTestName,test);
+	});
+	function test(e){
 		e.preventDefault();
+
 		// load specific version of tinysort
 		var aVersions = [
 				'../../src/jquery.tinysort.js'
@@ -37,7 +42,8 @@
 		}
 
 		function startTest(){
-			console.log('startTest'); // log
+			tinysort.log.clear();
+			tinysort.log('start:',sTestName,"\n"); // log
 
 			// prepare DOM
 			var a100 = [], a1000 = [], i;
@@ -45,28 +51,26 @@
 			for (i=0;i<10;i++) a1000.push(getList(1000));
 
 
-			var suite = new Benchmark.Suite;
+			var suite = new Benchmark.Suite();
 
 			// add tests
 			$.each(aFn,function(i,o){
 				suite.add('TinySort '+o.version, function() {
 					o.fn.apply($(a1000[0]));
 					a1000.unshift(a1000.pop());
-				})
+				});
 			});
 
-			// add tests
-			suite
 			// add listeners
-			.on('cycle', function(event) {
-			  console.log(String(event.target));
-			})
-			.on('complete', function() {
-				console.log('Fastest is ' + this.filter('fastest').pluck('name'));
-			})
-			// run async
-			.run({ 'async': true });
-
+			suite
+				.on('cycle', function(event) {
+				  tinysort.log(String(event.target));
+				})
+				.on('complete', function() {
+					tinysort.log('=');
+					tinysort.log('Fastest is ' + this.filter('fastest').pluck('name'));
+				})
+				.run({ 'async': true });
 		}
-	};
-})(jQuery);
+	}
+})(jQuery,tinysort);

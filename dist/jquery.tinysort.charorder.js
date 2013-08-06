@@ -1,9 +1,8 @@
-/*! TinySort CharOrder
-* Copyright (c) 2008-2013 Ron Valstar http://www.sjeiti.com/
-*
-* Dual licensed under the MIT and GPL licenses:
-*   http://www.opensource.org/licenses/mit-license.php
-*   http://www.gnu.org/licenses/gpl.html
+/*! TinySort CharOrder 1.1.2
+* Copyright (c) 2008-2013 Ron Valstar http://tinysort.sjeiti.com/
+* License:
+*     MIT: http://www.opensource.org/licenses/mit-license.php
+*     GPL: http://www.gnu.org/licenses/gpl.html
 *//*
 * Description:
 *   A TinySort plugin to sort non-latin characters.

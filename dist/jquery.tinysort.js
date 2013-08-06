@@ -1,9 +1,8 @@
-/*! TinySort
+/*! TinySort 1.5.6
 * Copyright (c) 2008-2013 Ron Valstar http://tinysort.sjeiti.com/
-*
-* Dual licensed under the MIT and GPL licenses:
-*   http://www.opensource.org/licenses/mit-license.php
-*   http://www.gnu.org/licenses/gpl.html
+* License:
+*     MIT: http://www.opensource.org/licenses/mit-license.php
+*     GPL: http://www.gnu.org/licenses/gpl.html
 *//*
 * Description:
 *   A jQuery plugin to sort child nodes by (sub) contents or attributes.

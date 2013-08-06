@@ -40,7 +40,7 @@
   var contextProps = [
     'Array', 'Date', 'Function', 'Math', 'Object', 'RegExp', 'String', '_',
     'clearTimeout', 'chrome', 'chromium', 'document', 'java', 'navigator',
-    'performance', 'platform', 'process', 'runtime', 'setTimeout'
+    'tinysort', 'platform', 'process', 'runtime', 'setTimeout'
   ];
 
   /** Used to avoid hz of Infinity */
@@ -156,7 +156,7 @@
     var microtimeObject = req('microtime');
 
     /** Used to access the browser's high resolution timer */
-    var perfObject = isHostType(context, 'performance') && context.performance;
+    var perfObject = isHostType(context, 'tinysort') && context.tinysort;
 
     /** Used to call the browser's high resolution timer */
     var perfName = perfObject && (
@@ -1836,7 +1836,7 @@
         }
       } catch(e) { }
 
-      // detect `performance.now` microsecond resolution timer
+      // detect `tinysort.now` microsecond resolution timer
       if ((timer.ns = perfName && perfObject)) {
         timers.push({ 'ns': timer.ns, 'res': getRes('us'), 'unit': 'us' });
       }

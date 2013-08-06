@@ -1,571 +1,561 @@
-<!doctype html>
-<html class="no-js" lang="en">
-	<head>
-		<meta charset="utf-8">
+	<!doctype html>
+	<html class="no-js" lang="en">
+		<head>
+			<meta charset="utf-8">
 
-		<title>jQuery TinySort - a tiny sorting plugin</title>
+			<title>jQuery TinySort - a tiny sorting plugin</title>
 
-		<meta name="author" content="Ron Valstar" />
-		<meta name="keywords" content="jquery, sort, tinysort, sortby, tablesort, listsort, sort nodes, nested sort" />
-		<meta name="description" content="TinySort is a small jQuery plugin that will sort any nodetype by it's text-, attribute- or data value, or by that of one of it's children." />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<meta name="author" content="Ron Valstar" />
+			<meta name="keywords" content="jquery, sort, tinysort, sortby, tablesort, listsort, sort nodes, nested sort" />
+			<meta name="description" content="TinySort is a small jQuery plugin that will sort any nodetype by it's text-, attribute- or data value, or by that of one of it's children." />
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="shortcut icon" href="style/favicon.ico">
+			<link rel="shortcut icon" href="style/favicon.ico">
 
-		<link rel="stylesheet" type="text/css" href="style/screen.css" />
-		<!--<link rel="stylesheet" type="text/css" href="../opensource/web/style/opensource.css" />-->
+			<link rel="stylesheet" type="text/css" href="style/screen.css" />
+			<!--<link rel="stylesheet" type="text/css" href="http://localhost/libs/js/opensource/web/style/opensource.css" />-->
 
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
-		<script>window.jQuery||document.write("<script src='libs/jquery-2.0.3.js'>\x3C/script>")</script>
-		<script src="libs/jquery.opensource.min.js"></script>
-		<!--<script src="../opensource/web/scripts/jquery.opensource.js"></script>-->
-		<script src="src/jquery.tinysort.js"></script>
-		<script src="src/jquery.tinysort.charorder.js"></script>
+			<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+			<script>window.jQuery||document.write("<script src='libs/jquery-2.0.3.js'>\x3C/script>")</script>
+			<script src="libs/jquery.opensource.min.js"></script>
+			<!--<script src="http://localhost/libs/js/opensource/web/scripts/jquery.opensource.js"></script>-->
+			<script src="src/jquery.tinysort.js"></script>
+			<script src="src/jquery.tinysort.charorder.js"></script>
 
-		<script>
-			var aAsc = [],$XTable ,$XTableTB ,$XTableTR ,$XTableTD;
-			OPENSOURCE.init($.tinysort,function(){
-				var i,j;
-				$('pre.example').each(function(){
-					var mPre = $(this);
-					var iNm = parseInt(mPre.attr('title')?mPre.attr('title'):6);
-					mPre.removeAttr('title');
-					var sTg = mPre.text().match(/(\w+)(?=#)/)[0];
-					var sId = mPre.text().match(/(?:#)(\w+)/)[1];
-					mPre.after('<'+sTg+' id=\''+sId+'\' class=\'xmpl\'></'+sTg+'>').after('<p>test: <a onclick="'+mPre.text().replace(/\n/g,'')+'">sort</a> or <a onclick=\'refill("'+sId+'",'+iNm+')\'>refill</a></p>');
-					refill(sId,iNm);
+			<script>
+				var aAsc = [],$XTable ,$XTableTB ,$XTableTR ,$XTableTD;
+				OPENSOURCE.init($.tinysort,function(){
+					var i,j;
+					$('pre.example').each(function(){
+						var mPre = $(this);
+						var iNm = parseInt(mPre.attr('title')?mPre.attr('title'):6);
+						mPre.removeAttr('title');
+						var sTg = mPre.text().match(/(\w+)(?=#)/)[0];
+						var sId = mPre.text().match(/(?:#)(\w+)/)[1];
+						mPre.after('<'+sTg+' id=\''+sId+'\' class=\'xmpl\'></'+sTg+'>').after('<p>test: <a onclick="'+mPre.text().replace(/\n/g,'')+'">sort</a> or <a onclick=\'refill("'+sId+'",'+iNm+')\'>refill</a></p>');
+						refill(sId,iNm);
+					});
+					$XTable = $('#xtable');
+					$XTableTB = $XTable.find('>tbody').html('');
+					$XTableTR = $XTableTB.find('>tr');
+					$XTableTD = $XTableTR.find('>td');
+					for (i=0;i<6;i++) addTRow();
+				},{
+					ga: {
+						account: 'UA-37777223-1'
+						,domain: null
+					}
 				});
-				$XTable = $('#xtable');
-				$XTableTB = $XTable.find('>tbody').html('');
-				$XTableTR = $XTableTB.find('>tr');
-				$XTableTD = $XTableTR.find('>td');
-				for (i=0;i<6;i++) addTRow();
-			});
-			function refill(s,num) {
-				var mEl = $('#'+s)
-						,i;
-				mEl.children().remove();
-				switch (s) {
-					case 'xattr':
-					case 'xret':	for (i=0;i<num;i++) mEl.append('<li><span'+(brnd()?'':' class="striked"')+'>'+getPassword(6)+'</span></li>'); break;
-					case 'xsub':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <span>'+getPassword(6)+'</span></li>'); break;
-					case 'xval':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#'+getPassword(3,true)+'" title="'+getPassword(6)+'">'+getPassword(6)+'</a></li>'); break;
-					case 'xdta':	for (i=0;i<num;i++) { var sDta = getPassword(6); mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#" data-foo="'+sDta+'">'+sDta+'</a></li>'); } break;
+				function refill(s,num) {
+					var mEl = $('#'+s)
+							,i;
+					mEl.children().remove();
+					switch (s) {
+						case 'xattr':
+						case 'xret':	for (i=0;i<num;i++) mEl.append('<li><span'+(brnd()?'':' class="striked"')+'>'+getPassword(6)+'</span></li>'); break;
+						case 'xsub':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <span>'+getPassword(6)+'</span></li>'); break;
+						case 'xval':	for (i=0;i<num;i++) mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#'+getPassword(3,true)+'" title="'+getPassword(6)+'">'+getPassword(6)+'</a></li>'); break;
+						case 'xdta':	for (i=0;i<num;i++) { var sDta = getPassword(6); mEl.append('<li><span>'+getPassword(1,true)+'</span> <a href="#" data-foo="'+sDta+'">'+sDta+'</a></li>'); } break;
 
-					case 'xinp':
-						for (i=0;i<num;i++) {
-							var fnGetFormElement = function(){
-								var aTypes = ['text','password','file','url','email','number','range','search','date','time','select'];//,'radio'
-								var sType = aTypes[Math.floor(Math.random()*aTypes.length)];
-								var sName = getPassword(6,true);
-								var sEcho = '<label for="'+sName+'">'+sType+'</label>';
-								switch (sType) {
-									case 'text':		sEcho += '<input type="text" name="'+sName+'" placeholder="enter some text" />'; break;
-									case 'password':	sEcho += '<input type="password" name="'+sName+'" placeholder="enter a password" />'; break;
-									case 'url':			sEcho += '<input type="url" name="'+sName+'" placeholder="enter an url" />'; break;
-									case 'number':		sEcho += '<input type="number" name="'+sName+'" />'; break;
-									case 'range':		sEcho += '<input type="range" name="'+sName+'" />'; break;
-									case 'file':		sEcho += '<input type="file" name="'+sName+'" />'; break;
-									case 'date':		sEcho += '<input type="date" name="'+sName+'" />'; break;
-									case 'time':		sEcho += '<input type="time" name="'+sName+'" />'; break;
-									case 'search':		sEcho += '<input type="search" name="'+sName+'" placeholder="search something" />'; break;
-									case 'email':		sEcho += '<input type="email" name="'+sName+'" placeholder="enter an email adress" />'; break;
-									case 'radio':
-										for (var j=0;j<3;j++) {
-											var sVal = getPassword(6,true);
-											sEcho += '<input type="radio" name="'+sName+'" value="'+sVal+'">'+sVal+'</input>';
-										}
-									break;
-									case 'select':
-										sEcho += '<select name="'+getPassword(6,true)+'">';
-										for (j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
-										sEcho += '<optgroup label="'+getPassword(6,true)+'">';
-										for (j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
-										sEcho += '</optgroup>';
-										sEcho += '</select>';
-									break;
-								}
-								return sEcho;
-							};
-							mEl.append('<li>'+fnGetFormElement()+'<span></span></li>');
-						}
-					break;
-
-
-
-					case 'xany':	for (i=0;i<num;i++) mEl.append('<span>'+getPassword(5,true)+' </span>'); break;
-					case 'ximg':
-						for (i=0;i<num;i++) {
-							var c = '#'+rndHex(3);
-							$('<img src="style/logo.png" title="'+getPassword(2)+'" />').css({
-								 border:'23px solid '+c
-								,background:c
-							}).appendTo(mEl);
-						}
-					break;
-					case 'xcst':	for (i=0;i<num;i++) mEl.append('<li>'+rand(0,999)+'</li>'); break;
-					case 'xnum':	for (i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
-					case 'xmix':
-						var sBase1 = getPassword(3,true);
-						var sBase2 = getPassword(3,true);
-						var sNum = rand(0,150);
-						for (i=0;i<num/2;i++) mEl.append('<li>'+(getPassword(3,true)+rand(0,150)+getPassword(3,true)+rand(0,150))+'</li>');
-						for (i=0;i<num/2;i++) mEl.append('<li>'+(sBase1+rand(0,150)+sBase2+rand(0,150))+'</li>');
-						for (i=0;i<num/2;i++) mEl.append('<li>'+(sBase1+sNum+sBase2+rand(0,150))+'</li>');
-					break;
-					case 'xrnd':
-						for (i=0;i<num;i++) {
-							if (i>0) {
-								mEl.append('<li>'+getPassword(6)+'</li>');
-							} else {
-								var sId = 's'+i;
-								mEl.append('<li><ul id="'+sId+'"></ul></li>');
-								refill(sId,6);
+						case 'xinp':
+							for (i=0;i<num;i++) {
+								var fnGetFormElement = function(){
+									var aTypes = ['text','password','file','url','email','number','range','search','date','time','select'];//,'radio'
+									var sType = aTypes[Math.floor(Math.random()*aTypes.length)];
+									var sName = getPassword(6,true);
+									var sEcho = '<label for="'+sName+'">'+sType+'</label>';
+									switch (sType) {
+										case 'text':		sEcho += '<input type="text" name="'+sName+'" placeholder="enter some text" />'; break;
+										case 'password':	sEcho += '<input type="password" name="'+sName+'" placeholder="enter a password" />'; break;
+										case 'url':			sEcho += '<input type="url" name="'+sName+'" placeholder="enter an url" />'; break;
+										case 'number':		sEcho += '<input type="number" name="'+sName+'" />'; break;
+										case 'range':		sEcho += '<input type="range" name="'+sName+'" />'; break;
+										case 'file':		sEcho += '<input type="file" name="'+sName+'" />'; break;
+										case 'date':		sEcho += '<input type="date" name="'+sName+'" />'; break;
+										case 'time':		sEcho += '<input type="time" name="'+sName+'" />'; break;
+										case 'search':		sEcho += '<input type="search" name="'+sName+'" placeholder="search something" />'; break;
+										case 'email':		sEcho += '<input type="email" name="'+sName+'" placeholder="enter an email adress" />'; break;
+										case 'radio':
+											for (var j=0;j<3;j++) {
+												var sVal = getPassword(6,true);
+												sEcho += '<input type="radio" name="'+sName+'" value="'+sVal+'">'+sVal+'</input>';
+											}
+										break;
+										case 'select':
+											sEcho += '<select name="'+getPassword(6,true)+'">';
+											for (j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
+											sEcho += '<optgroup label="'+getPassword(6,true)+'">';
+											for (j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
+											sEcho += '</optgroup>';
+											sEcho += '</select>';
+										break;
+									}
+									return sEcho;
+								};
+								mEl.append('<li>'+fnGetFormElement()+'<span></span></li>');
 							}
-						}
-					break;
-					case 'greek':	mEl.append('<li>'+('άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
-					case 'danish':	mEl.append('<li>'+('København,Æble,Øresund,Åben,Aarhus,Åse'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
-					case 'serb':	mEl.append('<li>'+('coga,čega,čovjek,džep,godina,gospodin,liljana,luđak,ljubav,muškarac,muž,nož,njuška,zec'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
-					case 'xmul':
-						var aNames = [];
-						for (i=0;i<(num/2<<0);i++) aNames.push(getPassword(6));
+						break;
 
-						for (i=0;i<num;i++) {
-							var iTimestamp = rand(1145925286604,1345925286604)
-								,oDate = new Date(iTimestamp)
-								,iMonth = oDate.getMonth()+1
-								,iDay = oDate.getDate()
-								,sDate = (iDay<10?'0':'')+iDay+'-'+(iMonth<10?'0':'')+iMonth+'-'+oDate.getFullYear();
-							mEl.append('<li><span class="name" style="display:inline-block;width:100px;">'+aNames[rand(0,aNames.length)]+'</span> <span class="date" style="font-family:monospace;" data-timestamp="'+iTimestamp+'">'+sDate+'</span> </li>');
-						}
-					break;
-					default:  for (i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
+
+
+						case 'xany':	for (i=0;i<num;i++) mEl.append('<span>'+getPassword(5,true)+' </span>'); break;
+						case 'ximg':
+							for (i=0;i<num;i++) {
+								var c = '#'+rndHex(3);
+								$('<img src="style/logo.png" title="'+getPassword(2)+'" />').css({
+									 border:'23px solid '+c
+									,background:c
+								}).appendTo(mEl);
+							}
+						break;
+						case 'xcst':	for (i=0;i<num;i++) mEl.append('<li>'+rand(0,999)+'</li>'); break;
+						case 'xnum':	for (i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
+						case 'xmix':
+							var sBase1 = getPassword(3,true);
+							var sBase2 = getPassword(3,true);
+							var sNum = rand(0,150);
+							for (i=0;i<num/2;i++) mEl.append('<li>'+(getPassword(3,true)+rand(0,150)+getPassword(3,true)+rand(0,150))+'</li>');
+							for (i=0;i<num/2;i++) mEl.append('<li>'+(sBase1+rand(0,150)+sBase2+rand(0,150))+'</li>');
+							for (i=0;i<num/2;i++) mEl.append('<li>'+(sBase1+sNum+sBase2+rand(0,150))+'</li>');
+						break;
+						case 'xrnd':
+							for (i=0;i<num;i++) {
+								if (i>0) {
+									mEl.append('<li>'+getPassword(6)+'</li>');
+								} else {
+									var sId = 's'+i;
+									mEl.append('<li><ul id="'+sId+'"></ul></li>');
+									refill(sId,6);
+								}
+							}
+						break;
+						case 'greek':	mEl.append('<li>'+('άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+						case 'danish':	mEl.append('<li>'+('København,Æble,Øresund,Åben,Aarhus,Åse'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+						case 'serb':	mEl.append('<li>'+('coga,čega,čovjek,džep,godina,gospodin,liljana,luđak,ljubav,muškarac,muž,nož,njuška,zec'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+						case 'xmul':
+							var aNames = [];
+							for (i=0;i<(num/2<<0);i++) aNames.push(getPassword(6));
+
+							for (i=0;i<num;i++) {
+								var iTimestamp = rand(1145925286604,1345925286604)
+									,oDate = new Date(iTimestamp)
+									,iMonth = oDate.getMonth()+1
+									,iDay = oDate.getDate()
+									,sDate = (iDay<10?'0':'')+iDay+'-'+(iMonth<10?'0':'')+iMonth+'-'+oDate.getFullYear();
+								mEl.append('<li><span class="name" style="display:inline-block;width:100px;">'+aNames[rand(0,aNames.length)]+'</span> <span class="date" style="font-family:monospace;" data-timestamp="'+iTimestamp+'">'+sDate+'</span> </li>');
+							}
+						break;
+						default:  for (i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
+					}
 				}
-			}
-			function sortTable(nr) {
-				aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
-				$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
-			}
-			function addTRow() {
-				var sName = getPassword(6);
-				var iInt = rand(0,9999);
-				var fFloat = rand(0,9999)/100;
-				var sStNm = getPassword(1,true).toUpperCase()+'_'+rand(0,99);
-				var sSome = brnd()?(brnd()?rand(0,999):getPassword(4)):'';
-				var sRow = '<tr>';
-				sRow += '<td abbr="'+sName+'">'+sName+'</td>';
-				sRow += '<td abbr="'+iInt+'">'+iInt+'</td>';
-				sRow += '<td abbr="'+fFloat+'">'+fFloat+'</td>';
-				sRow += '<td abbr="'+sStNm+'">'+sStNm+'</td>';
-				sRow += '<td'+(sSome!=''?' abbr="'+sSome+'"':'')+'>'+sSome+'</td>';
-				sRow += '<td><a onclick="deleteTRow(this)">x</a></td>';
-				sRow += '</tr>';
-				$XTableTB.append(sRow);
-			}
-			function deleteTRow(e) {
-				$(e).parent().parent().remove();
-			}
-			function getPassword(iLen,bCut) {
-				if (!bCut) bCut = false;
-				var aLtr = [['a','e','i','o','u','y'],['aa','ai','au','ea','ee','ei','eu','ia','ie','io','iu','oa','oe','oi','ua','ui'],['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'],['bb','br','bs','cc','ch','cl','cr','db','dd','df','dg','dh','dj','dk','dl','dm','dn','dp','dq','dr','ds','dt','dv','dw','dz','fb','fd','ff','fg','fh','fj','fk','fl','fm','fn','fp','fq','fr','fs','ft','fv','fw','fz','gb','gd','gf','gg','gh','gj','gk','gl','gm','gn','gp','gq','gr','gs','gt','gv','gw','gz','kb','kd','kf','kg','kh','kj','kk','kl','km','kn','kp','kq','kr','ks','kt','kv','kw','kz','lb','ld','lf','lg','lh','lj','lk','ll','lm','ln','lp','lq','lr','ls','lt','lv','lw','lz','mb','md','mf','mg','mh','mj','mk','ml','mm','mn','mp','mq','mr','ms','mt','mv','mw','mz','nb','nd','nf','ng','nh','nj','nk','nl','nm','nn','np','nq','nr','ns','nt','nv','nw','nz','pb','pd','pf','pg','ph','pj','pk','pl','pm','pn','pp','pq','pr','ps','pt','pv','pw','pz','qb','qd','qf','qg','qh','qj','qk','ql','qm','qn','qp','qq','qr','qs','qt','qv','qw','qz','rb','rd','rf','rg','rh','rj','rk','rl','rm','rn','rp','rq','rr','rs','rt','rv','rw','rz','sb','sc','sd','sf','sg','sh','sj','sk','sl','sm','sn','sp','sq','sr','ss','st','sv','sw','sz','tb','td','tf','tg','th','tj','tk','tl','tm','tn','tp','tq','tr','ts','tt','tv','tw','tz','vb','vd','vf','vg','vh','vj','vk','vl','vm','vn','vp','vq','vr','vs','vt','vv','vw','vz','xb','xd','xf','xg','xh','xj','xk','xl','xm','xn','xp','xq','xr','xs','xt','xv','xw','xx','xz']];
-				var iSnm = 6;
-				var sPsw = "";
-				var iNum = 0;
-				for (var i=0;i<iSnm;i++) {
-					if (i==0)			iNum = rand(0,2);
-					else if (i==iSnm-1)	iNum = (iNum<2)?2:rand(0,1);
-					else				iNum = (iNum<2)?rand(0,1)+2:rand(0,1);
-					var aLst = aLtr[iNum];
-					sPsw += aLst[ rand(0,aLst.length-1) ];
+				function sortTable(nr) {
+					aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
+					$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
 				}
-				return bCut?sPsw.substr(0,iLen):sPsw;
-			}
-			function rand(fStr,fEnd) {
-				var fNum = fStr + Math.random()*(fEnd-fStr);
-				return (isInt(fStr)&&isInt(fEnd))?Math.round(fNum):fNum;
-			}
-			function rndHex(n) {
-				var sHex = Math.floor(Math.random()*Math.pow(16,n)).toString(16);
-				var iHex = sHex.length;
-				if (iHex<n) for (var i=0;i<n-iHex;i++) sHex = '0'+sHex;
-				return sHex;
-			}
-			function brnd() {
-				return Math.random()<.5;
-			}
-			function isInt(n) {
-				return (n%1)==0;
-			}
-		</script>
-		<script>
-
-		  var _gaq = _gaq || [];
-		  _gaq.push(['_setAccount', 'UA-37777223-1']);
-		  _gaq.push(['_trackPageview']);
-
-		  setTimeout("_gaq.push(['_trackEvent', '15_seconds', 'read'])", 15000);
-
-		  (function() {
-		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		  })();
-
-		</script>
-	</head>
-	<body>
-		<header class="main">
-			<div><h1><span></span></h1><nav></nav></div>
-		</header>
-		<section id="intro">
-			<div>
+				function addTRow() {
+					var sName = getPassword(6);
+					var iInt = rand(0,9999);
+					var fFloat = rand(0,9999)/100;
+					var sStNm = getPassword(1,true).toUpperCase()+'_'+rand(0,99);
+					var sSome = brnd()?(brnd()?rand(0,999):getPassword(4)):'';
+					var sRow = '<tr>';
+					sRow += '<td abbr="'+sName+'">'+sName+'</td>';
+					sRow += '<td abbr="'+iInt+'">'+iInt+'</td>';
+					sRow += '<td abbr="'+fFloat+'">'+fFloat+'</td>';
+					sRow += '<td abbr="'+sStNm+'">'+sStNm+'</td>';
+					sRow += '<td'+(sSome!=''?' abbr="'+sSome+'"':'')+'>'+sSome+'</td>';
+					sRow += '<td><a onclick="deleteTRow(this)">x</a></td>';
+					sRow += '</tr>';
+					$XTableTB.append(sRow);
+				}
+				function deleteTRow(e) {
+					$(e).parent().parent().remove();
+				}
+				function getPassword(iLen,bCut) {
+					if (!bCut) bCut = false;
+					var aLtr = [['a','e','i','o','u','y'],['aa','ai','au','ea','ee','ei','eu','ia','ie','io','iu','oa','oe','oi','ua','ui'],['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'],['bb','br','bs','cc','ch','cl','cr','db','dd','df','dg','dh','dj','dk','dl','dm','dn','dp','dq','dr','ds','dt','dv','dw','dz','fb','fd','ff','fg','fh','fj','fk','fl','fm','fn','fp','fq','fr','fs','ft','fv','fw','fz','gb','gd','gf','gg','gh','gj','gk','gl','gm','gn','gp','gq','gr','gs','gt','gv','gw','gz','kb','kd','kf','kg','kh','kj','kk','kl','km','kn','kp','kq','kr','ks','kt','kv','kw','kz','lb','ld','lf','lg','lh','lj','lk','ll','lm','ln','lp','lq','lr','ls','lt','lv','lw','lz','mb','md','mf','mg','mh','mj','mk','ml','mm','mn','mp','mq','mr','ms','mt','mv','mw','mz','nb','nd','nf','ng','nh','nj','nk','nl','nm','nn','np','nq','nr','ns','nt','nv','nw','nz','pb','pd','pf','pg','ph','pj','pk','pl','pm','pn','pp','pq','pr','ps','pt','pv','pw','pz','qb','qd','qf','qg','qh','qj','qk','ql','qm','qn','qp','qq','qr','qs','qt','qv','qw','qz','rb','rd','rf','rg','rh','rj','rk','rl','rm','rn','rp','rq','rr','rs','rt','rv','rw','rz','sb','sc','sd','sf','sg','sh','sj','sk','sl','sm','sn','sp','sq','sr','ss','st','sv','sw','sz','tb','td','tf','tg','th','tj','tk','tl','tm','tn','tp','tq','tr','ts','tt','tv','tw','tz','vb','vd','vf','vg','vh','vj','vk','vl','vm','vn','vp','vq','vr','vs','vt','vv','vw','vz','xb','xd','xf','xg','xh','xj','xk','xl','xm','xn','xp','xq','xr','xs','xt','xv','xw','xx','xz']];
+					var iSnm = 6;
+					var sPsw = "";
+					var iNum = 0;
+					for (var i=0;i<iSnm;i++) {
+						if (i==0)			iNum = rand(0,2);
+						else if (i==iSnm-1)	iNum = (iNum<2)?2:rand(0,1);
+						else				iNum = (iNum<2)?rand(0,1)+2:rand(0,1);
+						var aLst = aLtr[iNum];
+						sPsw += aLst[ rand(0,aLst.length-1) ];
+					}
+					return bCut?sPsw.substr(0,iLen):sPsw;
+				}
+				function rand(fStr,fEnd) {
+					var fNum = fStr + Math.random()*(fEnd-fStr);
+					return (isInt(fStr)&&isInt(fEnd))?Math.round(fNum):fNum;
+				}
+				function rndHex(n) {
+					var sHex = Math.floor(Math.random()*Math.pow(16,n)).toString(16);
+					var iHex = sHex.length;
+					if (iHex<n) for (var i=0;i<n-iHex;i++) sHex = '0'+sHex;
+					return sHex;
+				}
+				function brnd() {
+					return Math.random()<.5;
+				}
+				function isInt(n) {
+					return (n%1)==0;
+				}
+			</script>
+		</head>
+		<body>
+			<header class="main">
+				<div><h1><span></span></h1><nav></nav></div>
+			</header>
+			<section id="intro">
 				<div>
-					<p>TinySort is a small and simple jQuery plugin that will sort any nodetype by it's text- or attribute value, or by that of one of it's children.<br/>The examples below should help getting you on your way.</p>
+					<div>
+						<p>TinySort is a small and simple jQuery plugin that will sort any nodetype by it's text- or attribute value, or by that of one of it's children.<br/>The examples below should help getting you on your way.</p>
 
-					<p>For those interested: there is a <a href="test/unit">unit/regression test here</a>.</p>
+						<p>For those interested: there is a <a href="test/unit">unit/regression test here</a>.</p>
 
-					<p><small>If you find a bug, have a feature request or a code improvement you can <a href="https://github.com/Sjeiti/TinySort/issues">file them here</a>. Please <a href="http://jsfiddle.net/">provide code examples</a> where applicable.</small></p>
+						<p><small>If you find a bug, have a feature request or a code improvement you can <a href="https://github.com/Sjeiti/TinySort/issues">file them here</a>. Please <a href="http://jsfiddle.net/">provide code examples</a> where applicable.</small></p>
+					</div>
+					<aside>
+						<h3>download</h3>
+						<a class="button download choosehref" href="dist/jquery.tinysort.min.js">
+							<label for="tts1"><input type="radio" id="tts1" name="tts" value="dist/jquery.tinysort.js" /><span class="filesize"></span> source</label><br/>
+							<label for="tts2"><input type="radio" id="tts2" name="tts" value="dist/jquery.tinysort.min.js" checked /><span class="filesize"></span> minified</label><br/>
+							<label for="tts3"><input type="radio" id="tts3" name="tts" value="dist/jquery.tinysort.jgz" /><span class="filesize"></span> gzipped</label><br/>
+							<span class="iconic download"></span>TinySort
+						</a>
+
+						<a class="button download choosehref" href="dist/jquery.tinysort.charorder.min.js">
+							<label for="pco1"><input type="radio" id="pco1" name="pco" value="dist/jquery.tinysort.charorder.js" /><span class="filesize"></span> source</label><br/>
+							<label for="pco2"><input type="radio" id="pco2" name="pco" value="dist/jquery.tinysort.charorder.min.js" checked /><span class="filesize"></span> minified</label><br/>
+							<label for="pco3"><input type="radio" id="pco3" name="pco" value="dist/jquery.tinysort.charorder.jgz" /><span class="filesize"></span> gzipped</label><br/>
+							<span class="iconic download"></span> CharOrder plugin
+						</a>
+						<a href="https://github.com/Sjeiti/TinySort/zipball/master" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> full zip<br/><small>including examples</small></a>
+
+						<a href="https://github.com/Sjeiti/TinySort.git" class="repo" data-type="git" rel="external" target="_blank"></a>
+					</aside>
+					<br class="clear" />
 				</div>
-				<aside>
-					<h3>download</h3>
-					<a class="button download choosehref" href="src/jquery.tinysort.min.js">
-						<label for="tts1"><input type="radio" id="tts1" name="tts" value="src/jquery.tinysort.js" /><span class="filesize"></span> source</label><br/>
-						<label for="tts2"><input type="radio" id="tts2" name="tts" value="src/jquery.tinysort.min.js" checked /><span class="filesize"></span> minified</label><br/>
-						<label for="tts3"><input type="radio" id="tts3" name="tts" value="src/jquery.tinysort.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
-						<span class="iconic download"></span>TinySort
-					</a>
+			</section>
+			<div id="page">
 
-					<a class="button download choosehref" href="src/jquery.tinysort.charorder.min.js">
-						<label for="pco1"><input type="radio" id="pco1" name="pco" value="src/jquery.tinysort.charorder.js" /><span class="filesize"></span> source</label><br/>
-						<label for="pco2"><input type="radio" id="pco2" name="pco" value="src/jquery.tinysort.charorder.min.js" checked /><span class="filesize"></span> minified</label><br/>
-						<label for="pco3"><input type="radio" id="pco3" name="pco" value="src/jquery.tinysort.charorder.min.jgz" /><span class="filesize"></span> gzipped</label><br/>
-						<span class="iconic download"></span> CharOrder plugin
-					</a>
-					<a href="https://github.com/Sjeiti/TinySort/zipball/master" class="button download small"><span class="iconic download"></span> <span class="filesize"></span> full zip<br/><small>including examples</small></a>
 
-					<a href="https://github.com/Sjeiti/TinySort.git" class="repo" data-type="git" rel="external" target="_blank"></a>
-				</aside>
-				<br class="clear" />
+
+
+				<section>
+					<h2>usage</h2>
+					<p>The first argument in the tsort function can either be nothing...</p>
+					<pre>$('li').tsort();
+	$('ul#people&gt;li').tsort();</pre>
+						<p>a string (as you would in <a href="http://docs.jquery.com/Traversing/find#expr">find</a>)...</p>
+						<pre>$('ul#people&gt;li').tsort('span.surname');</pre>
+						<p>a 'settings' object...</p>
+						<pre>$('ul#people&gt;li').tsort({place:'end'});</pre>
+						<p>both...</p>
+						<pre>$('ul#people&gt;li').tsort('img',{order:'desc',attr:'alt'});</pre>
+						<p>or more if you want multiple sort criteria...</p>
+						<pre>$('ul#people&gt;li').tsort('span.surname',{order:'desc'},'span.name',{order:'desc'});</pre>
+
+						<p>Change default settings globally like so:</p>
+						<pre>$.tinysort.defaults.order = 'desc';
+		$.tinysort.defaults.attr = 'title';</pre>
+
+					<br/>
+
+					<p>TinySort has a number of settings:</p>
+
+					<table class="props" id="properties">
+						<thead><tr><th>property</th><th>type</th><th>description</th><th>possible values</th><th>default</th></tr></thead>
+						<tbody>
+							<tr>
+								<td>order</td>
+								<td>String</td>
+								<td>the order of the sorting method</td>
+								<td>
+									<table>
+										<tr><td>asc</td><td>ascending order</td></tr>
+										<tr><td>desc</td><td>descending order</td></tr>
+										<tr><td>rand</td><td>random order</td></tr>
+									</table>
+								</td>
+								<td>"asc"</td>
+							</tr>
+							<tr>
+								<td>attr</td>
+								<td>String</td>
+								<td>order by attribute value (ie title, href, class)</td>
+								<td>anything</td>
+								<td>""</td>
+							</tr>
+							<tr>
+								<td>useVal</td>
+								<td>Boolean</td>
+								<td>use element value instead of text</td>
+								<td>
+									<table>
+										<tr><td>false</td><td>use text</td></tr>
+										<tr><td>true</td><td>use value</td></tr>
+									</table>
+								</td>
+								<td>false</td>
+							</tr>
+							<tr>
+								<td>data</td>
+								<td>String</td>
+								<td>use the data attribute for sorting</td>
+								<td>
+									<table>
+										<tr><td>null</td><td>use text</td></tr>
+										<tr><td>String</td><td>use data attribute</td></tr>
+									</table>
+								</td>
+								<td>null</td>
+							</tr>
+							<tr>
+								<td>charOrder</td>
+								<td>String</td>
+								<td>use the data attribute for sorting</td>
+								<td>
+									<table>
+										<tr><td>null</td><td>use text</td></tr>
+										<tr><td>String</td><td>use data attribute</td></tr>
+									</table>
+								</td>
+								<td>null</td>
+							</tr>
+							<tr>
+								<td>place</td>
+								<td>String</td>
+								<td>determines the placement of the ordered elements in respect to the unordered elements filtered out by using the 'attr' setting or the first parsed 'find' string</td>
+								<td>
+									<table>
+										<tr><td>start</td><td>sorted elements are prepended at the parent attribute</td></tr>
+										<tr><td>end</td><td>sorted elements are appended at the parent attribute</td></tr>
+										<tr><td>org</td><td>placement occurs at the positions the sortable elements are found</td></tr>
+										<tr><td>first</td><td>elements are appended after the first occurance of a sortable element</td></tr>
+									</table>
+								</td>
+								<td>"start"</td>
+							</tr>
+							<tr>
+								<td>returns</td>
+								<td>Boolean</td>
+								<td>affects the returned jquery array</td>
+								<td>
+									<table>
+										<tr><td>false</td><td>all elements are returned</td></tr>
+										<tr><td>true</td><td>only sorted elements are returned</td></tr>
+									</table>
+								</td>
+								<td>false</td>
+							</tr>
+							<tr>
+								<td>cases</td>
+								<td>Boolean</td>
+								<td>a case sensitive sort (orders [aB,aa,ab,bb])</td>
+								<td>
+									<table>
+										<tr><td>false</td><td>cases are ignored</td></tr>
+										<tr><td>true</td><td>case sensitive sort</td></tr>
+									</table>
+								</td>
+								<td>false</td>
+							</tr>
+							<tr>
+								<td>ignoreDashes</td>
+								<td>Boolean</td>
+								<td>ignore dashes when matching numerals to prevent negative numbers</td>
+								<td>
+									<table>
+										<tr><td>false</td><td>dashes are ignored</td></tr>
+										<tr><td>true</td><td>dashes are matched</td></tr>
+									</table>
+								</td>
+								<td>false</td>
+							</tr>
+							<tr>
+								<td>forceStrings</td>
+								<td>Boolean</td>
+								<td>use string value for numerals</td>
+								<td>
+									<table>
+										<tr><td>false</td><td>numbers sorted by numeric value</td></tr>
+										<tr><td>true</td><td>everything sorted as string</td></tr>
+									</table>
+								</td>
+								<td>false</td>
+							</tr>
+							<tr>
+								<td>sortFunction</td>
+								<td>function</td>
+								<td>override the default sort function</td>
+								<td>any sort function like function(a,b){return -1,0,1;}
+								where the two parameters are objects with the following properties:
+								<table>
+									<tr><td>e</td><td>jQuery object</td></tr>
+									<tr><td>n</td><td>original order</td></tr>
+									<tr><td>s</td><td>string to sort</td></tr>
+								</table>
+								</td>
+								<td>...</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+				<section>
+					<h2>examples</h2>
+
+					<h3>default sorting</h3>
+					<p>The default sort is done by simply calling the 'tsort' function onto your selection.</p>
+					<pre class="example">$('ul#xdflt>li').tsort();</pre>
+
+					<h3>sort on any node</h3>
+					<p>TinySort works on any nodeType. The following is a div with spans.</p>
+					<pre class="example" title="12">$('div#xany>span').tsort('',{order:'desc'});</pre>
+
+					<h3>sorted numbers</h3>
+					<p>TinySort also works on numbers.</p>
+					<pre class="example">$('ul#xnum>li').tsort();</pre>
+
+					<h3 title="literal vs numeral">mixed literal and numeral</h3>
+					<p>In a normal sort the order would be a1,a11,a2 while you'd really want it to be a1,a2,a11. TinySort corrects this:</p>
+					<pre class="example">$('ul#xmix>li').tsort();</pre>
+
+					<h3 title="attribute value">sorted by attribute value</h3>
+					<p>Sort by attribute value by parsing the additional parameter 'attr=attributeName'. This will sort by attribute of, either the jquery selection, or of the sub-selection (if provided). In this case sort is by href on the anchor sub-selection.</p>
+					<pre class="example">$('ul#xval>li').tsort('a',{attr:'href'});</pre>
+					<p>Another example: images sorted by attribute title value.</p>
+					<pre class="example">$('span#ximg>img').tsort({attr:'title'});</pre>
+
+					<h3 title="sub-selection">sorted by sub-selection</h3>
+					<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The returned array will be in the newly sorted order.<br/>
+					In this example the list elements are sorted to the text of the second span.</p>
+					<pre class="example">$('ul#xsub>li').tsort('span:eq(1)');</pre>
+					<p>The following example will only sort the non-striked elements.</p>
+					<pre class="example" title="12">$('ul#xattr>li').tsort('span[class!=striked]');</pre>
+
+					<h3 title="return only sorted">return only sorted elements</h3>
+					<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
+					<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
+
+					<h3>multiple sort criteria</h3>
+					<p>Sometimes multiple sorting criteria are required. For instance: you might want to sort a list of people first by surname then by name.</p>
+					<p>For multiple sorting rules you can just append the parameters. So tsort(selector,object) becomes tsort(selector1,object1,selector2,object2,selector3,object3...). You can also leave out either the selector or the object if it's not needed: tsort(selector1,selector2,object2,object3...). Keep in mind that tsort will look for selector-object pairs and if no applicable pair is formed it will use default values. In this example three arguments are two criteria: the first argument uses the default options object, the second argument uses the third argument as options object.</p>
+					<pre class="example" title="12">$('ul#xmul>li').tsort('span.name','span.date',{data:'timestamp'});</pre>
+
+					<h3>non-latin characters</h3>
+					<p>A normal array sorts according to <a href="http://en.wikipedia.org/wiki/Unicode">Unicode</a>, which is wrong for most languages. For correct ordering you can use the charorder plugin to parse a rule with the 'charOrder' parameter. This is a string that consist of exceptions, not the entire alfabet. For characters that should sort equally use brackets. For characters that consist of multiple characters use curly braces. For example: </p>
+					<ul>
+						<li><p><strong>cčć</strong> sorts c č and ć in that order</p></li>
+						<li><p><strong>æøå</strong> in absence of a latin character æ ø and å are sorted after z</p></li>
+						<li><p><strong>ι[ίϊΐ]</strong> ί ϊ and ΐ are sorted equally to ι</p></li>
+						<li><p><strong>d{dž}</strong> dž is sorted as one character after d</p></li>
+						<li><p><strong>å[{Aa}]</strong> Aa is sorted as one character, equal to å, after z</p></li>
+					</ul>
+					<p>Here some real examples:</p>
+					<pre class="example">$('ul#greek>li').tsort({charOrder:'α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]'});</pre>
+					<pre class="example">$('ul#danish>li').tsort({charOrder:'æøå[{Aa}]'});</pre>
+					<pre class="example">$('ul#serb>li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});</pre>
+					<p>Here are some example languages:
+					<table class="props">
+						<thead><tr>
+							<th>Language</th>
+							<th>charOrder</th>
+						</tr></thead>
+						<tfoot><tr>
+							<td colspan="2">since only one of these is my native language please feel free to contact me if you think corrections are in order</td>
+						</tr></tfoot>
+						<tbody>
+							<tr><td>Cyrilic</td><td>абвгдђежзијклљмнњопрстћуфхцчџш</td></tr>
+							<tr><td>Czech</td><td>a[á]cčd[ď]e[éě]h{ch}i[í]n[ň]o[ó]rřsšt[ť]u[úů]y[ý]zž</td></tr>
+							<tr><td>Danish and Norwegian</td><td>æøå[{Aa}]</td></tr>
+							<tr><td>Dutch</td><td>a[áàâä]c[ç]e[éèêë]i[íìîï]o[óòôö]u[úùûü]</td></tr>
+							<tr><td>French</td><td>a[àâ]c[ç]e[éèêë]i[ïî]o[ôœ]u[ûù]</td></tr>
+							<tr><td>German</td><td>a[ä]o[ö]s{ss}u[ü]</td></tr>
+							<tr><td>Greek</td><td>α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]</td></tr>
+							<tr><td>Icelandic</td><td>a[á]dðe[é]i[í]o[ó]u[ú]y[ý]zþæö</td></tr>
+							<tr><td>Polish</td><td>aąbcćeęlłnńoósśuúzźż</td></tr>
+							<tr><td>Serbo-Croatian</td><td>cčćd{dž}đl{lj}n{nj}sšzž</td></tr>
+							<tr><td>Spanish</td><td>a[á]c{ch}e[é]i[í]l{ll}nño[ó]u[ú]y[ý]</td></tr>
+							<tr><td>Swedish</td><td>åäö</td></tr>
+						</tbody>
+					</table>
+					</p>
+
+					<h3>sort <a href="http://api.jquery.com/val/">$.val()</a></h3>
+					<p>The .val() method is primarily used to get the values of form elements. By parsing the useVal attribute you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.</p>
+					<pre class="example">$('ul#xinp>li').tsort('>input,>select',{useVal:true}).each(function(i,el){
+		var $Li = $(el);
+		$Li.find('span').text(' : '+$Li.find('>input,>select').filter(':eq(0)').val());
+	});</pre>
+
+					<h3>sort <a href="http://api.jquery.com/data/">$.data()</a></h3>
+					<p>Sort by data attribute by parsing the additional parameter 'data=dataName'.</p>
+					<pre class="example">$('ul#xdta>li').tsort('a',{data:'foo'});</pre>
+
+					<h3>sorted descending</h3>
+					<p>Sort by ascending or descending order by parsing the additional 'order="desc"/"asc"' parameter.</p>
+					<pre class="example">$('ul#xdesc>li').tsort('',{order:'desc'});</pre>
+
+					<h3>randomize</h3>
+					<p>TinySort can also order randomly (or is that a contradiction).</p>
+					<pre class="example">$('ul#xrnd li').tsort({order:'rand'});</pre>
+
+					<h3 title="custom sort function">parsing a custom sort function</h3>
+					<p>Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.</p>
+					<pre class="example">$('ul#xcst li').tsort('',{sortFunction:function(a,b){
+		var iCalcA = parseInt(a.s)%16;
+		var iCalcB = parseInt(b.s)%16;
+		return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
+	}});</pre>
+
+					<h3>sorting tables</h3>
+					<p>With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:</p>
+					<pre>var aAsc = [];
+	function sortTable(nr) {
+		console.log('sortTable',nr);
+		aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
+		$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
+	}</pre>
+					<p>Note that the mixed column only sorts those rows of which the td's have the abbr attribute set, and because of the default place value the non-sorted elements always remain at the bottom</p>
+					<table class="props xmpl" id="xtable">
+						<thead>
+							<tr>
+								<th><a href="javascript:sortTable(0)">word</a></th>
+								<th><a href="javascript:sortTable(1)">int</a></th>
+								<th><a href="javascript:sortTable(2)">float</a></th>
+								<th><a href="javascript:sortTable(3)">mixed</a></th>
+								<th><a href="javascript:sortTable(4)">mixed</a></th>
+								<th><a href="javascript:addTRow()">add row</a></th>
+							</tr>
+						</thead>
+						<tbody><tr><td></td></tr></tbody>
+					</table>
+
+					<h3>animated sorting</h3>
+					<p>Tinysort has no built in animating features but it can quite easily be accomplished through regular js/jQuery.</p>
+					<pre class="example">var $Ul = $('ul#xanim');
+	$Ul.css({position:'relative',height:$Ul.height(),display:'block'});
+	var iLnH;
+	var $Li = $('ul#xanim>li');
+	$Li.each(function(i,el){
+		var iY = $(el).position().top;
+		$.data(el,'h',iY);
+		if (i===1) iLnH = iY;
+	});
+	$Li.tsort().each(function(i,el){
+		var $El = $(el);
+		var iFr = $.data(el,'h');
+		var iTo = i*iLnH;
+		$El.css({position:'absolute',top:iFr}).animate({top:iTo},500);
+	});</pre>
+				</section>
 			</div>
-		</section>
-		<div id="page">
-
-
-
-
-			<section>
-				<h2>usage</h2>
-				<p>The first argument in the tsort function can either be nothing...</p>
-				<pre>$('li').tsort();
-$('ul#people&gt;li').tsort();</pre>
-					<p>a string (as you would in <a href="http://docs.jquery.com/Traversing/find#expr">find</a>)...</p>
-					<pre>$('ul#people&gt;li').tsort('span.surname');</pre>
-					<p>a 'settings' object...</p>
-					<pre>$('ul#people&gt;li').tsort({place:'end'});</pre>
-					<p>both...</p>
-					<pre>$('ul#people&gt;li').tsort('img',{order:'desc',attr:'alt'});</pre>
-					<p>or more if you want multiple sort criteria...</p>
-					<pre>$('ul#people&gt;li').tsort('span.surname',{order:'desc'},'span.name',{order:'desc'});</pre>
-
-					<p>Change default settings globally like so:</p>
-					<pre>$.tinysort.defaults.order = 'desc';
-	$.tinysort.defaults.attr = 'title';</pre>
-
-				<br/>
-
-				<p>TinySort has a number of settings:</p>
-
-				<table class="props" id="properties">
-					<thead><tr><th>property</th><th>type</th><th>description</th><th>possible values</th><th>default</th></tr></thead>
-					<tbody>
-						<tr>
-							<td>order</td>
-							<td>String</td>
-							<td>the order of the sorting method</td>
-							<td>
-								<table>
-									<tr><td>asc</td><td>ascending order</td></tr>
-									<tr><td>desc</td><td>descending order</td></tr>
-									<tr><td>rand</td><td>random order</td></tr>
-								</table>
-							</td>
-							<td>"asc"</td>
-						</tr>
-						<tr>
-							<td>attr</td>
-							<td>String</td>
-							<td>order by attribute value (ie title, href, class)</td>
-							<td>anything</td>
-							<td>""</td>
-						</tr>
-						<tr>
-							<td>useVal</td>
-							<td>Boolean</td>
-							<td>use element value instead of text</td>
-							<td>
-								<table>
-									<tr><td>false</td><td>use text</td></tr>
-									<tr><td>true</td><td>use value</td></tr>
-								</table>
-							</td>
-							<td>false</td>
-						</tr>
-						<tr>
-							<td>data</td>
-							<td>String</td>
-							<td>use the data attribute for sorting</td>
-							<td>
-								<table>
-									<tr><td>null</td><td>use text</td></tr>
-									<tr><td>String</td><td>use data attribute</td></tr>
-								</table>
-							</td>
-							<td>null</td>
-						</tr>
-						<tr>
-							<td>charOrder</td>
-							<td>String</td>
-							<td>use the data attribute for sorting</td>
-							<td>
-								<table>
-									<tr><td>null</td><td>use text</td></tr>
-									<tr><td>String</td><td>use data attribute</td></tr>
-								</table>
-							</td>
-							<td>null</td>
-						</tr>
-						<tr>
-							<td>place</td>
-							<td>String</td>
-							<td>determines the placement of the ordered elements in respect to the unordered elements filtered out by using the 'attr' setting or the first parsed 'find' string</td>
-							<td>
-								<table>
-									<tr><td>start</td><td>sorted elements are prepended at the parent attribute</td></tr>
-									<tr><td>end</td><td>sorted elements are appended at the parent attribute</td></tr>
-									<tr><td>org</td><td>placement occurs at the positions the sortable elements are found</td></tr>
-									<tr><td>first</td><td>elements are appended after the first occurance of a sortable element</td></tr>
-								</table>
-							</td>
-							<td>"start"</td>
-						</tr>
-						<tr>
-							<td>returns</td>
-							<td>Boolean</td>
-							<td>affects the returned jquery array</td>
-							<td>
-								<table>
-									<tr><td>false</td><td>all elements are returned</td></tr>
-									<tr><td>true</td><td>only sorted elements are returned</td></tr>
-								</table>
-							</td>
-							<td>false</td>
-						</tr>
-						<tr>
-							<td>cases</td>
-							<td>Boolean</td>
-							<td>a case sensitive sort (orders [aB,aa,ab,bb])</td>
-							<td>
-								<table>
-									<tr><td>false</td><td>cases are ignored</td></tr>
-									<tr><td>true</td><td>case sensitive sort</td></tr>
-								</table>
-							</td>
-							<td>false</td>
-						</tr>
-						<tr>
-							<td>ignoreDashes</td>
-							<td>Boolean</td>
-							<td>ignore dashes when matching numerals to prevent negative numbers</td>
-							<td>
-								<table>
-									<tr><td>false</td><td>dashes are ignored</td></tr>
-									<tr><td>true</td><td>dashes are matched</td></tr>
-								</table>
-							</td>
-							<td>false</td>
-						</tr>
-						<tr>
-							<td>forceStrings</td>
-							<td>Boolean</td>
-							<td>use string value for numerals</td>
-							<td>
-								<table>
-									<tr><td>false</td><td>numbers sorted by numeric value</td></tr>
-									<tr><td>true</td><td>everything sorted as string</td></tr>
-								</table>
-							</td>
-							<td>false</td>
-						</tr>
-						<tr>
-							<td>sortFunction</td>
-							<td>function</td>
-							<td>override the default sort function</td>
-							<td>any sort function like function(a,b){return -1,0,1;}
-							where the two parameters are objects with the following properties:
-							<table>
-								<tr><td>e</td><td>jQuery object</td></tr>
-								<tr><td>n</td><td>original order</td></tr>
-								<tr><td>s</td><td>string to sort</td></tr>
-							</table>
-							</td>
-							<td>...</td>
-						</tr>
-					</tbody>
-				</table>
-			</section>
-
-			<section>
-				<h2>examples</h2>
-
-				<h3>default sorting</h3>
-				<p>The default sort is done by simply calling the 'tsort' function onto your selection.</p>
-				<pre class="example">$('ul#xdflt>li').tsort();</pre>
-
-				<h3>sort on any node</h3>
-				<p>TinySort works on any nodeType. The following is a div with spans.</p>
-				<pre class="example" title="12">$('div#xany>span').tsort('',{order:'desc'});</pre>
-
-				<h3>sorted numbers</h3>
-				<p>TinySort also works on numbers.</p>
-				<pre class="example">$('ul#xnum>li').tsort();</pre>
-
-				<h3 title="literal vs numeral">mixed literal and numeral</h3>
-				<p>In a normal sort the order would be a1,a11,a2 while you'd really want it to be a1,a2,a11. TinySort corrects this:</p>
-				<pre class="example">$('ul#xmix>li').tsort();</pre>
-
-				<h3 title="attribute value">sorted by attribute value</h3>
-				<p>Sort by attribute value by parsing the additional parameter 'attr=attributeName'. This will sort by attribute of, either the jquery selection, or of the sub-selection (if provided). In this case sort is by href on the anchor sub-selection.</p>
-				<pre class="example">$('ul#xval>li').tsort('a',{attr:'href'});</pre>
-				<p>Another example: images sorted by attribute title value.</p>
-				<pre class="example">$('span#ximg>img').tsort({attr:'title'});</pre>
-
-				<h3 title="sub-selection">sorted by sub-selection</h3>
-				<p>You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The returned array will be in the newly sorted order.<br/>
-				In this example the list elements are sorted to the text of the second span.</p>
-				<pre class="example">$('ul#xsub>li').tsort('span:eq(1)');</pre>
-				<p>The following example will only sort the non-striked elements.</p>
-				<pre class="example" title="12">$('ul#xattr>li').tsort('span[class!=striked]');</pre>
-
-				<h3 title="return only sorted">return only sorted elements</h3>
-				<p>By default, all the elements are returned, even the ones excluded by your sub-selection. By parsing the additional parameter 'returns=true' only the sorted elements are returned.<br/>You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.</p>
-				<pre class="example" title="12">$('ul#xret>li').tsort('span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});</pre>
-
-				<h3>multiple sort criteria</h3>
-				<p>Sometimes multiple sorting criteria are required. For instance: you might want to sort a list of people first by surname then by name.</p>
-				<p>For multiple sorting rules you can just append the parameters. So tsort(selector,object) becomes tsort(selector1,object1,selector2,object2,selector3,object3...). You can also leave out either the selector or the object if it's not needed: tsort(selector1,selector2,object2,object3...). Keep in mind that tsort will look for selector-object pairs and if no applicable pair is formed it will use default values. In this example three arguments are two criteria: the first argument uses the default options object, the second argument uses the third argument as options object.</p>
-				<pre class="example" title="12">$('ul#xmul>li').tsort('span.name','span.date',{data:'timestamp'});</pre>
-
-				<h3>non-latin characters</h3>
-				<p>A normal array sorts according to <a href="http://en.wikipedia.org/wiki/Unicode">Unicode</a>, which is wrong for most languages. For correct ordering you can use the charorder plugin to parse a rule with the 'charOrder' parameter. This is a string that consist of exceptions, not the entire alfabet. For characters that should sort equally use brackets. For characters that consist of multiple characters use curly braces. For example: </p>
-				<ul>
-					<li><p><strong>cčć</strong> sorts c č and ć in that order</p></li>
-					<li><p><strong>æøå</strong> in absence of a latin character æ ø and å are sorted after z</p></li>
-					<li><p><strong>ι[ίϊΐ]</strong> ί ϊ and ΐ are sorted equally to ι</p></li>
-					<li><p><strong>d{dž}</strong> dž is sorted as one character after d</p></li>
-					<li><p><strong>å[{Aa}]</strong> Aa is sorted as one character, equal to å, after z</p></li>
-				</ul>
-				<p>Here some real examples:</p>
-				<pre class="example">$('ul#greek>li').tsort({charOrder:'α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]'});</pre>
-				<pre class="example">$('ul#danish>li').tsort({charOrder:'æøå[{Aa}]'});</pre>
-				<pre class="example">$('ul#serb>li').tsort({charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});</pre>
-				<p>Here are some example languages:
-				<table class="props">
-					<thead><tr>
-						<th>Language</th>
-						<th>charOrder</th>
-					</tr></thead>
-					<tfoot><tr>
-						<td colspan="2">since only one of these is my native language please feel free to contact me if you think corrections are in order</td>
-					</tr></tfoot>
-					<tbody>
-						<tr><td>Cyrilic</td><td>абвгдђежзијклљмнњопрстћуфхцчџш</td></tr>
-						<tr><td>Czech</td><td>a[á]cčd[ď]e[éě]h{ch}i[í]n[ň]o[ó]rřsšt[ť]u[úů]y[ý]zž</td></tr>
-						<tr><td>Danish and Norwegian</td><td>æøå[{Aa}]</td></tr>
-						<tr><td>Dutch</td><td>a[áàâä]c[ç]e[éèêë]i[íìîï]o[óòôö]u[úùûü]</td></tr>
-						<tr><td>French</td><td>a[àâ]c[ç]e[éèêë]i[ïî]o[ôœ]u[ûù]</td></tr>
-						<tr><td>German</td><td>a[ä]o[ö]s{ss}u[ü]</td></tr>
-						<tr><td>Greek</td><td>α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]</td></tr>
-						<tr><td>Icelandic</td><td>a[á]dðe[é]i[í]o[ó]u[ú]y[ý]zþæö</td></tr>
-						<tr><td>Polish</td><td>aąbcćeęlłnńoósśuúzźż</td></tr>
-						<tr><td>Serbo-Croatian</td><td>cčćd{dž}đl{lj}n{nj}sšzž</td></tr>
-						<tr><td>Spanish</td><td>a[á]c{ch}e[é]i[í]l{ll}nño[ó]u[ú]y[ý]</td></tr>
-						<tr><td>Swedish</td><td>åäö</td></tr>
-					</tbody>
-				</table>
-				</p>
-
-				<h3>sort <a href="http://api.jquery.com/val/">$.val()</a></h3>
-				<p>The .val() method is primarily used to get the values of form elements. By parsing the useVal attribute you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.</p>
-				<pre class="example">$('ul#xinp>li').tsort('>input,>select',{useVal:true}).each(function(i,el){
-	var $Li = $(el);
-	$Li.find('span').text(' : '+$Li.find('>input,>select').filter(':eq(0)').val());
-});</pre>
-
-				<h3>sort <a href="http://api.jquery.com/data/">$.data()</a></h3>
-				<p>Sort by data attribute by parsing the additional parameter 'data=dataName'.</p>
-				<pre class="example">$('ul#xdta>li').tsort('a',{data:'foo'});</pre>
-
-				<h3>sorted descending</h3>
-				<p>Sort by ascending or descending order by parsing the additional 'order="desc"/"asc"' parameter.</p>
-				<pre class="example">$('ul#xdesc>li').tsort('',{order:'desc'});</pre>
-
-				<h3>randomize</h3>
-				<p>TinySort can also order randomly (or is that a contradiction).</p>
-				<pre class="example">$('ul#xrnd li').tsort({order:'rand'});</pre>
-
-				<h3 title="custom sort function">parsing a custom sort function</h3>
-				<p>Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.</p>
-				<pre class="example">$('ul#xcst li').tsort('',{sortFunction:function(a,b){
-	var iCalcA = parseInt(a.s)%16;
-	var iCalcB = parseInt(b.s)%16;
-	return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
-}});</pre>
-
-				<h3>sorting tables</h3>
-				<p>With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:</p>
-				<pre>var aAsc = [];
-function sortTable(nr) {
-	console.log('sortTable',nr);
-	aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
-	$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
-}</pre>
-				<p>Note that the mixed column only sorts those rows of which the td's have the abbr attribute set, and because of the default place value the non-sorted elements always remain at the bottom</p>
-				<table class="props xmpl" id="xtable">
-					<thead>
-						<tr>
-							<th><a href="javascript:sortTable(0)">word</a></th>
-							<th><a href="javascript:sortTable(1)">int</a></th>
-							<th><a href="javascript:sortTable(2)">float</a></th>
-							<th><a href="javascript:sortTable(3)">mixed</a></th>
-							<th><a href="javascript:sortTable(4)">mixed</a></th>
-							<th><a href="javascript:addTRow()">add row</a></th>
-						</tr>
-					</thead>
-					<tbody><tr><td></td></tr></tbody>
-				</table>
-
-				<h3>animated sorting</h3>
-				<p>Tinysort has no built in animating features but it can quite easily be accomplished through regular js/jQuery.</p>
-				<pre class="example">var $Ul = $('ul#xanim');
-$Ul.css({position:'relative',height:$Ul.height(),display:'block'});
-var iLnH;
-var $Li = $('ul#xanim>li');
-$Li.each(function(i,el){
-	var iY = $(el).position().top;
-	$.data(el,'h',iY);
-	if (i===1) iLnH = iY;
-});
-$Li.tsort().each(function(i,el){
-	var $El = $(el);
-	var iFr = $.data(el,'h');
-	var iTo = i*iLnH;
-	$El.css({position:'absolute',top:iFr}).animate({top:iTo},500);
-});</pre>
-			</section>
-		</div>
-		<footer>
-			<div>© 2008-2013 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>
-		</footer>
-	</body>
-</html>
+			<footer>
+				<div>© 2008-2013 <a href="http://www.sjeiti.com/">Ron Valstar</a></div>
+			</footer>
+		</body>
+	</html>

@@ -1,0 +1,28 @@
+{
+	"name": "TinySort",
+	"version": "1.5.6",
+	"devDependencies": {
+		"grunt": "~0.4.1",
+		"grunt-contrib": "~0.7.0",
+		"grunt-contrib-jshint": "~0.6.2",
+		"grunt-contrib-uglify": "~0.2.2"
+	},
+	"description": "TinySort",
+	"main": "Gruntfile.js",
+	"dependencies": {
+		"grunt": "~0.4.1",
+		"uglify-js": "~2.3.6"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Sjeiti/TinySort.git"
+	},
+	"keywords": [
+		"jQuery",
+		"plugin",
+		"sorting",
+		"sort"
+	],
+	"author": "Ron Valstar",
+	"license": "MIT"
+}
