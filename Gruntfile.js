@@ -72,6 +72,37 @@ module.exports = function (grunt) {
 				src: 'src/jquery.tinysort.charorder.js',
 				dest: 'dist/jquery.tinysort.charorder.jgz',
 				compress: true
+			},
+			opensource: {
+				options: { banner: bannerTinysort },
+				src: '../opensource/web/scripts/jquery.opensource.js',
+				dest: 'libs/jquery.opensource.min.js',
+				compress: true
+			}
+		},
+
+		copy: {
+			external: {
+				files: [
+					{
+						expand: true,
+						flatten: true,
+						src: '../opensource/web/scripts/jquery.opensource.min.js',
+						dest: 'libs/'
+					},
+					{
+						expand: true,
+						cwd: '../opensource/web/style/',
+						src: ['*.!(less|php|*.php)','*/**'],
+						dest: 'style/'
+					},
+					{
+						expand: true,
+						flatten: true,
+						src: '../zen/dist/*.min.js',
+						dest: 'libs/'
+					}
+				]
 			}
 		}
 	});
@@ -80,16 +111,32 @@ module.exports = function (grunt) {
 		var sFile = fs.readFileSync(this.data.src).toString(),
 			sBanner = sFile.match(/\/\*!([\s\S]*?)\*\//g),
 			sToBanner = this.data.options.banner;
-		fs.writeFile(this.data.dest,sBanner!==null&&sBanner!==sToBanner?sFile.replace(sBanner,sToBanner):sFile);
+		fs.writeFileSync(this.data.dest,sBanner!==null&&sBanner!==sToBanner?sFile.replace(sBanner,sToBanner):sFile);
 		grunt.log.writeln('File "'+this.data.dest+'" created.');
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	grunt.registerTask('default',[
 		'jshint'
 		,'distill'
-		,'uglify'
+		,'uglify:tinysort'
+		,'uglify:charorder'
+		,'uglify:tinysortgz'
+		,'uglify:charordergz'
+	]);
+
+	grunt.registerTask('dist',[
+		'distill'
+	]);
+
+	grunt.registerTask('opensource',[
+		'uglify:opensource'
+	]);
+
+	grunt.registerTask('external',[
+		'copy:external'
 	]);
 };
