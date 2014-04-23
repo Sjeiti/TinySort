@@ -176,7 +176,7 @@
 						,$Row = $('<tr>'
 							+'<td abbr="'+sName+'">'+sName+'</td>'
 							+'<td abbr="'+iInt+'">'+iInt+'</td>'
-							+'<td abbr="'+fFloat+'">'+fFloat+'</td>'
+							+'<td abbr="'+fFloat+'">€ '+String(fFloat).replace('.',',')+'</td>'
 							+'<td abbr="'+sStNm+'">'+sStNm+'</td>'
 							+'<td'+(sSome!=''?' abbr="'+sSome+'"':'')+'>'+sSome+'</td>'
 							+'<td><a>x</a></td>'
@@ -532,9 +532,9 @@ return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
 				<p>With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:</p>
 				<pre>var aAsc = [];
 function sortTable(e) {
-var nr = $(e.currentTarget).index();
-aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
-$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
+	var nr = $(e.currentTarget).index();
+	aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
+	$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
 }
 $('#xtable').find('thead th:last').siblings().on('click',sortTable);
 				</pre>
