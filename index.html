@@ -173,11 +173,15 @@
 						,fFloat = rand(0,9999)/100
 						,sStNm = getPassword(1,true).toUpperCase()+'_'+rand(0,99)
 						,sSome = brnd()?(brnd()?rand(0,999):getPassword(4)):''
+						,iNow = Date.now()
+						,iRndTimeStamp = Math.round(Math.random()*iNow)
+						,oDate = new Date(iRndTimeStamp)
 						,$Row = $('<tr>'
 							+'<td abbr="'+sName+'">'+sName+'</td>'
 							+'<td abbr="'+iInt+'">'+iInt+'</td>'
 							+'<td abbr="'+fFloat+'">€ '+String(fFloat).replace('.',',')+'</td>'
 							+'<td abbr="'+sStNm+'">'+sStNm+'</td>'
+							+'<td abbr="'+iRndTimeStamp+'">'+oDate.getDate()+'/'+(oDate.getMonth()+1)+'/'+oDate.getFullYear()+'</td>'
 							+'<td'+(sSome!=''?' abbr="'+sSome+'"':'')+'>'+sSome+'</td>'
 							+'<td><a>x</a></td>'
 							+'</tr>')
@@ -534,7 +538,7 @@ return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
 function sortTable(e) {
 	var nr = $(e.currentTarget).index();
 	aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
-	$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr]});
+	$('#xtable>tbody>tr').tsort('td:eq('+nr+')[abbr]',{order:aAsc[nr],attr:'abbr'});
 }
 $('#xtable').find('thead th:last').siblings().on('click',sortTable);
 				</pre>
@@ -546,6 +550,7 @@ $('#xtable').find('thead th:last').siblings().on('click',sortTable);
 							<th><a>int</a></th>
 							<th><a>float</a></th>
 							<th><a>mixed</a></th>
+							<th><a>date</a></th>
 							<th><a>mixed</a></th>
 							<th><a>add row</a></th>
 						</tr>
