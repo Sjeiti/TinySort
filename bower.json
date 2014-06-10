@@ -1,0 +1,22 @@
+{
+  "name": "tinysort",
+  "version": "1.5.6",
+  "main": "dist/jquery.tinysort.min.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "test",
+    "libs",
+    "style",
+    "*.md",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "jquery": ">=1.6"
+  },
+  "keywords": [
+    "sort",
+    "jquery plugin"
+  ]
+}
