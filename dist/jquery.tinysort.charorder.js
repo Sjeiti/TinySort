@@ -86,8 +86,13 @@
 						,j,m // init
 					,i=0;i<l;i++) { // loop through chars to set 'rxNotLatin' and 'sOrderChar'
 						var  sChar = sCharOrder[i]
-							,iChar = sChar.charCodeAt()
-							,bIsLatin = iChar>96&&iChar<123; // 'a'.charCodeAt()===97 'z'.charCodeAt()===122
+						var iChar;
+						if (typeof sChar === "string") {
+							iChar = sChar.charCodeAt();
+						} else {
+							iChar = 0;
+						}
+						var bIsLatin = iChar>96&&iChar<123; // 'a'.charCodeAt()===97 'z'.charCodeAt()===122
 						if (!bIsLatin){
 							if (sChar=='[') { // find replace chars: ë will sort similar to e
 								var iCharNotLatin = aCharNotLatin.length
@@ -128,7 +133,7 @@
 							//
 							aCharNotLatin.length = 0;
 						}
-						if (i+1===l) rxNotLatin = new RegExp('['+sAllCharNotLatin+']','gi'); // make regex to test for chars
+						if (i+1===l) rxNotLatin = new RegExp('\\['+sAllCharNotLatin+'\\]','gi'); // make regex to test for chars
 						else if (bIsLatin) sCharLatin = sChar;
 					}
 				}
