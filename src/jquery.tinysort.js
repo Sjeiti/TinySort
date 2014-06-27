@@ -121,7 +121,7 @@
 					if (typeof element=='string') {
 						// if !settings.cases
 						if (!settings.cases) element = toLowerCase(element);
-						element = element.replace(/^\s*(.*?)\s*$/i, '$1');
+						element = element.replace(/^\s*((.|[\r\n])*?)\s*$/i, '$1');
 					}
 					return element;
 				}
