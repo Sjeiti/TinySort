@@ -226,9 +226,11 @@
 				for (j=0;j<iCriteriaMax;j++) {
 					var oPoint = aCriteria[j]
 						// element or sub selection
-						,mElmOrSub = oPoint.bFind?(oPoint.bFilter?oPoint.$Filter.filter(el):$Elm.find(oPoint.sFind)):$Elm;
-					// text or attribute value
-					aSort.push(oPoint.bData?mElmOrSub.data(oPoint.oSettings.data):(oPoint.bAttr?mElmOrSub.attr(oPoint.oSettings.attr):(oPoint.oSettings.useVal?mElmOrSub.val():mElmOrSub.text())));
+						,mElmOrSub = oPoint.bFind ? (oPoint.bFilter ? oPoint.$Filter.filter(el) : $Elm.find(oPoint.sFind)) : $Elm
+						// text or attribute value
+						,mVal = oPoint.bData ? mElmOrSub.data(oPoint.oSettings.data) : (oPoint.bAttr ? mElmOrSub.attr(oPoint.oSettings.attr) : (oPoint.oSettings.useVal ? mElmOrSub.val() : mElmOrSub.text()));
+					// make sure to push strings only
+					aSort.push(mVal ? mVal.toString() : "");
 					if (mFirstElmOrSub===undefined) mFirstElmOrSub = mElmOrSub;
 				}
 				// to sort or not to sort
