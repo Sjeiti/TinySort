@@ -93,6 +93,7 @@
 			,ignoreDashes:fls		// ignores dashes when looking for numerals
 
 			,sortFunction: nll		// override the default sort function
+			,dataIndex: false               // if true, will add a data-index attribute to sorted elements
 		}
 	};
 	$.fn.extend({
@@ -265,6 +266,7 @@
 					var bFromSortList = contains(aOriginal,i)?!fls:i>=iLow&&i<iLow+iSorted
                         ,iCountIndex = bFromSortList?0:1
 						,mEl = (bFromSortList?aSorted:aUnsorted)[aCount[iCountIndex]].e;
+					if(oSettings.dataIndex) mEl.attr('data-index', i);	
 					mEl.parent().append(mEl);
 					if (bFromSortList||!oSettings.returns) aNewOrder.push(mEl.get(0));
 					aCount[iCountIndex]++;
