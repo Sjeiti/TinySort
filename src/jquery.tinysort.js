@@ -80,14 +80,16 @@
 
 			 order: 'asc'			// order: asc, desc or rand
 
-			,attr: nll				// order by attribute value
-			,data: nll				// use the data attribute for sorting
+			,attr: nll			// order by attribute value
+			,data: nll			// use the data attribute for sorting
 			,useVal: fls			// use element value instead of text
 
 			,place: 'start'			// place ordered elements at position: start, end, org (original position), first
 			,returns: fls			// return all elements or only the sorted ones (true/false)
 
-			,cases: fls				// a case sensitive sort orders [aB,aa,ab,bb]
+			,cases: fls			// a case sensitive sort orders [aB,aa,ab,bb]
+			,spaces: fls                    // a space sensitive sort orders [ a, b,aa,ab]
+			
 			,forceStrings:fls		// if false the string '2' will sort with the value 2, not the string '2'
 
 			,ignoreDashes:fls		// ignores dashes when looking for numerals
@@ -119,9 +121,8 @@
 				//
 				,fnPrepareSortElement = function(settings,element){
 					if (typeof element=='string') {
-						// if !settings.cases
-						if (!settings.cases) element = toLowerCase(element);
-						element = element.replace(/^\s*(.*?)\s*$/i, '$1');
+						element = settings.cases  ? element : toLowerCase(element);
+						element = settings.spaces ? element : element.replace(/^\s*(.*?)\s*$/i, '$1');
 					}
 					return element;
 				}
