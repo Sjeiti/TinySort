@@ -1,0 +1,76 @@
+<style type="text/css">
+	li:before {
+		content: attr(value)': ';
+	}
+</style>
+<ul>
+	<li>lorem</li>
+	<li>ipsum</li>
+	<li>dolor</li>
+	<li>sit</li>
+	<li>amet</li>
+	<li>consectetur</li>
+	<li>adipisicing</li>
+	<li>elit</li>
+	<li>accusantium</li>
+	<li>ad</li>
+	<li>aliquid</li>
+	<li>assumenda</li>
+	<li>doloremque</li>
+	<li>eius</li>
+	<li>et</li>
+	<li>illo</li>
+	<li>lorem</li>
+	<li>ipsum</li>
+	<li>dolor</li>
+	<li>sit</li>
+	<li>amet</li>
+	<li>consectetur</li>
+	<li>adipisicing</li>
+	<li>elit</li>
+	<li>accusantium</li>
+	<li>ad</li>
+	<li>aliquid</li>
+	<li>assumenda</li>
+	<li>doloremque</li>
+	<li>eius</li>
+	<li>et</li>
+	<li>illo</li>
+</ul>
+<script src="../src/tinysort.js"></script>
+<script>
+	(function(){
+		var mUl = document.body.querySelector('ul')
+			,mLi = mUl.querySelectorAll('li');
+		Array.prototype.forEach.call(mLi,function(elm,i){
+			elm.setAttribute('value',i<=9?'0'+i:i);
+		});
+	})();
+	///////////////////////
+	///////////////////////
+	(function(){
+		var mUl = document.body.querySelector('ul')
+			,mLi = mUl.querySelectorAll('li')
+			,aoUl = []
+			,mFragment = document.createDocumentFragment();
+		//mUl.addEventListener('click',tinysort.bind(null,mLi));
+		mUl.addEventListener('click',function(){
+			console.log('sorted',tinysort(mLi)); // log
+		});
+
+		/*Array.prototype.forEach.call(mLi,function(elm,i){
+			aoUl.push({
+				elm: elm
+				,pos: i
+				,text: elm.textContent
+			});
+		});
+		aoUl.sort(function(a,b){
+			return a.text>b.text?1:-1;
+		});
+		aoUl.forEach(function(o){
+			mFragment.appendChild(o.elm);
+		});
+		mUl.appendChild(mFragment);*/
+	})();
+</script>

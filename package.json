@@ -6,7 +6,9 @@
     "grunt-contrib": "~0.7.0",
     "grunt-contrib-jshint": "~0.6.2",
     "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-copy": "~0.4.1"
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-version-git": "~0.1.7",
+    "load-grunt-tasks": "~1.0.0"
   },
   "description": "TinySort",
   "main": "Gruntfile.js",

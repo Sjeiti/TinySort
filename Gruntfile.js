@@ -1,6 +1,10 @@
 module.exports = function (grunt) {
 	'use strict';
 
+    // Load grunt tasks automatically
+    require('load-grunt-tasks')(grunt);
+	grunt.loadTasks('gruntTasks');
+
 	GLOBAL.jQuery = {fn:{extend:function(){}}};
 	require('./src/jquery.tinysort.js');
 	require('./src/jquery.tinysort.charorder.js');
@@ -31,7 +35,24 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		pkg: oPackage,
 
-		jshint: {
+		watch: {
+			gruntfile: {
+				files: ['Gruntfile.js', '.jshintrc'],
+				options: { spawn: false, reload: true }
+			}
+			,default: {
+				files: ['src/*.js']
+				,tasks: ['jshint']
+				,options: { spawn: false }
+			}
+			,revision: {
+				files: ['.git/COMMIT_EDITMSG']
+				,tasks: ['version']
+				,options: { spawn: false }
+			}
+		}
+
+		,jshint: {
 			options: { jshintrc: '.jshintrc' },
 			files: [
 				'src/jquery.tinysort.js',
@@ -114,10 +135,6 @@ module.exports = function (grunt) {
 		fs.writeFileSync(this.data.dest,sBanner!==null&&sBanner!==sToBanner?sFile.replace(sBanner,sToBanner):sFile);
 		grunt.log.writeln('File "'+this.data.dest+'" created.');
 	});
-
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	grunt.registerTask('default',[
 		'jshint'
