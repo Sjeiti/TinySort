@@ -13,10 +13,15 @@
     "package.json"
   ],
   "dependencies": {
-    "jquery": ">=1.6"
+    "jquery": ">=1.6",
+    "es5-shim": "~4.0.5"
   },
   "keywords": [
     "sort",
     "jquery plugin"
-  ]
+  ],
+  "devDependencies": {
+    "qunit": "~1.16.0",
+    "zenjs": "~0.1.7"
+  }
 }

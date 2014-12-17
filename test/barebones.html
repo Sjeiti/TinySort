@@ -55,7 +55,14 @@
 			,mFragment = document.createDocumentFragment();
 		//mUl.addEventListener('click',tinysort.bind(null,mLi));
 		mUl.addEventListener('click',function(){
-			console.log('sorted',tinysort(mLi,'[value]',{order:'asc'})); // log
+			console.log('sorted',
+					tinysort(mLi
+//							,'[value]',{order:'asc'}
+//							,'[value]'
+							,{order:'asc'}
+							,{attr:'value'}
+					)
+			); // log
 		});
 
 		/*Array.prototype.forEach.call(mLi,function(elm,i){

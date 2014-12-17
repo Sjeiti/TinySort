@@ -1,15 +1,19 @@
 if (!window.tinysort) window.tinysort = (function(){
 	'use strict';
+
 	// private vars
 	var fls = !1							// minify placeholder
 		,nll = null							// minify placeholder
-		/*,prsflt = parseFloat				// minify placeholder
-		,mathmn = Math.min					// minify placeholder
+		,prsflt = parseFloat				// minify placeholder
+//		,mathmn = Math.min					// minify placeholder
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
-		,aPluginPrepare = []
-		,aPluginSort = []
-		,*/
+//		,aPluginPrepare = []
+//		,aPluginSort = []
+		/** @type {criterium[]} */
+		,aCriteria = []
+		,iCriteria = 0
+		,iCriterium = 0
 		////////////////////////////
 //		id: 'TinySort'
 //		,version: '1.5.6'
@@ -43,61 +47,94 @@ if (!window.tinysort) window.tinysort = (function(){
 	 *
 	 * @param {NodeList} nodeList
 	 * @param {String} [select]
-	 * @param {Object} [options]
+	 * @param {Object} [...options]
 	 * @returns {Array}
 	 */
-	function tinysort(nodeList,select,options){
+	function tinysort(nodeList){
 		var aoList = []
 			,mFragment = document.createDocumentFragment()
-			,mParent
-			//
-			,aSelect = []
-			,aOption = []
+			,mTmpParent//todo rem after refactoring
 		;
-		//
-		(function(){
-			initArguments();
-			initSortList();
-			sort();
-			applyToDOM();
-		})();
+
+		initCriteria.apply(nll,Array.prototype.slice.call(arguments,1));
+		initSortList();
+		sort();
+		applyToDOM();
 
 		/**
-		 * Order arguments in paired select and option list
+		 * Create criteria list
 		 */
-		function initArguments(){
-			var iSelect;
+		function initCriteria(){ // todo: minimum of one?
+			var sTempSelect
+				,iArguments = arguments.length;
 			loop(arguments,function(param,i){
-				if (i>0){
-					if (isString(param))	{
-						if (aSelect.push(param)-1>aOption.length) aOption.length = aSelect.length-1;
-					} else {
-						if (aOption.push(extend(param,defaults))>aSelect.length) aSelect.length = aOption.length;
-					}
+				if (isString(param)) {
+					if (sTempSelect||iArguments===i+1) addCriterium(sTempSelect||param);
+					sTempSelect = param;
+				} else {
+					addCriterium(sTempSelect,param);
+					sTempSelect = nll;
 				}
 			});
-			// equal length
-			iSelect = aSelect.length;
-			if (iSelect>aOption.length) aOption.length = iSelect; // todo: and other way around?
-			// no select arguments
-			if (iSelect===0) {
-				aSelect.length = 1;
-				aOption.push({});
-			}
-			//
-			console.log('aFind,aSettings',aSelect,aOption); // log
+			iCriteria = aCriteria.length;
 		}
+
+		/**
+		 * A criterium is a combination of the selector, the options and the default options
+		 * @typedef {Object} criterium
+		 * @property {String} order - order: asc, desc or rand
+		 * @property {String} attr - order by attribute value
+		 * @property {String} data - use the data attribute for sorting
+		 * @property {Boolean} useVal - use element value instead of text
+		 * @property {String} place - place ordered elements at position: start, end, org (original position), first
+		 * @property {Boolean} returns - return all elements or only the sorted ones (true/false)
+		 * @property {Boolean} cases - a case sensitive sort orders [aB,aa,ab,bb]
+		 * @property {Boolean} forceStrings - if false the string '2' will sort with the value 2, not the string '2'
+		 * @property {Boolean} ignoreDashes - ignores dashes when looking for numerals
+		 * @property {Function} sortFunction - override the default sort function
+		 */
+
+		/**
+		 * Adds a criterium
+		 * @param {String} [select]
+		 * @param {Object} [options]
+		 */
+		function addCriterium(select,options){
+			var bFind = !!select
+				,bFilter = bFind&&select[0]===':'
+				,oOptions = extend(options||{},defaults)
+			;
+			// todo: why not extend criterium with options/settings
+			aCriteria.push(extend({ // todo: only used locally, find a way to minify properties
+				 sFind: select
+				// has find, attr or data
+				,bFind: bFind
+				,bAttr: !(oOptions.attr===nll||oOptions.attr==='')
+				,bData: oOptions.data!==nll
+				// filter
+				,bFilter: bFilter
+				,mFilter: nll//bFilter?oThis.filter(select):oThis
+				,fnSort: oOptions.sortFunction
+				,iAsc: oOptions.order==='asc'?1:-1
+			},oOptions));
+		}
+
+		/**
+		 * The element object.
+		 * @typedef {Object} elementObject
+		 * @property {HTMLElement} elm - The element
+		 * @property {number} pos - original position
+		 */
 
 		/**
 		 * Creates a list of objects to be sorted
 		 */
 		function initSortList(){
 			loop(nodeList,function(elm,i){
-				if (!mParent) mParent = elm.parentNode;
+				if (!mTmpParent) mTmpParent = elm.parentNode;
 				aoList.push({
 					elm: elm
 					,pos: i
-					,text: elm.textContent
 				});
 			});
 		}
@@ -106,10 +143,89 @@ if (!window.tinysort) window.tinysort = (function(){
 		 * Sorts the sortList
 		 */
 		function sort(){
-			aoList.sort(function (a,b) {
-				return a.text>b.text?1:-1;
-			});
+			console.log('aCriteria',aCriteria); // log
+			console.log('aoList',aoList); // log
+			//
+			aoList.sort(sortFunction);
 		}
+
+		/**
+		 * Sort all the things
+		 * @param {elementObject} a
+		 * @param {elementObject} b
+		 * @returns {number}
+		 */
+		function sortFunction(a,b){
+			var iReturn = 0;
+			if (iCriterium!==0) iCriterium = 0;
+			while (iReturn===0&&iCriterium<iCriteria) {
+				/** @type {criterium} */
+				var oCriterium = aCriteria[iCriterium]
+					,rxLast = oCriterium.ignoreDashes?rxLastNrNoDash:rxLastNr;
+				//
+				// todo: fnPluginPrepare(oSett);
+				//
+				if (oCriterium.sortFunction) { // custom sort
+					iReturn = oCriterium.sortFunction(a,b);
+				} else if (oCriterium.order=='rand') { // random sort
+					iReturn = Math.random()<0.5?1:-1;
+				} else { // regular sort
+					var bNumeric = fls
+						// prepare sort elements
+						,sA = getSortBy(a,oCriterium)//a.text//prepareSortElement(oSett,a.s[iCriteria])
+						,sB = getSortBy(b,oCriterium)//b.text//prepareSortElement(oSett,b.s[iCriteria])
+					;
+					// maybe force Strings
+					if (!oCriterium.forceStrings) {
+						// maybe mixed
+						var  aAnum = isString(sA)?sA&&sA.match(rxLast):fls
+							,aBnum = isString(sB)?sB&&sB.match(rxLast):fls;
+						if (aAnum&&aBnum) {
+							var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
+								,sBprv = sB.substr(0,sB.length-aBnum[0].length);
+							if (sAprv==sBprv) {
+								bNumeric = !fls;
+								sA = prsflt(aAnum[0]);
+								sB = prsflt(aBnum[0]);
+							}
+						}
+					}
+					iReturn = oCriterium.iAsc*(sA<sB?-1:(sA>sB?1:0));
+				}
+				//loop(aPluginSort,function(fn){
+				//	iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
+				//});
+				if (iReturn===0) iCriterium++;
+			}
+			return iReturn;
+//			return a.text>b.text?1:-1;
+		}
+
+		/**
+		 * Get the string/number to be sorted by checking the elementObject with the criterium.
+		 * @param {elementObject} elementObject
+		 * @param {criterium} criterium
+		 * @returns {String}
+		 */
+		function getSortBy(elementObject,criterium){
+			var sReturn;
+			if (criterium.bAttr) sReturn = elementObject.elm.getAttribute(criterium.attr);
+			if (sReturn===undefined) sReturn = elementObject.elm.textContent;
+			return sReturn;
+		}
+
+//		function prepareSortElement(settings,element){
+//			if (typeof element=='string') {
+//				// if !settings.cases
+//				if (!settings.cases) element = toLowerCase(element);
+//				element = element.replace(/^\s*(.*?)\s*$/i, '$1');
+//			}
+//			return element;
+//		}
+//		function toLowerCase(s) {
+//			return s&&s.toLowerCase?s.toLowerCase():s;
+//		}
+
 
 		/**
 		 * Applies the sorted list to the DOM
@@ -118,7 +234,7 @@ if (!window.tinysort) window.tinysort = (function(){
 			aoList.forEach(function (o) {
 				mFragment.appendChild(o.elm);
 			});
-			mParent.appendChild(mFragment);
+			mTmpParent.appendChild(mFragment);
 		}
 
 		return aoList.map(function(o) {
