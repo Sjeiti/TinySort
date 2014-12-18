@@ -7,6 +7,7 @@
 		'../../src/tinysort.js'
 		,'test-api.js'
 		,'test-private.js'
+		,'test-plugin.js'
 		,'test-regression.js'
 	].forEach(function(script){
 		/*jslint evil: true */

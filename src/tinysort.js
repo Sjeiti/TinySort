@@ -1,4 +1,4 @@
-if (!window.tinysort) window.tinysort = (function(){
+if (!window.tinysort) window.tinysort = (function(undefined){
 	'use strict';
 
 	// private vars
@@ -56,6 +56,8 @@ if (!window.tinysort) window.tinysort = (function(){
 	 */
 	function tinysort(nodeList){
 		var aoList = []
+			,aoListFull = []
+			,aoListNot = []
 			,mFragment = document.createDocumentFragment()
 			,mTmpParent//todo rem after refactoring
 			,aCriteria = []
@@ -134,7 +136,9 @@ if (!window.tinysort) window.tinysort = (function(){
 		 * @typedef {Object} elementObject
 		 * @property {HTMLElement} elm - The element
 		 * @property {number} pos - original position
+		 *    property {boolean} sorted - element has been sorted
 		 */
+
 
 		/**
 		 * Creates a list of objects to be sorted
@@ -142,10 +146,27 @@ if (!window.tinysort) window.tinysort = (function(){
 		function initSortList(){
 			loop(nodeList,function(elm,i){
 				if (!mTmpParent) mTmpParent = elm.parentNode;
-				aoList.push({
+				var criterium = aCriteria[0]
+					,bFilter = criterium.bFilter
+					,sSelector = criterium.selector
+					,odd = !sSelector||(sSelector&&!!elm.querySelector(sSelector))
+					,add = !bFilter||(bFilter&&elm.matchesSelector(sSelector))
+					,idd = !sSelector||(bFilter&&elm.matchesSelector(sSelector))||(sSelector&&elm.querySelector(sSelector));
+				window.foo&&console.log('init',i,bFilter,add,odd,idd); // log
+				var oElementObject = {
 					elm: elm
 					,pos: i
-				});
+				};
+				aoListFull.push(oElementObject);
+				(idd?aoList:aoListNot).push(oElementObject);
+//				(!!idd)&&aoList.push({
+//					elm: elm
+//					,pos: i
+////					,sorted: true
+//				});
+			});
+			window.foo&&aoList.forEach(function (o,i) {
+				console.log('o',i,o.pos,o.sorted,o.elm.textContent); // log
 			});
 		}
 
@@ -153,8 +174,8 @@ if (!window.tinysort) window.tinysort = (function(){
 		 * Sorts the sortList
 		 */
 		function sort(){
-			console.log('aCriteria',aCriteria); // log
-			console.log('aoList',aoList); // log
+//			console.log('aCriteria',aCriteria); // log
+//			console.log('aoList',aoList); // log
 			//
 			aoList.sort(sortFunction);
 		}
@@ -200,7 +221,11 @@ if (!window.tinysort) window.tinysort = (function(){
 							}
 						}
 					}
-					iReturn = oCriterium.iAsc*(sA<sB?-1:(sA>sB?1:0));
+					if (sA===undefined||sB===undefined) {
+						iReturn = 0;
+					} else {
+						iReturn = oCriterium.iAsc*(sA<sB?-1:(sA>sB?1:0));
+					}
 				}
 				//loop(aPluginSort,function(fn){
 				//	iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
@@ -221,13 +246,21 @@ if (!window.tinysort) window.tinysort = (function(){
 		function getSortBy(elementObject,criterium){
 			var sReturn
 				,mElement = elementObject.elm;
-			if (criterium.selector) mElement = mElement.querySelector(criterium.selector);
-			!mElement&&console.log('criterium.selector',criterium.selector); // log
-			//
+			// element
+			if (criterium.selector) {
+				if (criterium.bFilter) {
+					if (!mElement.matchesSelector(criterium.selector)) mElement = nll;
+				} else {
+					mElement = mElement.querySelector(criterium.selector);
+				}
+			}
+			// value
 			if (criterium.bAttr) sReturn = mElement.getAttribute(criterium.attr);
 			else if (criterium.useVal) sReturn = mElement.value ;
 			else if (criterium.bData) sReturn = mElement.getAttribute('data-'+criterium.data);
-			else sReturn = mElement.textContent;
+			else if (mElement) sReturn = mElement.textContent;
+			// sets if the element was not sorted
+//			if (criterium.returns&&elementObject.sorted&&!mElement) elementObject.sorted = false;
 			//
 			return sReturn;
 		}
@@ -249,16 +282,39 @@ if (!window.tinysort) window.tinysort = (function(){
 		 * Applies the sorted list to the DOM
 		 */
 		function applyToDOM(){
-			aoList.forEach(function (o) {
-				mFragment.appendChild(o.elm);
-			});
-			mTmpParent.appendChild(mFragment);
+			window.foo&&console.log(''); // log
+			if (aoList.length===aoListFull.length) {
+				aoList.forEach(function(o){
+					mFragment.appendChild(o.elm);
+				});
+				mTmpParent.appendChild(mFragment);
+			} else {
+				aoList.forEach(function (o,i) {
+					window.foo&&console.log('o',i,o.pos,o.sorted,o.elm.textContent); // log
+					mFragment.appendChild(o.elm);
+				});
+//				window.foo&&console.log('aaaNodeList',aNodeList); // log
+			}
+			//
+//			var aGhosts = [];
+//			aoList.forEach(function (o,i) {
+//				var mGhost = document.createElement('div')
+//					,mElm = o.elm;
+//				aGhosts[o.pos] = mGhost;
+//				mElm.parentNode.insertBefore(mGhost,mElm);
+//
+//
+//				mFragment.appendChild(o.elm);
+//			});
 		}
 
-		console.log('return',aoList.map(function(o) {
-			return o.pos;
-		})); // log
-		return aoList.map(function(o) {
+//		console.log('return',aoList.map(function(o) {
+//			return o.pos;
+//		})); // log
+		if(window.foo)console.log('aoList',aoList); // log
+		return aoList/*.filter(function(o){
+			return o.sorted;
+		})*/.map(function(o) {
 			return o.elm;
 		});
 	}
@@ -317,6 +373,8 @@ if (!window.tinysort) window.tinysort = (function(){
 
 // todo: add as dependency
 (function(){
+	'use strict';
+
 	window.Element && function(ElementPrototype) {
 		ElementPrototype.matchesSelector = ElementPrototype.matchesSelector ||
 		ElementPrototype.mozMatchesSelector ||
