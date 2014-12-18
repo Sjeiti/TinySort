@@ -54,6 +54,7 @@
 					var s = '';
 					$zen('ul>li#a${a}*6',{a:aList}).find('li').tsort({attr:'id'})
 					.each(function(i,el){ s += $(el).attr('id'); });
+					console.log('s,sJoin',s,sJoin); // log
 					return s==sJoin;
 				})(),'$Li.tsort({attr:\'id\'});');
 				ok( (function(){

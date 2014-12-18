@@ -64,18 +64,22 @@ if (!window.tinysort) window.tinysort = (function(){
 		/**
 		 * Create criteria list
 		 */
-		function initCriteria(){ // todo: minimum of one?
+		function initCriteria(){
 			var sTempSelect
 				,iArguments = arguments.length;
-			loop(arguments,function(param,i){
-				if (isString(param)) {
-					if (sTempSelect||iArguments===i+1) addCriterium(sTempSelect||param);
-					sTempSelect = param;
-				} else {
-					addCriterium(sTempSelect,param);
-					sTempSelect = nll;
-				}
-			});
+			if (iArguments===0) {
+				addCriterium();
+			} else {
+				loop(arguments,function(param,i){
+					if (isString(param)) {
+						if (sTempSelect||iArguments===i+1) addCriterium(sTempSelect||param);
+						sTempSelect = param;
+					} else {
+						addCriterium(sTempSelect,param);
+						sTempSelect = nll;
+					}
+				});
+			}
 			iCriteria = aCriteria.length;
 		}
 
@@ -237,6 +241,9 @@ if (!window.tinysort) window.tinysort = (function(){
 			mTmpParent.appendChild(mFragment);
 		}
 
+		console.log('return',aoList.map(function(o) {
+			return o.pos;
+		})); // log
 		return aoList.map(function(o) {
 			return o.elm;
 		});
