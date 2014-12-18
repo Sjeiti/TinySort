@@ -11,7 +11,6 @@ if (!window.tinysort) window.tinysort = (function(){
 //		,aPluginPrepare = []
 //		,aPluginSort = []
 		/** @type {criterium[]} */
-		,aCriteria = []
 		,iCriteria = 0
 		,iCriterium = 0
 		////////////////////////////
@@ -44,9 +43,14 @@ if (!window.tinysort) window.tinysort = (function(){
 	;
 
 	/**
-	 *
+	 * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
+	 * @summary A nodeElement sorting script.
+	 * @version 2.0.6 beta
+	 * @license MIT/GPL
+	 * @author Ron Valstar (http://www.sjeiti.com/)
+	 * @copyright Ron Valstar <ron@ronvalstar.nl>
 	 * @param {NodeList} nodeList
-	 * @param {String} [select]
+	 * @param {String} [selector]
 	 * @param {Object} [...options]
 	 * @returns {Array}
 	 */
@@ -54,6 +58,7 @@ if (!window.tinysort) window.tinysort = (function(){
 		var aoList = []
 			,mFragment = document.createDocumentFragment()
 			,mTmpParent//todo rem after refactoring
+			,aCriteria = []
 		;
 
 		initCriteria.apply(nll,Array.prototype.slice.call(arguments,1));
@@ -100,17 +105,18 @@ if (!window.tinysort) window.tinysort = (function(){
 
 		/**
 		 * Adds a criterium
-		 * @param {String} [select]
+		 * @param {String} [selector]
 		 * @param {Object} [options]
 		 */
-		function addCriterium(select,options){
-			var bFind = !!select
-				,bFilter = bFind&&select[0]===':'
+		function addCriterium(selector,options){
+			var bFind = !!selector
+				,bFilter = bFind&&selector[0]===':'
 				,oOptions = extend(options||{},defaults)
 			;
 			// todo: why not extend criterium with options/settings
 			aCriteria.push(extend({ // todo: only used locally, find a way to minify properties
-				 sFind: select
+				 sFind: selector
+				,selector: selector
 				// has find, attr or data
 				,bFind: bFind
 				,bAttr: !(oOptions.attr===nll||oOptions.attr==='')
@@ -210,11 +216,19 @@ if (!window.tinysort) window.tinysort = (function(){
 		 * @param {elementObject} elementObject
 		 * @param {criterium} criterium
 		 * @returns {String}
+		 * @todo memoize
 		 */
 		function getSortBy(elementObject,criterium){
-			var sReturn;
-			if (criterium.bAttr) sReturn = elementObject.elm.getAttribute(criterium.attr);
-			if (sReturn===undefined) sReturn = elementObject.elm.textContent;
+			var sReturn
+				,mElement = elementObject.elm;
+			if (criterium.selector) mElement = mElement.querySelector(criterium.selector);
+			!mElement&&console.log('criterium.selector',criterium.selector); // log
+			//
+			if (criterium.bAttr) sReturn = mElement.getAttribute(criterium.attr);
+			else if (criterium.useVal) sReturn = mElement.value ;
+			else if (criterium.bData) sReturn = mElement.getAttribute('data-'+criterium.data);
+			else sReturn = mElement.textContent;
+			//
 			return sReturn;
 		}
 
@@ -299,4 +313,22 @@ if (!window.tinysort) window.tinysort = (function(){
 	}
 
 	return tinysort;
+})();
+
+// todo: add as dependency
+(function(){
+	window.Element && function(ElementPrototype) {
+		ElementPrototype.matchesSelector = ElementPrototype.matchesSelector ||
+		ElementPrototype.mozMatchesSelector ||
+		ElementPrototype.msMatchesSelector ||
+		ElementPrototype.oMatchesSelector ||
+		ElementPrototype.webkitMatchesSelector ||
+		function (selector) {
+			var node = this, nodes = (node.parentNode || node.document).querySelectorAll(selector), i = -1;
+
+			while (nodes[++i] && nodes[i] != node);
+
+			return !!nodes[i];
+		};
+	}(Element.prototype);
 })();

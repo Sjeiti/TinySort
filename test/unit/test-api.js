@@ -54,7 +54,6 @@
 
 		module('TinySort');
 		test('default functionality', function() {
-			expect(16);
 			ok( (function(){
 				var aSorted = tinysort($zen('ul>li{a$}*6',{a:aList}))
 					,sSorted = eachs(aSorted,function(elm){return elm.textContent;});
@@ -66,61 +65,58 @@
 				return sSorted==sJoin;
 			})(),'tinysort(nodeList,{attr:\'id\'});');
 			ok( (function(){
-				var aSorted = tinysort($zen('ul>li*6>(p{$}+p{a$})',{a:aList}),'p:eq(1)')
-					,sSorted = eachs(aSorted,function(elm){return elm.querySelector('p:eq(1)').textContent;});
+				window.foo = true;
+				var aSorted = tinysort($zen('ul>li*6>(p{$}+p{a$})',{a:aList}),'p:nth-child(2)')
+					,sSorted = eachs(aSorted,function(elm){return elm.querySelector('p:nth-child(2)').textContent;});
 				return sSorted==sJoin;
-				/*var s = '';
-				$zen('ul>li*6>(p{$}+p{a$})',{a:aList}).find('li').tsort('p:eq(1)')
-				.each(function(i,el){ s += $(el).find('>p:eq(1)').text(); });
-				return s==sJoin;*/
-			})(),'tinysort(nodeList,\'p:eq(1)\');');
+			})(),'tinysort(nodeList,\'p:nth-child(2)\');');
 			ok( (function(){
-				var s = '';
-				$zen('ul>li*6>p[title=a$]{a}',{a:aList}).find('li').tsort('p[title]',{attr:'title'})
-				.each(function(i,el){ s += $(el).find('>p').attr('title'); });
-				return s==sJoin;
-			})(),'$Li.tsort(\'p[title]\',{attr:\'title\'});');
+				var aSorted = tinysort($zen('ul>li*6>p[title=a$]{a}',{a:aList}),'p[title]',{attr:'title'})
+					,sSorted = eachs(aSorted,function(elm){return elm.querySelector('p').getAttribute('title'); });
+				return sSorted==sJoin;
+			})(),'tinysort(nodeList,\'p[title]\',{attr:\'title\'});');
 			ok( (function(){
-				var s = '';
-				$zen('ul>(li>input[value=a$]+li>select>option[value=b$])*3',{a:aList.slice(0,3),b:aList.slice(3)}).find('li').tsort('>input,>select',{useVal:true})
-				.each(function(i,el){ s += $(el).find('>*').val(); });
-				return s=='aar-eax-eek-myr-oac-oif-';
-			})(),'$Li.tsort(\'>input,>select\',{useVal:true})');
+				var aSorted = tinysort($zen('ul>(li>input[value=a$]+li>select>option[value=b$])*3',{a:aList.slice(0,3),b:aList.slice(3)}),'input,select',{useVal:true})
+					,sSorted = eachs(aSorted,function(elm){return elm.querySelector('input,select').value; });
+				return sSorted==sJoin;
+			})(),'tinysort(nodeList,\'input,select\',{useVal:true})');
 			ok( (function(){
-				var s = '';
-				$zen('ul>li[data-foo=a$]{_a$}*6',{a:aList}).find('li').tsort({data:'foo'})
-				.each(function(i,el){ s += $(el).data('foo'); });
-				return s==sJoin;
-			})(),'$Li.tsort(\'li\',{data:\'foo\'})');
+				var aSorted = tinysort($zen('ul>li[data-foo=a$]{_a$}*6',{a:aList}),{data:'foo'})
+					,sSorted = eachs(aSorted,function(elm){ return elm.getAttribute('data-foo'); });
+				return sSorted==sJoin;
+			})(),'tinysort(nodeList,\'li\',{data:\'foo\'})');
+			/*ok( (function(){
+				var aSorted = tinysort($zen('ul>li{a$}*6',{a:aList}),':nth-child(-n+4)')
+					,sSorted = eachs(aSorted,function(elm){ ;console.log('elm',elm);;return elm.textContent; });
+				return sSorted==sHfJn;
+//				var s = '';
+//				$zen('ul>li{a$}*6',{a:aList}).find('li').tsort(':lt(4)',{returns:true})
+//				.each(function(i,el){ s += $(el).text(); });
+//				return s==sHfJn;
+			})(),'$Li.tsort({returns:true});');*/
 			ok( (function(){
-				var s = '';
-				$zen('ul>li{a$}*6',{a:aList}).find('li').tsort(':lt(4)',{returns:true})
-				.each(function(i,el){ s += $(el).text(); });
-				return s==sHfJn;
-			})(),'$Li.tsort({returns:true});');
-			ok( (function(){
-				var s = '';
-				$zen('ul>li{a$}*6',{a:aList}).find('li').tsort({order:'desc'})
-				.each(function(i,el){ s += $(el).text(); });
-				return s==sSRvr;
+				var aSorted = tinysort($zen('ul>li{a$}*6',{a:aList}),{order:'desc'})
+					,sSorted = eachs(aSorted,function(elm){ return elm.textContent; });
+				return sSorted==sSRvr;
 			})(),'$Li.tsort({order:\'desc\'});');
 			ok( (function(){
-				var s = '';
-				$zen('ul>li{a$}*5',{a:[6,1,5,2,4]}).find('li').tsort()
-				.each(function(i,el){ s += $(el).text(); });
-				return s=='12456';
+				var aSorted = tinysort($zen('ul>li{a$}*5',{a:[6,1,5,2,4]}))
+					,sSorted = eachs(aSorted,function(elm){ return elm.textContent; });
+				return sSorted=='12456';
 			})(),'$Li.tsort(); with integers');
 			ok( (function(){
-				var s = '';
-				$zen('ul>li{a$}*5',{a:[4.6,3.1,2.5,5.2,7.4]}).find('li').tsort()
-				.each(function(i,el){ s += $(el).text(); });
-				return s=='2.53.14.65.27.4';
+				var aSorted = tinysort($zen('ul>li{a$}*5',{a:[4.6,3.1,2.5,5.2,7.4]}))
+					,sSorted = eachs(aSorted,function(elm){ return elm.textContent; });
+				return sSorted=='2.53.14.65.27.4';
 			})(),'$Li.tsort(); with floats');
 			ok( (function(){
-				var s = '';
-				$zen('ul>li{a$}*15',{a:[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]}).find('li').tsort()
-				.each(function(i,el){ s += ' '+$(el).text(); });
-				return s==' 1 2 2.5 3.1 4 4.6 5 5.2 6 7.4 11 a b c d';
+				var aSorted = tinysort($zen('ul>li{a$}*15',{a:[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]}))
+					,sSorted = eachs(aSorted,function(elm){ return elm.textContent; });
+				return sSorted==' 1 2 2.5 3.1 4 4.6 5 5.2 6 7.4 11 a b c d';
+//				var s = '';
+//				$zen('ul>li{a$}*15',{a:[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]}).find('li').tsort()
+//				.each(function(i,el){ s += ' '+$(el).text(); });
+//				return s==' 1 2 2.5 3.1 4 4.6 5 5.2 6 7.4 11 a b c d';
 			})(),'$Li.tsort(); mixed types');
 			ok( (function(){
 				var s = '';
