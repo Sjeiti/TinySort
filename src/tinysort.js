@@ -4,7 +4,7 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 	// private vars
 	var fls = !1							// minify placeholder
 		,nll = null							// minify placeholder
-		,prsflt = parseFloat				// minify placeholder
+		,parsefloat = parseFloat				// minify placeholder
 //		,mathmn = Math.min					// minify placeholder
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
@@ -206,21 +206,20 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 				} else { // regular sort
 					var bNumeric = fls
 						// prepare sort elements
-						,sA = getSortBy(a,oCriterium)//a.text//prepareSortElement(oSett,a.s[iCriteria])
-						,sB = getSortBy(b,oCriterium)//b.text//prepareSortElement(oSett,b.s[iCriteria])
+						,sA = getSortBy(a,oCriterium)
+						,sB = getSortBy(b,oCriterium)
 					;
-					// maybe force Strings
 					if (!oCriterium.forceStrings) {
-						// maybe mixed
-						var  aAnum = isString(sA)?sA&&sA.match(rxLast):fls
+						// cast to float if both strings are numeral (or end numeral)
+						var  aAnum = isString(sA)?sA&&sA.match(rxLast):fls// todo: isString superfluous because getSortBy returns string|undefined
 							,aBnum = isString(sB)?sB&&sB.match(rxLast):fls;
 						if (aAnum&&aBnum) {
 							var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
 								,sBprv = sB.substr(0,sB.length-aBnum[0].length);
 							if (sAprv==sBprv) {
 								bNumeric = !fls;
-								sA = prsflt(aAnum[0]);
-								sB = prsflt(aBnum[0]);
+								sA = parsefloat(aAnum[0]);
+								sB = parsefloat(aBnum[0]);
 							}
 						}
 					}
@@ -262,8 +261,8 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 			else if (criterium.useVal) sReturn = mElement.value ;
 			else if (criterium.bData) sReturn = mElement.getAttribute('data-'+criterium.data);
 			else if (mElement) sReturn = mElement.textContent;
-			// sets if the element was not sorted
-//			if (criterium.returns&&elementObject.sorted&&!mElement) elementObject.sorted = false;
+			// strings should be ordered in lowercase (unless specified)
+			if (isString(sReturn)&&!criterium.cases) sReturn = sReturn.toLowerCase();
 			//
 			return sReturn;
 		}
@@ -332,7 +331,7 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 	 * @returns {boolean}
 	 */
 	function isString(o){
-		return typeof o=='string';
+		return typeof o==='string';
 	}
 
 	/**

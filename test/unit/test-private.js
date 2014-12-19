@@ -2,6 +2,22 @@
 (function(){
 	'use strict';
 
+
+	// load tinysort and hack source to expose private functions for testing
+	/*$.ajax({
+		url:'../../src/jquery.tinysort.js'
+		,dataFilter: function(data) {
+			return data.replace(/\$\.tinysort\s*=\s*{/g,'$.tinysort={expose:function(){return{toLowerCase:toLowerCase,contains:contains};},');//,isNum:isNum
+		}
+		,success: function(){
+			$.ajax({
+				url:'../../src/jquery.tinysort.charorder.js'
+				,success: startTest
+			});
+		}
+	});*/
+
+
 	module('private methods');
 	/*test('exposed private functions', function() {
 		var o = $.tinysort.expose();
