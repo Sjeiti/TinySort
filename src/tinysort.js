@@ -10,7 +10,6 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
 //		,aPluginPrepare = []
 //		,aPluginSort = []
-		/** @type {criterium[]} */
 		,iCriteria = 0
 		,iCriterium = 0
 		////////////////////////////
@@ -55,12 +54,24 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 	 * @returns {Array}
 	 */
 	function tinysort(nodeList){
-		var aoList = []
-			,aoListFull = []
-			,aoListNot = []
-			,mFragment = document.createDocumentFragment()
-			,mTmpParent//todo rem after refactoring
+		var mFragment = document.createDocumentFragment()
+			/** both sorted and unsorted elements
+			 * @type {elementObject[]} */
+			,aoFull = []
+			/** sorted elements
+			 * @type {elementObject[]} */
+			,aoSort = []
+			/** unsorted elements
+			 * @type {elementObject[]} */
+			,aoNot = []
+			/** sorted elements before sort
+			 * @type {elementObject[]} */
+			,aoSortBeforeSort
+			/** @type {criterium[]} */
 			,aCriteria = []
+			/** @type {HTMLElement} */
+			,mParent
+			,bSameParent = true
 		;
 
 		initCriteria.apply(nll,Array.prototype.slice.call(arguments,1));
@@ -115,7 +126,6 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 				,bFilter = bFind&&selector[0]===':'
 				,oOptions = extend(options||{},defaults)
 			;
-			// todo: why not extend criterium with options/settings
 			aCriteria.push(extend({ // todo: only used locally, find a way to minify properties
 				 sFind: selector
 				,selector: selector
@@ -136,38 +146,32 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		 * @typedef {Object} elementObject
 		 * @property {HTMLElement} elm - The element
 		 * @property {number} pos - original position
-		 *    property {boolean} sorted - element has been sorted
+		 * @property {number} posn - original position on the partial list
 		 */
 
-
 		/**
-		 * Creates a list of objects to be sorted
+		 * Creates an elementObject and adds to lists.
+		 * Also checks if has one or more parents.
 		 */
 		function initSortList(){
 			loop(nodeList,function(elm,i){
-				if (!mTmpParent) mTmpParent = elm.parentNode;
+				if (!mParent) mParent = elm.parentNode;
+				else if (mParent!==elm.parentNode) bSameParent = false;
 				var criterium = aCriteria[0]
 					,bFilter = criterium.bFilter
 					,sSelector = criterium.selector
-					,odd = !sSelector||(sSelector&&!!elm.querySelector(sSelector))
-					,add = !bFilter||(bFilter&&elm.matchesSelector(sSelector))
-					,idd = !sSelector||(bFilter&&elm.matchesSelector(sSelector))||(sSelector&&elm.querySelector(sSelector));
-				window.foo&&console.log('init',i,bFilter,add,odd,idd); // log
+					,idd = !sSelector||(bFilter&&elm.matchesSelector(sSelector))||(sSelector&&elm.querySelector(sSelector))
+					,aListPartial = idd?aoSort:aoNot
+				;
 				var oElementObject = {
 					elm: elm
 					,pos: i
+					,posn: aListPartial.length
 				};
-				aoListFull.push(oElementObject);
-				(idd?aoList:aoListNot).push(oElementObject);
-//				(!!idd)&&aoList.push({
-//					elm: elm
-//					,pos: i
-////					,sorted: true
-//				});
+				aoFull.push(oElementObject);
+				aListPartial.push(oElementObject);
 			});
-			window.foo&&aoList.forEach(function (o,i) {
-				console.log('o',i,o.pos,o.sorted,o.elm.textContent); // log
-			});
+			aoSortBeforeSort = aoSort.slice(0);
 		}
 
 		/**
@@ -176,8 +180,7 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		function sort(){
 //			console.log('aCriteria',aCriteria); // log
 //			console.log('aoList',aoList); // log
-			//
-			aoList.sort(sortFunction);
+			aoSort.sort(sortFunction);
 		}
 
 		/**
@@ -282,39 +285,40 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		 * Applies the sorted list to the DOM
 		 */
 		function applyToDOM(){
-			window.foo&&console.log(''); // log
-			if (aoList.length===aoListFull.length) {
-				aoList.forEach(function(o){
+			var bAllSorted = aoSort.length===aoFull.length;
+			if (bSameParent&&bAllSorted) {
+				aoSort.forEach(function(elmObj){
+					mFragment.appendChild(elmObj.elm);
+				});
+				mParent.appendChild(mFragment);
+				//
+			} else if (bSameParent&&!bAllSorted) {
+				aoSort.forEach(function(elmObj){
+					var iToPos = aoSort[elmObj.posn].pos;
+					aoFull[iToPos] = elmObj;
+				});
+				aoFull.forEach(function(o) {
 					mFragment.appendChild(o.elm);
 				});
-				mTmpParent.appendChild(mFragment);
+				mParent.appendChild(mFragment);
+				//
 			} else {
-				aoList.forEach(function (o,i) {
-					window.foo&&console.log('o',i,o.pos,o.sorted,o.elm.textContent); // log
-					mFragment.appendChild(o.elm);
+				aoSort.forEach(function(elmObj) {
+					var mElm = elmObj.elm
+						,mGhost = document.createElement('div')
+					;
+					elmObj.ghost = mGhost;
+					mElm.parentNode.insertBefore(mGhost,mElm);
 				});
-//				window.foo&&console.log('aaaNodeList',aNodeList); // log
+				aoSort.forEach(function(elmObj,i) {
+					var mGhost = aoSortBeforeSort[i].ghost;
+					mGhost.parentNode.insertBefore(elmObj.elm,mGhost);
+					mGhost.parentNode.removeChild(mGhost);
+				});
 			}
-			//
-//			var aGhosts = [];
-//			aoList.forEach(function (o,i) {
-//				var mGhost = document.createElement('div')
-//					,mElm = o.elm;
-//				aGhosts[o.pos] = mGhost;
-//				mElm.parentNode.insertBefore(mGhost,mElm);
-//
-//
-//				mFragment.appendChild(o.elm);
-//			});
 		}
 
-//		console.log('return',aoList.map(function(o) {
-//			return o.pos;
-//		})); // log
-		if(window.foo)console.log('aoList',aoList); // log
-		return aoList/*.filter(function(o){
-			return o.sorted;
-		})*/.map(function(o) {
+		return aoSort.map(function(o) {
 			return o.elm;
 		});
 	}

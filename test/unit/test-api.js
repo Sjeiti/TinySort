@@ -123,27 +123,15 @@
 				return sSorted==' a1 a1.1 a7 a11';
 			})(),'tinysort(nodeList); mixed numeral/literal');
 			ok( (function(){
-				window.foo=true;//##
 				var aSorted = tinysort($zen('ul>(li>span{a$}+li>span.striked{b$})*3',{a:aList.slice(0,3),b:aList.slice(3)}),'span:not([class=striked])',{returns:true,place:'org'})
 					,sSorted = aSorted[0].parentNode.textContent+aSorted.length;//eachs(aSorted,function(elm){ return ' '+elm.textContent; });
-				console.log('',zen('ul>(li>span{a$}+li>span.striked{b$})*3',{a:aList.slice(0,3),b:aList.slice(3)})[0].textContent); // log
-				console.log('aList',aList.join('')); // log
-				console.log('sSorted',sSorted); // log
-				console.log('=======','eek-aar-myr-oac-oif-eax-3'); // log
-				window.foo=false;//##
 				return sSorted=='eek-aar-myr-oac-oif-eax-3';
-//				var $s = $zen('ul>(li>span{a$}+li>span.striked{b$})*3',{a:aList.slice(0,3),b:aList.slice(3)}).find('li').tsort('span[class!=striked]',{returns:true,place:'org'});
-//				return $s.parent().text()+$s.length=='eek-aar-myr-oac-oif-eax-3';
 			})(),'tinysort(nodeList,\'span:not([class=striked])\',{returns:true,place:\'org\'}); return only sorted at original position');
-			/*ok( (function(){
+			ok( (function(){
 				var aSorted = tinysort($zen('div>((ul>li{a$}*4)+ul>li{b$}*4)',{a:['a9','a2','a3','a7'],b:['a11','a1.1','a1','a7']}))
 					,sSorted = eachs(aSorted,function(elm){ return ' '+elm.textContent; });
-				return sSorted==' a2 a3 a7 a9 a1 a1.1 a7 a11';
-//				var s = '';
-//				$zen('div>((ul>li{a$}*4)+ul>li{b$}*4)',{a:['a9','a2','a3','a7'],b:['a11','a1.1','a1','a7']}).find('li').tsort()
-//				.each(function(i,el){ s += ' '+$(el).text(); });
-//				return s==' a2 a3 a7 a9 a1 a1.1 a7 a11';
-			})(),'tinysort(nodeList); multiple parents');*/
+				return sSorted==' a1 a1.1 a2 a3 a7 a7 a9 a11';
+			})(),'tinysort(nodeList); multiple parents');
 			ok( (function(){
 				var aSorted = tinysort($zen('ul>li{a$}*5',{a:['a-2','a-5','a-6','a-4','a-1']}),{ignoreDashes:true})
 					,sSorted = eachs(aSorted,function(elm){ return elm.textContent; });
@@ -168,9 +156,4 @@
 				return sSorted===' aaaa_id1 bbaa_id3 ccaa_id4 bbaa_id11 aabb_id5 aabb_id12 aacc_id2 cccc_id6';
 			})(),'tinysort(nodeList,\'p:eq(1)\',{},{attr:\'title\'});');
 		});
-
-
-
-
-
 })();
