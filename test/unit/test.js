@@ -21,8 +21,9 @@
 		'../../src/tinysort.js'
 		,'test-api.js'
 		,'test-private.js'
-		,'test-plugin.js'
 		,'test-regression.js'
+		,'../../src/tinysort.charorder.js'
+		,'test-charorder.js'
 	].forEach(function(script){
 		/*jslint evil: true */
 		document.write('<script src="'+script+'"></script>');

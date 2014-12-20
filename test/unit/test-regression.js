@@ -79,11 +79,31 @@
 			return sSorted==='_0_1_2_3_4_5';
 		})(),'regexp match onto number bug');
 	});
+	/*test('issue 44', function() {
+		ok( (function(){
+			var aTest = ['adi95yqw31','eiw19ewe55','eiw73ewe133','eiw99ewe84','eiw9ewe42','eiw9ewe51','eiw9ewe98','jua21soa68','wau147oic54']
+				,aSorted = tinysort(zenLi('ul>li{_a$}*'+aTest.length,{a:aTest}))
+				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+			console.log('sSorted',sSorted); // log
+			return sSorted==='_adi95yqw31_eiw9ewe42_eiw9ewe51_eiw9ewe98_eiw19ewe55_eiw73ewe133_eiw99ewe84_jua21soa68_wau147oic54';
+		})(),'mixed literal and numeral');
+	});*/
 	test('issue 51', function() {
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li{_a$}*6',{a:[' 0 ',' 5 ',' 1 ',' 4 ',' 2 ',' 3 ']}))
 				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
 			return sSorted==='_ 0 _ 1 _ 2 _ 3 _ 4 _ 5 ';
 		})(),'numeral values with leading and trailing spaces');
+	});
+	test('issue 78', function() {
+		ok( (function(){
+			var aTest = (function(a,i){
+					while (i--) a.push(i);
+					return a.sort(function(){return Math.random()<0.5?1:-1;});
+				})([],14)
+				,aSorted = tinysort(zenLi('ul>li[data-position=a$]{a$}*'+aTest.length,{a:aTest}))
+				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+			return sSorted==='012345678910111213';
+		})(),'mixed literal and numeral');
 	});
 })();

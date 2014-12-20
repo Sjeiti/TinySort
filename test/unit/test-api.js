@@ -16,6 +16,16 @@
 			return sSorted===sJoin;
 		})(),'tinysort(nodeList);');
 		ok( (function(){
+			var aNodes = zenLi('ul>li{a$}*6',{a:aList})
+				,iNodes = aNodes.length
+				,aArray = []
+				,aSorted,sSorted;
+			while (iNodes--) aArray.unshift(aNodes[iNodes]);
+			aSorted = tinysort(aArray);
+			sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+			return sSorted===sJoin;
+		})(),'tinysort(Array);');
+		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li#a${a}*6',{a:aList}),{attr:'id'})
 				,sSorted = eachElement(aSorted,function(elm){return elm.getAttribute('id');});
 			return sSorted==sJoin;

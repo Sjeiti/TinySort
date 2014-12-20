@@ -1,11 +1,6 @@
 {
     "globals": {
-		"_": false,
-		"Benchmark": true,
-		"tinysort": true,
-		"GLOBAL": true,
-		"require": true,
-		"module": true
+		"tinysort": true
 	},
     "strict": true,
     "browser": true,
@@ -17,7 +12,7 @@
     "noarg": true,
     "nonew": true,
     "undef": true,
-    "unused": true,
+    "unused": "vars",
     "trailing": true,
     "laxcomma": true,
     "loopfunc": true,
@@ -25,5 +20,6 @@
     "smarttabs": true,
     "boss": true,
     "expr": true,
-    "noempty": false
+    "noempty": false,
+    "laxbreak": true
 }

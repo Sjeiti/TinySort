@@ -1,11 +1,17 @@
 module.exports = function (grunt) {
 	'use strict';
 
+	var sPackage = 'package.json',
+		oPackage = grunt.file.readJSON(sPackage)
+		,bannerTinysort = '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+			'<%= grunt.template.today("yyyy-mm-dd") %> */'
+		,bannerCharorder = bannerCharorder;
+
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('gruntTasks');
 
-	GLOBAL.jQuery = {fn:{extend:function(){}}};
+	/*GLOBAL.jQuery = {fn:{extend:function(){}}};
 	require('./src/jquery.tinysort.js');
 	require('./src/jquery.tinysort.charorder.js');
 
@@ -22,15 +28,15 @@ module.exports = function (grunt) {
 	}
 
 	function getBanner(o){
-		return '/*! '+o.id+' '+o.version+'\n'+
+		return '*//*! '+o.id+' '+o.version+'\n'+
 			'* '+o.copyright+' '+ o.uri+'\n'+
 			'* License:\n'+(function(o){
 				var s = '';
 				for (var ss in o) s += '*     '+ss+': '+o[ss]+'\n';
 				return s;
 			})(o.licensed)+
-			'*/';
-	}
+			'*//*';
+	}*/
 
 	grunt.initConfig({
 		pkg: oPackage,
@@ -47,8 +53,57 @@ module.exports = function (grunt) {
 			}
 			,revision: {
 				files: ['.git/COMMIT_EDITMSG']
-				,tasks: ['version']
+				,tasks: ['version_git']
 				,options: { spawn: false }
+			}
+			,jsdoc: {
+				files: [
+					'jsdoc/template/tmpl/*.tmpl'
+					,'jsdoc/src/**/*'
+					,'jsdoc/template/static/styles/*.css'
+					,'jsdoc/**/*.md'
+				]
+				,tasks: ['jsdoc']
+				,options: { spawn: false }
+			}
+		}
+
+		// update revision
+		,version_git: {
+			main: {
+				files: {
+					src: 'src/*.js'
+					,package: './package.json'
+					,bower: './bower.json'
+				}
+			}
+			,mainVar: {
+				files: {src:'src/tinysort.js'}
+				,options: {regex: /sVersion\s*=\s*'(\d+\.\d+\.\d+)'/}
+			}
+		}
+
+		// command line interface
+		,cli: {
+			/*elasticsearch: { cwd: 'elasticsearch-1.4.0/bin/', command: 'elasticsearch', output: true }
+			,*/jsdoc: { cwd: './', command: '"node_modules/.bin/jsdoc" -c jsdoc.json', output: true }
+			//,jsgrudoc: { cwd: './', command: 'jsdoc -c jsdoc.json', output: true }
+			,jsdocprepare: { cwd: './jsdoc', command: 'grunt prepare', output: true }
+			//
+			,jsdocInitNpm: { cwd: './jsdoc', command: 'npm install', output: true }
+			,jsdocInitBower: { cwd: './jsdoc', command: 'bower install', output: true }
+		}
+
+		// clean
+		,clean: {
+			dist: {
+				src: ['dist/**']
+			}
+			,jsdoc: {
+				src: ['doc/**']
+			}
+			,temp: {
+				src: ['temp/**']
 			}
 		}
 
@@ -58,19 +113,6 @@ module.exports = function (grunt) {
 				'src/jquery.tinysort.js',
 				'src/jquery.tinysort.charorder.js'
 			]
-		},
-
-		distill: {
-			tinysort: {
-				options: { banner: bannerTinysort },
-				src: 'src/jquery.tinysort.js',
-				dest: 'dist/jquery.tinysort.js'
-			},
-			charorder: {
-				options: { banner: bannerCharorder },
-				src: 'src/jquery.tinysort.charorder.js',
-				dest: 'dist/jquery.tinysort.charorder.js'
-			}
 		},
 
 		uglify: {
@@ -128,25 +170,20 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerMultiTask('distill', '', function() {
-		var sFile = fs.readFileSync(this.data.src).toString(),
-			sBanner = sFile.match(/\/\*!([\s\S]*?)\*\//g),
-			sToBanner = this.data.options.banner;
-		fs.writeFileSync(this.data.dest,sBanner!==null&&sBanner!==sToBanner?sFile.replace(sBanner,sToBanner):sFile);
-		grunt.log.writeln('File "'+this.data.dest+'" created.');
-	});
+//	grunt.registerMultiTask('distill', '', function() {
+//		var sFile = fs.readFileSync(this.data.src).toString(),
+//			sBanner = sFile.match(/\/\*!([\s\S]*?)\*\//g),
+//			sToBanner = this.data.options.banner;
+//		fs.writeFileSync(this.data.dest,sBanner!==null&&sBanner!==sToBanner?sFile.replace(sBanner,sToBanner):sFile);
+//		grunt.log.writeln('File "'+this.data.dest+'" created.');
+//	});
 
 	grunt.registerTask('default',[
 		'jshint'
-		,'distill'
 		,'uglify:tinysort'
 		,'uglify:charorder'
 		,'uglify:tinysortgz'
 		,'uglify:charordergz'
-	]);
-
-	grunt.registerTask('dist',[
-		'distill'
 	]);
 
 	grunt.registerTask('opensource',[
@@ -155,5 +192,17 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('external',[
 		'copy:external'
+	]);
+	grunt.registerTask('jsdocInit',[
+		'cli:jsdocInitNpm'
+		,'cli:jsdocInitBower'
+	]);
+	grunt.registerTask('jsdoc',[
+		'clean:jsdoc'
+		,'cli:jsdocprepare'
+		,'cli:jsdoc'
+//		,'copy:jsdoc'
+//		,'renderPages:docs'
+//		,'extendDocs'
 	]);
 };

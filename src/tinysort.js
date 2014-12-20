@@ -1,20 +1,31 @@
+/**
+ * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
+ * @summary A nodeElement sorting script.
+ * @version 2.0.81 beta
+ * @license MIT/GPL
+ * @author Ron Valstar (http://www.sjeiti.com/)
+ * @copyright Ron Valstar <ron@ronvalstar.nl>
+ * @namespace tinysort
+ * @todo check place option
+ */
 if (!window.tinysort) window.tinysort = (function(undefined){
 	'use strict';
 
 	// private vars
 	var fls = !1							// minify placeholder
 		,nll = null							// minify placeholder
-		,parsefloat = parseFloat				// minify placeholder
+		,parsefloat = parseFloat			// minify placeholder
 //		,mathmn = Math.min					// minify placeholder
+		,fnIndexOf = Array.prototype.indexOf
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
-//		,aPluginPrepare = []
-//		,aPluginSort = []
+		,aPluginPrepare = []
+		,aPluginSort = []
 		,iCriteria = 0
 		,iCriterium = 0
 		////////////////////////////
 //		id: 'TinySort'
-//		,version: '1.5.6'
+		,sVersion = '2.0.81'
 //		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 //		,uri: 'http://tinysort.sjeiti.com/'
 //		,licensed: {
@@ -43,15 +54,21 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 
 	/**
 	 * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
-	 * @summary A nodeElement sorting script.
-	 * @version 2.0.6 beta
-	 * @license MIT/GPL
-	 * @author Ron Valstar (http://www.sjeiti.com/)
-	 * @copyright Ron Valstar <ron@ronvalstar.nl>
-	 * @param {NodeList} nodeList
-	 * @param {String} [selector]
-	 * @param {Object} [...options]
-	 * @returns {Array}
+	 * @memberof tinysort
+	 * @public
+	 * @param {NodeList|HTMLElement[]} nodeList The nodelist or array of elements to be sorted.
+	 * @param {String} [selector] An optional CSS selector.
+	 * @param {Object} [options] A list of options.
+	 * @param {String} [options.order='asc'] The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.
+	 * @param {String} [options.attr=null] Order by attribute value (ie title, href, class)
+	 * @param {String} [options.data=null] Use the data attribute for sorting.
+	 * @param {String} [options.place='org'] Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first' or 'org'.
+	 * @param {Boolean} [options.useVal=false] Use element value instead of text.
+	 * @param {Boolean} [options.cases=false] A case sensitive sort (orders [aB,aa,ab,bb])
+	 * @param {Boolean} [options.forceStrings=false] If false the string '2' will sort with the value 2, not the string '2'.
+	 * @param {Boolean} [options.ignoreDashes=false] Ignores dashes when looking for numerals.
+	 * @param {Function} [options.sortFunction=null] Override the default sort function.
+	 * @returns {HTMLElement[]}
 	 */
 	function tinysort(nodeList){
 		var mFragment = document.createDocumentFragment()
@@ -118,6 +135,8 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 
 		/**
 		 * Adds a criterium
+		 * @memberof tinysort
+		 * @private
 		 * @param {String} [selector]
 		 * @param {Object} [options]
 		 */
@@ -152,6 +171,8 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		/**
 		 * Creates an elementObject and adds to lists.
 		 * Also checks if has one or more parents.
+		 * @memberof tinysort
+		 * @private
 		 */
 		function initSortList(){
 			loop(nodeList,function(elm,i){
@@ -178,13 +199,13 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		 * Sorts the sortList
 		 */
 		function sort(){
-//			console.log('aCriteria',aCriteria); // log
-//			console.log('aoList',aoList); // log
 			aoSort.sort(sortFunction);
 		}
 
 		/**
 		 * Sort all the things
+		 * @memberof tinysort
+		 * @private
 		 * @param {elementObject} a
 		 * @param {elementObject} b
 		 * @returns {number}
@@ -198,6 +219,7 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 					,rxLast = oCriterium.ignoreDashes?rxLastNrNoDash:rxLastNr;
 				//
 				// todo: fnPluginPrepare(oSett);
+				pluginPrepare(oCriterium);
 				//
 				if (oCriterium.sortFunction) { // custom sort
 					iReturn = oCriterium.sortFunction(a,b);
@@ -229,9 +251,11 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 						iReturn = oCriterium.iAsc*(sA<sB?-1:(sA>sB?1:0));
 					}
 				}
-				//loop(aPluginSort,function(fn){
-				//	iReturn = fn.call(fn,bNumeric,sA,sB,iReturn);
-				//});
+				//
+				loop(aPluginSort,function(fn){
+					iReturn = fn.call(fn,oCriterium,bNumeric,sA,sB,iReturn);
+				});
+				//
 				if (iReturn===0) iCriterium++;
 			}
 			return iReturn;
@@ -240,6 +264,8 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 
 		/**
 		 * Get the string/number to be sorted by checking the elementObject with the criterium.
+		 * @memberof tinysort
+		 * @private
 		 * @param {elementObject} elementObject
 		 * @param {criterium} criterium
 		 * @returns {String}
@@ -282,6 +308,8 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 
 		/**
 		 * Applies the sorted list to the DOM
+		 * @memberof tinysort
+		 * @private
 		 */
 		function applyToDOM(){
 			var bAllSorted = aoSort.length===aoFull.length;
@@ -371,7 +399,33 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		return obj;
 	}
 
-	return tinysort;
+	function plugin(prepare,sort){
+		aPluginPrepare.push(prepare);	// function(settings){doStuff();}
+		aPluginSort.push(sort);			// function(valuesAreNumeric,sA,sB,iReturn){doStuff();return iReturn;}
+	}
+
+	/**
+	 * Change criterium by looping through plugins
+	 * @param {criterium} criterium
+	 */
+	function pluginPrepare(criterium){
+		//loop(aPluginPrepare,bind)
+		loop(aPluginPrepare,function(fn){
+			fn.call(fn,criterium);
+		});
+	}
+
+	// extend the plugin to expose stuff
+	extend(plugin,{
+		indexOf: fnIndexOf
+		,loop: loop
+	});
+
+	return extend(tinysort,{
+		plugin: plugin
+		,version: sVersion
+		,defaults: defaults
+	});
 })();
 
 // todo: add as dependency
