@@ -28,7 +28,7 @@ full
 The first (and only required) argument is a nodeList:
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#people&gt;li'));
+tinysort(nodeList);
 ```
 
 The other arguments can be a query selector string...
@@ -123,7 +123,7 @@ tinysort(document.querySelectorAll('ul#xsub>li'),'span:eq(1)');
 The following example will only sort the non-striked elements.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xattr>li'),'span[class!=striked]');
+tinysort(document.querySelectorAll('ul#xattr>li'),'span:not([class=striked])');
 ```
 
 ### return only sorted elements

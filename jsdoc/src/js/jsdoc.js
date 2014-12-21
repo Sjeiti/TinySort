@@ -91,7 +91,7 @@ iddqd.ns('jsdoc',(function($,u){
 		if (location.hash) {
 			setTimeout(function () {
 				$(location.hash).addClass('highlight');
-				$.scrollTo(location.hash,500,{axis: 'y',offset: -50});
+				$.scrollTo&&$.scrollTo(location.hash,500,{axis: 'y',offset: -50});
 			},500);
 		}
 	}
@@ -139,9 +139,157 @@ iddqd.ns('jsdoc',(function($,u){
 		/*jshint evil:false*/
 	}
 
+	function brnd(){
+		return Math.random()<0.5;
+	}
+	function l(){
+		var aLorem = 'a et at in mi ac id eu ut non dis cum sem dui nam sed est nec sit mus vel leo urna duis quam cras nibh enim quis arcu orci diam nisi nisl nunc elit odio amet eget ante erat eros ipsum morbi nulla neque vitae purus felis justo massa donec metus risus curae dolor etiam fusce lorem augue magna proin mauris nullam rutrum mattis libero tellus cursus lectus varius auctor sociis ornare magnis turpis tortor semper dictum primis ligula mollis luctus congue montes vivamus aliquam integer quisque feugiat viverra sodales gravida laoreet pretium natoque iaculis euismod posuere blandit egestas dapibus cubilia pulvinar bibendum faucibus lobortis ultrices interdum maecenas accumsan vehicula nascetur molestie sagittis eleifend facilisi suscipit volutpat venenatis fringilla elementum tristique penatibus porttitor imperdiet curabitur malesuada vulputate ultricies convallis ridiculus tincidunt fermentum dignissim facilisis phasellus consequat adipiscing parturient vestibulum condimentum ullamcorper scelerisque suspendisse consectetur pellentesque'.split(' ');
+		aLorem.sort(function(){return brnd()?1:-1;});
+		return aLorem.slice(0,8);//'jlufhl,iuaewf,liuaw,felhua,fhuuf,iudsf,weoijj,pojvnb'.split(',');
+	}
+	function ls(len){
+		var i = len||8, a = [];
+		while (i--) a.push(brnd()?'':'striked');
+		return a;
+	}
+	function f(len){
+		var i = len||8, a = [];
+		while (i--) a.push(Math.random()*1E9);
+		return a;
+	}
+	function n(len){
+		var i = len||8, a = [];
+		while (i--) {
+			a.push(Math.random()*1E9<<0);
+		}
+		return a;
+	}
+	function fn(len){
+		var i = len||8, a = [];
+		while (i--) {
+			var fRnd = Math.random()*1E9;
+			a.push(brnd()?fRnd:fRnd<<0);
+		}
+		return a;
+	}
+
 	function reset(parent,selector){
-		var aFoo = 'jlufhl,iuaewf,liuaw,felhua,fhuuf,iudsf,weoijj,pojvnb'.split(',')
-			,mExample = zen(selector+'{a$}*'+aFoo.length,{a:aFoo}).pop();
+		var aId = selector.match(/#(\w+)/)
+			,sId = aId&&aId.pop()
+			,oParse = {}
+			,iLen = 8
+			,mExample;
+		if (sId==='xattr'||sId==='xret'){
+			selector += '*'+iLen+'>span.a${b$}';
+			oParse = {a:ls(),b:l()};//a=brnd?striked
+		} else if (sId==='xsub'){
+			selector += '*'+iLen+'>span{a$}+span{b$}';
+			oParse = {a:l(),b:l()};
+		} else if (sId==='xval'){
+			selector += '*'+iLen+'>span{a$}+a[href=#b$ title=c$]{d$}';
+			oParse = {a:l(),b:l(),c:l(),d:l()};
+		} else if (sId==='xdta'){
+			selector += '*'+iLen+'>span{a$}+a[href=# data-foo=b$]{c$}';
+			oParse = {a:l(),b:l(),c:l()};
+		} else if (sId==='xinp'){
+			/*case 'xinp':
+				for (i=0;i<num;i++) {
+					var fnGetFormElement = function(){
+						var aTypes = ['text','password','file','url','email','number','range','search','date','time','select'];//,'radio'
+						var sType = aTypes[Math.floor(Math.random()*aTypes.length)];
+						var sName = getPassword(6,true);
+						var sEcho = '<label for="'+sName+'">'+sType+'</label>';
+						switch (sType) {
+							case 'text':		sEcho += '<input type="text" name="'+sName+'" placeholder="enter some text" />'; break;
+							case 'password':	sEcho += '<input type="password" name="'+sName+'" placeholder="enter a password" />'; break;
+							case 'url':			sEcho += '<input type="url" name="'+sName+'" placeholder="enter an url" />'; break;
+							case 'number':		sEcho += '<input type="number" name="'+sName+'" />'; break;
+							case 'range':		sEcho += '<input type="range" name="'+sName+'" />'; break;
+							case 'file':		sEcho += '<input type="file" name="'+sName+'" />'; break;
+							case 'date':		sEcho += '<input type="date" name="'+sName+'" />'; break;
+							case 'time':		sEcho += '<input type="time" name="'+sName+'" />'; break;
+							case 'search':		sEcho += '<input type="search" name="'+sName+'" placeholder="search something" />'; break;
+							case 'email':		sEcho += '<input type="email" name="'+sName+'" placeholder="enter an email adress" />'; break;
+							case 'radio':
+								for (var j=0;j<3;j++) {
+									var sVal = getPassword(6,true);
+									sEcho += '<input type="radio" name="'+sName+'" value="'+sVal+'">'+sVal+'</input>';
+								}
+							break;
+							case 'select':
+								sEcho += '<select name="'+getPassword(6,true)+'">';
+								for (j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
+								sEcho += '<optgroup label="'+getPassword(6,true)+'">';
+								for (j=0;j<4;j++) sEcho += '<option>'+getPassword(6,true)+'</option>';
+								sEcho += '</optgroup>';
+								sEcho += '</select>';
+							break;
+						}
+						return sEcho;
+					};
+					mEl.append('<li>'+fnGetFormElement()+'<span></span></li>');
+				}
+			break;*/
+		} else if (sId==='xany'){
+			selector = 'div#'+sId+'>span{a$}*'+iLen;
+			oParse = {a:l()};
+		} else if (sId==='ximg'){
+			selector = 'div#'+sId+'>img[src=style/logo.png title=a$ style=$b]*'+iLen;
+			oParse = {a:l(),b:l()};
+		} else if (sId==='xcst'){
+			selector += '{a$}*'+iLen;
+			oParse = {a:n()};
+		} else if (sId==='xnum'){
+			selector += '{a$}*'+iLen;
+			oParse = {a:fn()};
+		} else {
+			selector += '{a$}*'+iLen;
+			oParse = {a:l()};
+		}
+		mExample = zen(selector,oParse).pop();
+		console.log('fn',fn()); // log
+//
+//	case 'xcst':	for (i=0;i<num;i++) mEl.append('<li>'+rand(0,999)+'</li>'); break;
+//	case 'xnum':	for (i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
+//	case 'xmix':
+//		var sBase1 = getPassword(3,true);
+//		var sBase2 = getPassword(3,true);
+//		var sNum = rand(0,150);
+//		for (i=0;i<num/2;i++) mEl.append('<li>'+(getPassword(3,true)+rand(0,150)+getPassword(3,true)+rand(0,150))+'</li>');
+//		for (i=0;i<num/2;i++) mEl.append('<li>'+(sBase1+rand(0,150)+sBase2+rand(0,150))+'</li>');
+//		for (i=0;i<num/2;i++) mEl.append('<li>'+(sBase1+sNum+sBase2+rand(0,150))+'</li>');
+//	break;
+//	case 'xrnd':
+//		for (i=0;i<num;i++) {
+//			if (i>0) {
+//				mEl.append('<li>'+getPassword(6)+'</li>');
+//			} else {
+//				var sId = 's'+i;
+//				mEl.append('<li><ul id="'+sId+'"></ul></li>');
+//				refill(sId,6);
+//			}
+//		}
+//	break;
+//	case 'greek':	mEl.append('<li>'+('Î¬Î»Î¿Î³Î¿,Î±Î½Î´ÏÎ±Ï‚,Î´Î¬ÏƒÎºÎ±Î»Î¿Ï‚,Î´ÎµÎ½Ï„ÏÎ¿,Î´Î®Î¼Î·Ï„ÏÎ±,ÎºÎ¬Ï„Ï‰,Î»ÏÎ¸Î·ÎºÎµ,Î»ÏÎ¾Î·,Î¼Ï€ÏÎ¿ÏƒÏ„Î¬,Ï€Î»Î­Î½Ï‰,Ï€Î»Ï…Î½Ï„Î®ÏÎ¹Î¿'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+//	case 'danish':	mEl.append('<li>'+('KÃ¸benhavn,Ã†ble,Ã˜resund,Ã…ben,Aarhus,Ã…se'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+//	case 'serb':	mEl.append('<li>'+('coga,Äega,Äovjek,dÅ¾ep,godina,gospodin,liljana,luÄ‘ak,ljubav,muÅ¡karac,muÅ¾,noÅ¾,njuÅ¡ka,zec'.split(',').sort(function(){return Math.random()>.5?1:-1}).join('</li><li>'))+'</li>'); break;
+//	case 'xmul':
+//		var aNames = [];
+//		for (i=0;i<(num/2<<0);i++) aNames.push(getPassword(6));
+//
+//		for (i=0;i<num;i++) {
+//			var iTimestamp = rand(1145925286604,1345925286604)
+//				,oDate = new Date(iTimestamp)
+//				,iMonth = oDate.getMonth()+1
+//				,iDay = oDate.getDate()
+//				,sDate = (iDay<10?'0':'')+iDay+'-'+(iMonth<10?'0':'')+iMonth+'-'+oDate.getFullYear();
+//			mEl.append('<li><span class="name" style="display:inline-block;width:100px;">'+aNames[rand(0,aNames.length)]+'</span> <span class="date" style="font-family:monospace;" data-timestamp="'+iTimestamp+'">'+sDate+'</span> </li>');
+//		}
+//	break;
+//	default:  for (i=0;i<num;i++) mEl.append('<li>'+getPassword(6)+'</li>');
+//}
+//}
+		/////////////////////////////////////////////////////
 		while (parent.firstChild) parent.removeChild(parent.firstChild);
 		parent.appendChild(mExample);
 	}
