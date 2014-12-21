@@ -1,77 +1,58 @@
 #TinySort
 
-TinySort is a small and simple jQuery plugin that will sort any nodetype by it's text- or attribute value, or by that of one of it's children.
+TinySort is a small script that sorts HTMLElements. It sorts by text- or attribute value, or by that of one of it's children.
 The examples below should help getting you on your way.
 
 For those interested: there is a [unit/regression test here](test/unit).
 
 If you find a bug, have a feature request or a code improvement you can [file them here](https://github.com/Sjeiti/TinySort/issues). Please [provide code examples](http://jsfiddle.net/) where applicable.</small>
 
-##Download
-
-###TinySort
-
-source
-minified
-gzipped
-full
-
-#CharOrder plugin
-
-source
-minified
-gzipped
-full
+<div class="alert alert-warning" role="alert"><p>TinySort used to be a jQuery plugin but was rewritten to remove the jQuery dependency. The original functionality is still there but some changes have been made, notably to the parameters.</p></div>
 
 ## usage
 
-The first (and only required) argument is a nodeList:
+The first (and only required) argument is a [NodeList](https://developer.mozilla.org/en/docs/Web/API/NodeList), an array of HTMLElements or a string (which is converted to a NodeList using document.querySelectorAll).
 
 ``` javascript
-tinysort(nodeList);
+tinysort(NodeList);
 ```
 
-The other arguments can be a query selector string...
+The other arguments can be an an options object.
 
 ``` javascript
-tinysort(nodeList,'span.surname');
+tinysort(NodeList,{place:'end'});
 ```
 
-an options object...
+If the option object only contains a `selector` you can suffice by using the selector string instead of the object.
 
 ``` javascript
-tinysort(nodeList,{place:'end'});
+tinysort(NodeList,'span.surname');
 ```
 
-both...
-
-``` javascript
-tinysort(nodeList,'img',{order:'desc',attr:'alt'});
-```
-or more if you want multiple sort criteria...
+For multiple criteria you can just overload.
 
 ``` javascript
-tinysort(nodeList,'span.surname',{order:'desc'},'span.name',{order:'desc'});</pre>
+tinysort(NodeList,'span.surname','span.name',{data:'age'});
 ```
-Change default settings globally like so:
+
+Default settings can be changed
 
 ``` javascript
 tinysort.defaults.order = 'desc';
 tinysort.defaults.attr = 'title';
 ```
 
-TinySort has a number of settings:
-
+The options object can have the following settings:
 
 
 ## examples
 
 ### default sorting
 
-The default sort is done by simply calling the 'tsort' function onto your selection.
+The default sort simply sorts the textContent of each element
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xdflt>li'));
+tinysort('ul#xdflt>li');
 ```
 
 ### sort on any node
@@ -79,7 +60,7 @@ tinysort(document.querySelectorAll('ul#xdflt>li'));
 TinySort works on any nodeType. The following is a div with spans.
 
 ``` javascript
-tinysort(document.querySelectorAll('div#xany>span'),'',{order:'desc'});
+tinysort('div#xany>span','',{order:'desc'});
 ```
 
 ### sorted numbers
@@ -87,7 +68,7 @@ tinysort(document.querySelectorAll('div#xany>span'),'',{order:'desc'});
 TinySort also works on numbers.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xnum>li'));
+tinysort('ul#xnum>li');
 ```
 
 ### mixed literal and numeral
@@ -95,35 +76,37 @@ tinysort(document.querySelectorAll('ul#xnum>li'));
 In a normal sort the order would be a1,a11,a2 while you'd really want it to be a1,a2,a11. TinySort corrects this:
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xmix>li'));
+tinysort('ul#xmix>li');
 ```
 
 ### sorted by attribute value
 
-Sort by attribute value by parsing the additional parameter 'attr=attributeName'. This will sort by attribute of, either the jquery selection, or of the sub-selection (if provided). In this case sort is by href on the anchor sub-selection.
+Sort by attribute value by adding the 'attr' option. This will sort by attribute of, either the selection, or of the sub-selection (if provided). In this case sort is by href on the anchor sub-selection.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xval>li'),'a',{attr:'href'});
+tinysort('ul#xval>li',{selector:'a',attr:'href'});
 ```
+
 Another example: images sorted by attribute title value.
 
 ``` javascript
-tinysort(document.querySelectorAll('span#ximg>img'),{attr:'title'});
+tinysort('div#ximg>img',{attr:'title'});
 ```
 
 ### sorted by sub-selection
 
-You can provide an additional subselection by parsing a jquery sub-selection string into the tsort function. The returned array will be in the newly sorted order.
+You can provide an additional subselection by setting the `selector` option. If no other options are set you can also just pass the selector string instead of the options object.
 
 In this example the list elements are sorted to the text of the second span.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xsub>li'),'span:eq(1)');
+tinysort('ul#xsub>li','span:nth-child(2)');
 ```
+
 The following example will only sort the non-striked elements.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xattr>li'),'span:not([class=striked])');
+tinysort('ul#xattr>li','span:not([class=striked])');
 ```
 
 ### return only sorted elements
@@ -132,7 +115,7 @@ By default, all the elements are returned, even the ones excluded by your sub-se
 You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.
 
 ``` javascript
-var aSorted = tinysort(document.querySelectorAll('ul#xret>li'),'span:not([class=striked])',{returns:true,place:'org'});
+var aSorted = tinysort('ul#xret>li','span:not([class=striked])',{returns:true,place:'org'});
 aSorted.forEach(function(elm){
     elm.style.color = 'red';
 });
@@ -142,10 +125,10 @@ aSorted.forEach(function(elm){
 
 Sometimes multiple sorting criteria are required. For instance: you might want to sort a list of people first by surname then by name.
 
-For multiple sorting rules you can just append the parameters. So tsort(selector,object) becomes tsort(selector1,object1,selector2,object2,selector3,object3...). You can also leave out either the selector or the object if it's not needed: tsort(selector1,selector2,object2,object3...). Keep in mind that tsort will look for selector-object pairs and if no applicable pair is formed it will use default values. In this example three arguments are two criteria: the first argument uses the default options object, the second argument uses the third argument as options object.
+For multiple sorting rules you can just overload the parameters. So tinysort(selector,options) becomes tsort(selector,options1,options2,options3...). Note that in the next example the second parameter `'span.name'` will be rewritten internally to `{selector:'span.name'}`.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xmul>li'),'span.name','span.date',{data:'timestamp'});
+tinysort('ul#xmul>li','span.name',{selector:'span.date',data:'timestamp'});
 ```
 
 ### non-latin characters
@@ -165,9 +148,15 @@ A normal array sorts according to [Unicode](http://en.wikipedia.org/wiki/Unicode
 Here some real examples:
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#greek>li'),{charOrder:'α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]'});
-tinysort(document.querySelectorAll('ul#danish>li'),{charOrder:'æøå[{Aa}]'});
-tinysort(document.querySelectorAll('ul#serb>li'),{charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});
+tinysort('ul#greek>li',{charOrder:'α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]'});
+```
+
+``` javascript
+tinysort('ul#danish>li',{charOrder:'æøå[{Aa}]'});
+```
+
+``` javascript
+tinysort('ul#serb>li',{charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});
 ```
 
 Here are some example languages:
@@ -196,31 +185,30 @@ Here are some example languages:
     </tbody>
 </table>
 
-### sort [$.val()](http://api.jquery.com/val/)
+### sort by value
 
-The .val() method is primarily used to get the values of form elements. By parsing the useVal attribute you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.
+The value property is primarily used to get the values of form elements, but list-elements also have the value property. By setting the useVal option you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xinp>li'),'>input,>select',{useVal:true}).each(function(i,el){
-var $Li = $(el);
-$Li.find('span').text(' : '+$Li.find('>input,>select').filter(':eq(0)').val());
+tinysort('ul#xinp>li',{selector:'>input,>select',useVal:true}).forEach(function(elm){
+    elm.querySelector('span').textContent = elm.querySelector('>input,>select').value;
 });
 ```
 
-### sort [$.data()](http://api.jquery.com/data/)
+### sort by data
 
-Sort by data attribute by parsing the additional parameter 'data=dataName'.
+Sort by data attribute by setting the `data` option.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xdta>li'),'a',{data:'foo'});
+tinysort('ul#xdta>li',{selector:'a',data:'foo'});
 ```
 
 ### sorted descending
 
-Sort by ascending or descending order by parsing the additional 'order="desc"/"asc"' parameter.
+Sort in ascending or descending order  by setting the `order` option to `asc` or `desc`.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xdesc>li'),'',{order:'desc'});
+tinysort('ul#xdesc>li',{order:'desc'});
 ```
 
 ### randomize
@@ -228,22 +216,22 @@ tinysort(document.querySelectorAll('ul#xdesc>li'),'',{order:'desc'});
 TinySort can also order randomly (or is that a contradiction).
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xrnd>li'),{order:'rand'});
+tinysort('ul#xrnd>li',{order:'rand'});
 ```
 
-### parsing a custom sort function
+### parsing a custom sort function (todo)
 
 Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xcst>li'),'',{sortFunction:function(a,b){
+tinysort('ul#xcst>li','',{sortFunction:function(a,b){
 var iCalcA = parseInt(a.s)%16;
 var iCalcB = parseInt(b.s)%16;
 return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
 }});
 ```
 
-### sorting tables
+### sorting tables (todo)
 
 With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:
 
@@ -252,9 +240,9 @@ var aAsc = [];
 function sortTable(e) {
 var nr = $(e.currentTarget).index();
 aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
-tinysort(document.querySelectorAll('#xtable>tbody>tr'),'td:eq('+nr+')[abbr]',{order:aAsc[nr]});
+tinysort('#xtable>tbody>tr','td:eq('+nr+')[abbr]',{order:aAsc[nr]});
 }
-tinysort(document.querySelectorAll('#xtable').find('thead th:last').siblings().on('click',sortTable);
+tinysort('#xtable'.find('thead th:last').siblings().on('click',sortTable);
 ```
 
 Note that the mixed column only sorts those rows of which the td's have the abbr attribute set, and because of the default place value the non-sorted elements always remain at the bottom
@@ -273,15 +261,15 @@ Note that the mixed column only sorts those rows of which the td's have the abbr
     <tbody><tr><td></td></tr></tbody>
 </table>
 
-### animated sorting
+### animated sorting (todo)
 
 Tinysort has no built in animating features but it can quite easily be accomplished through regular js/jQuery.
 
 ``` javascript
-var $Ul = tinysort(document.querySelectorAll('ul#xanim');
+var $Ul = tinysort('ul#xanim');
 $Ul.css({position:'relative',height:$Ul.height(),display:'block'});
 var iLnH;
-var $Li = tinysort(document.querySelectorAll('ul#xanim>li');
+var $Li = tinysort('ul#xanim>li');
 $Li.each(function(i,el){
 	var iY = $(el).position().top;
 	$.data(el,'h',iY);

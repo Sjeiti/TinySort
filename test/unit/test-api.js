@@ -1,4 +1,4 @@
-/* global module, test, ok, zenLi, eachElement */ //expect
+/* global module, test, ok, zen, zenLi, eachElement */ //expect
 (function(){
 	'use strict';
 
@@ -15,6 +15,14 @@
 				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
 			return sSorted===sJoin;
 		})(),'tinysort(nodeList);');
+		ok( (function(){
+			var mList = zen('ul>li{a$}*6',{a:aList}).pop();
+			mList.style.display = 'none';
+			document.body.appendChild(mList);
+			var aSorted = tinysort('ul>li')
+				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+			return sSorted===sJoin;
+		})(),'tinysort(string);');
 		ok( (function(){
 			var aNodes = zenLi('ul>li{a$}*6',{a:aList})
 				,iNodes = aNodes.length
@@ -36,15 +44,15 @@
 			return sSorted==sJoin;
 		})(),'tinysort(nodeList,\'p:nth-child(2)\');');
 		ok( (function(){
-			var aSorted = tinysort(zenLi('ul>li*6>p[title=a$]{a}',{a:aList}),'p[title]',{attr:'title'})
+			var aSorted = tinysort(zenLi('ul>li*6>p[title=a$]{a}',{a:aList}),{selector:'p[title]',attr:'title'})
 				,sSorted = eachElement(aSorted,function(elm){return elm.querySelector('p').getAttribute('title'); });
 			return sSorted==sJoin;
-		})(),'tinysort(nodeList,\'p[title]\',{attr:\'title\'});');
+		})(),'tinysort(nodeList,{selector:\'p[title]\',attr:\'title\'});');
 		ok( (function(){
-			var aSorted = tinysort(zenLi('ul>(li>input[value=a$]+li>select>option[value=b$])*3',{a:aList.slice(0,3),b:aList.slice(3)}),'input,select',{useVal:true})
+			var aSorted = tinysort(zenLi('ul>(li>input[value=a$]+li>select>option[value=b$])*3',{a:aList.slice(0,3),b:aList.slice(3)}),{selector:'input,select',useVal:true})
 				,sSorted = eachElement(aSorted,function(elm){return elm.querySelector('input,select').value; });
 			return sSorted==sJoin;
-		})(),'tinysort(nodeList,\'input,select\',{useVal:true})');
+		})(),'tinysort(nodeList,{selector:\'input,select\',useVal:true})');
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li[data-foo=a$]{_a$}*6',{a:aList}),{data:'foo'})
 				,sSorted = eachElement(aSorted,function(elm){ return elm.getAttribute('data-foo'); });
@@ -114,9 +122,9 @@
 			return sSorted===' aa_id1 aa_id3 aa_id4 aa_id11 bb_id5 bb_id12 cc_id2 cc_id6';
 		})(),'tinysort(nodeList,{},{attr:\'id\'});');
 		ok( (function(){
-			var aSorted = tinysort(zenLi('ul>li[title=ida$]*8>(p{b$}+p{c$})',{a:[12,4,2,3,5,1,11,6],b:['aa','cc','aa','bb','aa','aa','bb','cc'],c:['bb','aa','cc','aa','bb','aa','aa','cc']}),'p:nth-child(2)',{},{attr:'title'})
+			var aSorted = tinysort(zenLi('ul>li[title=ida$]*8>(p{b$}+p{c$})',{a:[12,4,2,3,5,1,11,6],b:['aa','cc','aa','bb','aa','aa','bb','cc'],c:['bb','aa','cc','aa','bb','aa','aa','cc']}),'p:nth-child(2)',{attr:'title'})
 				,sSorted = eachElement(aSorted,function(elm){ return ' '+elm.textContent+'_'+elm.getAttribute('title'); });
 			return sSorted===' aaaa_id1 bbaa_id3 ccaa_id4 bbaa_id11 aabb_id5 aabb_id12 aacc_id2 cccc_id6';
-		})(),'tinysort(nodeList,\'p:eq(1)\',{},{attr:\'title\'});');
+		})(),'tinysort(nodeList,\'p:eq(1)\',{attr:\'title\'});');
 	});
 })();

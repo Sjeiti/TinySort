@@ -1,7 +1,7 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.84 beta
+ * @version 2.0.85 beta
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -24,7 +24,7 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		,iCriterium = 0
 		////////////////////////////
 //		id: 'TinySort'
-		,sVersion = '2.0.84'
+		,sVersion = '2.0.85'
 //		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 //		,uri: 'http://tinysort.sjeiti.com/'
 //		,licensed: {
@@ -33,7 +33,9 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 //		}
 		,defaults = { // default settings
 
-			 order: 'asc'			// order: asc, desc or rand
+			selector: undefined	// order: asc, desc or rand
+
+			,order: 'asc'			// order: asc, desc or rand
 
 			,attr: nll				// order by attribute value
 			,data: nll				// use the data attribute for sorting
@@ -55,9 +57,10 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 	 * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
 	 * @memberof tinysort
 	 * @public
-	 * @param {NodeList|HTMLElement[]} nodeList The nodelist or array of elements to be sorted.
+	 * @param {NodeList|HTMLElement[]|String} nodeList The nodelist or array of elements to be sorted. If a string is passed it should be a valid CSS selector.
 	 * @param {String} [selector] An optional CSS selector.
 	 * @param {Object} [options] A list of options.
+	 * @param {String} [options.selector] XXXXXXXXXXXXXXXX
 	 * @param {String} [options.order='asc'] The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.
 	 * @param {String} [options.attr=null] Order by attribute value (ie title, href, class)
 	 * @param {String} [options.data=null] Use the data attribute for sorting.
@@ -70,6 +73,11 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 	 * @returns {HTMLElement[]}
 	 */
 	function tinysort(nodeList){
+		if (isString(nodeList)) nodeList = document.querySelectorAll(nodeList);
+		if (nodeList.length===0) {
+			console.warn('No elements to sort');
+		}
+
 		var mFragment = document.createDocumentFragment()
 			/** both sorted and unsorted elements
 			 * @type {elementObject[]} */
@@ -99,19 +107,12 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		 * Create criteria list
 		 */
 		function initCriteria(){
-			var sTempSelect
-				,iArguments = arguments.length;
-			if (iArguments===0) {
-				addCriterium();
+			if (arguments.length===0) {
+				addCriterium({}); // have at least one criterium
 			} else {
 				loop(arguments,function(param,i){
-					if (isString(param)) {
-						if (sTempSelect||iArguments===i+1) addCriterium(sTempSelect||param);
-						sTempSelect = param;
-					} else {
-						addCriterium(sTempSelect,param);
-						sTempSelect = nll;
-					}
+					console.log('isString(param)',param,isString(param)); // log
+					addCriterium(isString(param)?{selector:param}:param);
 				});
 			}
 			iCriteria = aCriteria.length;
@@ -120,6 +121,7 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		/**
 		 * A criterium is a combination of the selector, the options and the default options
 		 * @typedef {Object} criterium
+		 * @property {String} selector - a valid CSS selector
 		 * @property {String} order - order: asc, desc or rand
 		 * @property {String} attr - order by attribute value
 		 * @property {String} data - use the data attribute for sorting
@@ -139,16 +141,14 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		 * @param {String} [selector]
 		 * @param {Object} [options]
 		 */
-		function addCriterium(selector,options){
-			var bFind = !!selector
-				,bFilter = bFind&&selector[0]===':'
+		function addCriterium(options){
+			var bFind = !!options.selector
+				,bFilter = bFind&&options.selector[0]===':'
 				,oOptions = extend(options||{},defaults)
 			;
 			aCriteria.push(extend({ // todo: only used locally, find a way to minify properties
-				 sFind: selector
-				,selector: selector
 				// has find, attr or data
-				,bFind: bFind
+				bFind: bFind
 				,bAttr: !(oOptions.attr===nll||oOptions.attr==='')
 				,bData: oOptions.data!==nll
 				// filter
@@ -429,9 +429,7 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		ElementPrototype.webkitMatchesSelector ||
 		function (selector) {
 			var node = this, nodes = (node.parentNode || node.document).querySelectorAll(selector), i = -1;
-
 			while (nodes[++i] && nodes[i] != node);
-
 			return !!nodes[i];
 		};
 	}(Element.prototype);

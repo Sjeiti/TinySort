@@ -14,8 +14,7 @@ iddqd.ns('jsdoc',(function($,u){
 		initPreCode();
 		initHash();
 		initTutorials();
-		loadScript('../src/tinysort.js');
-		loadScript('../src/tinysort.charorder.js');
+		loadScript('../src/tinysort.js').then(loadScript.bind(null,'../src/tinysort.charorder.js'));
 		initExamples();
 		console.log('adsf'); // log
 //						account: 'UA-37777223-1'
@@ -111,7 +110,7 @@ iddqd.ns('jsdoc',(function($,u){
 		Array.prototype.forEach.call(document.querySelectorAll('pre'),function(pre){
 			var mCode = pre.querySelector('code')
 				,sCode = mCode.textContent
-				,aCodeSelector = sCode.match(/(All\(')([^']*)/)
+				,aCodeSelector = sCode.match(/(tinysort\(')([^']*)/)
 				,sSelector = aCodeSelector&&aCodeSelector.pop()
 			;
 			if (sSelector) {
@@ -151,7 +150,7 @@ iddqd.ns('jsdoc',(function($,u){
 			selector += '*'+iLen+'>span.a${b$}';
 			oParse = {a:'t',b:'s'};
 		} else if (sId==='xsub'){
-			selector += '*'+iLen+'>span{a$}+span{b$}';
+			selector += '*'+iLen+'>span{a$ }+span{b$}';
 			oParse = {a:'s',b:'s'};
 		} else if (sId==='xval'){
 			selector += '*'+iLen+'>span{a$}+{ }+a[href=#b$ title=c$]{d$}';
@@ -199,11 +198,11 @@ iddqd.ns('jsdoc',(function($,u){
 				}
 			break;*/
 		} else if (sId==='xany'){
-			selector = 'div#'+sId+'>span{a$}*'+iLen;
+			selector = 'div#'+sId+'>span{a$ }*'+iLen;
 			oParse = {a:'s'};
 		} else if (sId==='ximg'){
-			selector = 'div#'+sId+'>img[src=style/logo.png title=a$ style=$b]*'+iLen;
-			oParse = {a:'s',b:'s'};
+			selector = 'div#'+sId+'>img[src=styles/logo.svg width=30 title=a$]*'+iLen;
+			oParse = {a:'s'};
 		} else if (sId==='xcst'){
 			selector += '{a$}*'+iLen;
 			oParse = {a:'i'};
@@ -216,11 +215,25 @@ iddqd.ns('jsdoc',(function($,u){
 		} else if (sId==='xmul'){
 			selector += '*'+iLen+'>span.name{a$}+span.date[data-timestamp=b$]{b$}';
 			oParse = {a:l('s ',4),b:'i'};
+		} else if (sId==='greek'){
+			var aGreek = 'άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο'.split(',').sort(function(){return Math.random()<0.5?1:-1;});
+			aGreek.length = iLen;
+			selector += '{a$}*'+iLen;
+			oParse = {a:aGreek};
+		} else if (sId==='serb'){
+			var aSerb = 'coga,čega,čovjek,džep,godina,gospodin,liljana,luđak,ljubav,muškarac,muž,nož,njuška,zec'.split(',').sort(function(){return Math.random()<0.5?1:-1;});
+			aSerb.length = iLen;
+			selector += '{a$}*'+iLen;
+			oParse = {a:aSerb};
+		} else if (sId==='danish'){
+			var aDanish = 'København,Æble,Øresund,Åben,Aarhus,Åse,druenzin,evisk,håndkommertepokker,imagen,mærk,vestegnendenne,vidste,væmme'.split(',').sort(function(){return Math.random()<0.5?1:-1;});
+			aDanish.length = iLen;
+			selector += '{a$}*'+iLen;
+			oParse = {a:aDanish};
 		} else {
 			selector += '{a$}*'+iLen;
 			oParse = {a:'s'};
 		}
-		mExample = zen(selector,oParse).pop();
 //
 //	case 'xcst':	for (i=0;i<num;i++) mEl.append('<li>'+rand(0,999)+'</li>'); break;
 //	case 'xnum':	for (i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
@@ -266,6 +279,12 @@ iddqd.ns('jsdoc',(function($,u){
 		for (var s in oParse) {
 			var sVal = oParse[s];
 			if (typeof sVal==='string') oParse[s] = l(sVal);
+		}
+		mExample = zen(selector,oParse).pop();
+		if (sId==='ximg') {
+			Array.prototype.forEach.call(mExample.querySelectorAll('img'),function(img){
+				img.style.backgroundColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+			});
 		}
 		while (parent.firstChild) parent.removeChild(parent.firstChild);
 		parent.appendChild(mExample);

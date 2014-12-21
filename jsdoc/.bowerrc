@@ -1,0 +1,21 @@
+{
+    "directory": "src/vendor"
+    ,"overrides": {
+		"iddqd": {
+			"main":[
+				"src/iddqd.js"
+				,"src/iddqd.pattern.js"
+			]
+		}
+		,"rainbow": { "main":[
+			"js/rainbow.js"
+			,"js/language/generic.js"
+			,"js/language/html.js"
+			,"js/language/css.js"
+			,"js/language/javascript.js"
+		]}
+		,"es6-promise": { "main":["promise.min.js"] }
+		,"js-signals": { "main":[] }
+		,"es5-shim": { "main":[]}
+	}
+}
