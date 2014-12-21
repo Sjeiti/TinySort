@@ -132,7 +132,10 @@ By default, all the elements are returned, even the ones excluded by your sub-se
 You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xret>li'),'span[class!=striked]',{returns:true,place:'org'}).css({color:'red'});
+var aSorted = tinysort(document.querySelectorAll('ul#xret>li'),'span:not([class=striked])',{returns:true,place:'org'});
+aSorted.forEach(function(elm){
+    elm.style.color = 'red';
+});
 ```
 
 ### multiple sort criteria
@@ -225,7 +228,7 @@ tinysort(document.querySelectorAll('ul#xdesc>li'),'',{order:'desc'});
 TinySort can also order randomly (or is that a contradiction).
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xrnd li'),{order:'rand'});
+tinysort(document.querySelectorAll('ul#xrnd>li'),{order:'rand'});
 ```
 
 ### parsing a custom sort function
@@ -233,7 +236,7 @@ tinysort(document.querySelectorAll('ul#xrnd li'),{order:'rand'});
 Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.
 
 ``` javascript
-tinysort(document.querySelectorAll('ul#xcst li'),'',{sortFunction:function(a,b){
+tinysort(document.querySelectorAll('ul#xcst>li'),'',{sortFunction:function(a,b){
 var iCalcA = parseInt(a.s)%16;
 var iCalcB = parseInt(b.s)%16;
 return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);

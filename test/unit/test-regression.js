@@ -79,6 +79,14 @@
 			return sSorted==='_0_1_2_3_4_5';
 		})(),'regexp match onto number bug');
 	});
+	test('issue 41', function() {
+		ok( (function(){
+			var aList = ['érythrée','égypte','espagne','estonie','émirats arabes unis','équateur','états-unis','éthiopie']
+				,aSorted = tinysort(zenLi('ul>li{_a$}*'+aList.length,{a:aList}),{charOrder:'a[àâ]c[ç]e[éèêë]i[ïî]o[ôœ]u[ûù]'})
+				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+			return sSorted==='_égypte_émirats arabes unis_équateur_érythrée_espagne_estonie_états-unis_éthiopie';
+		})(),'French');
+	});
 	/*test('issue 44', function() {
 		ok( (function(){
 			var aTest = ['adi95yqw31','eiw19ewe55','eiw73ewe133','eiw99ewe84','eiw9ewe42','eiw9ewe51','eiw9ewe98','jua21soa68','wau147oic54']
@@ -95,6 +103,14 @@
 			return sSorted==='_ 0 _ 1 _ 2 _ 3 _ 4 _ 5 ';
 		})(),'numeral values with leading and trailing spaces');
 	});
+	test('issue 62', function() {
+		ok( (function(){
+			var aList = ['érythrée','égypte',2345,'estonie',9876,'équateur','états-unis','éthiopie']
+				,aSorted = tinysort(zenLi('ul>li{_a$}*'+aList.length,{a:aList}),{charOrder:'a[àâ]c[ç]e[éèêë]i[ïî]o[ôœ]u[ûù]'})
+				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+			return sSorted==='_égypte_équateur_érythrée_estonie_états-unis_éthiopie_2345_9876';
+		})(),'French');
+	});
 	test('issue 78', function() {
 		ok( (function(){
 			var aTest = (function(a,i){
@@ -106,4 +122,14 @@
 			return sSorted==='012345678910111213';
 		})(),'mixed literal and numeral');
 	});
+	/*test('issue 86', function() {
+		ok( (function(){
+			var aList = ['Βέλγιο','Βανουάτου','Βατικανό','Βενεζουέλα','Βερμούδες','Βιετνάμ','Βολιβία','Βοσνία και Ερζεγοβίνη','Βουλγαρία','Βραζιλία','Βρετανικές Παρθένοι Νήσοι','Βρετανικό Έδαφος Ανταρκτικής','Βρετανικό Έδαφος του Ινδικού Ωκεανού','Βόρεια Αμερική','Βόρεια Κορέα']
+				,aSorted = tinysort(zenLi('ul>li{_a$}*'+aList.length,{a:aList}),{charOrder:'α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]'})
+				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+//			console.log('sSorted\n\t',sSorted,'\n\t','_'+aList.join('_')); // log
+			return sSorted==='_Βανουάτου_Βατικανό_Βέλγιο_Βενεζουέλα_Βερμούδες_Βιετνάμ_Βολιβία_Βοσνία και Ερζεγοβίνη_Βουλγαρία_Βραζιλία_Βρετανικές Παρθένοι Νήσοι_Βρετανικό Έδαφος Ανταρκτικής_Βρετανικό Έδαφος του Ινδικού Ωκεανού_Βόρεια Αμερική_Βόρεια Κορέα';
+		})(),'Greek');
+	});*/
 })();
+

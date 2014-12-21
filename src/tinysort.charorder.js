@@ -1,7 +1,7 @@
 /**
  * TinySort Charorder: a TinySort plugin to sort non-latin characters.
  * @summary A nodeElement sorting script.
- * @version 2.0.83 beta
+ * @version 2.0.84 beta
  * @requires tinysort v2.0.81 beta
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
@@ -98,7 +98,8 @@
 									bDoubles = true;
 								}
 							}
-							for (j=0,m=sReplaces.length;j<m;j++) fnAddNonLatinChar(sLastChar,sReplaces[j]);
+							for (j=0,m=sReplaces.length;j<m;j++) fnAddNonLatinChar(sReplaces[j],sLastChar);
+//							for (j=0,m=sReplaces.length;j<m;j++) fnAddNonLatinChar(sLastChar,sReplaces[j]);
 							i += sReplaces.length+1;
 						} else if (sChar=='{') { // find doubles: dž, ss, lj ...
 							var sDouble = sCharOrder.substr(i+1).match(/[^}]*/)[0];
@@ -128,6 +129,10 @@
 				}
 			}
 		}
+		//'a[àâ]c[ç]e[éèêë]i[ïî]o[ôœ]u[ûù]'
+//		console.log('aCharNotLatin',aCharNotLatin); // log
+//		console.log('oReplace',oReplace); // log
+//		console.log('aOrderChar',aOrderChar); // log
 	}
 
 	/**
@@ -142,24 +147,30 @@
 	 * @returns {Number} A sorting number -1, 0 or 1
 	 */
 	function sort(criterium,isNumeric,a,b,sortReturn){
+//		console.log('a,b',a,b,criterium.charOrder,oReplace,bDoubles); // log
 		if (!isNumeric&&criterium.charOrder) {
-			if (bDoubles) { // first replace doubles
+//			if (bDoubles) { // first replace doubles
 				for (var s in oReplace) {
 					var o = oReplace[s];
 					a = a.replace(s,o);
 					b = b.replace(s,o);
 				}
-			}
+//			}
 			// then test if either word has non latin chars
 			// we're using the slower string.match because strangely regex.test sometimes fails
 			if (a.match(rxNotLatin)!==nll||b.match(rxNotLatin)!==nll) {
 				for (var k=0,l=mathmn(a.length,b.length);k<l;k++) {
 					var iAchr = fnIndexOf.call(aOrderChar,a[k])
 						,iBchr = fnIndexOf.call(aOrderChar,b[k]);
+//					console.log('iAchr',iAchr,a[k],'\tiBchr',iBchr,b[k]); // log
 					if (sortReturn=criterium.iAsc*(iAchr<iBchr?-1:(iAchr>iBchr?1:0))) break;
 				}
 			}
 		}
 		return sortReturn;
 	}
+
+	/*function getSortBy(elementObject,criterium,subject){
+		return subject;
+	}*/
 })();

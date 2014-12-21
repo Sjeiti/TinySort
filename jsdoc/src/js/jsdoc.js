@@ -139,58 +139,26 @@ iddqd.ns('jsdoc',(function($,u){
 		/*jshint evil:false*/
 	}
 
-	function brnd(){
-		return Math.random()<0.5;
-	}
-	function l(){
-		var aLorem = 'a et at in mi ac id eu ut non dis cum sem dui nam sed est nec sit mus vel leo urna duis quam cras nibh enim quis arcu orci diam nisi nisl nunc elit odio amet eget ante erat eros ipsum morbi nulla neque vitae purus felis justo massa donec metus risus curae dolor etiam fusce lorem augue magna proin mauris nullam rutrum mattis libero tellus cursus lectus varius auctor sociis ornare magnis turpis tortor semper dictum primis ligula mollis luctus congue montes vivamus aliquam integer quisque feugiat viverra sodales gravida laoreet pretium natoque iaculis euismod posuere blandit egestas dapibus cubilia pulvinar bibendum faucibus lobortis ultrices interdum maecenas accumsan vehicula nascetur molestie sagittis eleifend facilisi suscipit volutpat venenatis fringilla elementum tristique penatibus porttitor imperdiet curabitur malesuada vulputate ultricies convallis ridiculus tincidunt fermentum dignissim facilisis phasellus consequat adipiscing parturient vestibulum condimentum ullamcorper scelerisque suspendisse consectetur pellentesque'.split(' ');
-		aLorem.sort(function(){return brnd()?1:-1;});
-		return aLorem.slice(0,8);//'jlufhl,iuaewf,liuaw,felhua,fhuuf,iudsf,weoijj,pojvnb'.split(',');
-	}
-	function ls(len){
-		var i = len||8, a = [];
-		while (i--) a.push(brnd()?'':'striked');
-		return a;
-	}
-	function f(len){
-		var i = len||8, a = [];
-		while (i--) a.push(Math.random()*1E9);
-		return a;
-	}
-	function n(len){
-		var i = len||8, a = [];
-		while (i--) {
-			a.push(Math.random()*1E9<<0);
-		}
-		return a;
-	}
-	function fn(len){
-		var i = len||8, a = [];
-		while (i--) {
-			var fRnd = Math.random()*1E9;
-			a.push(brnd()?fRnd:fRnd<<0);
-		}
-		return a;
-	}
-
 	function reset(parent,selector){
 		var aId = selector.match(/#(\w+)/)
 			,sId = aId&&aId.pop()
 			,oParse = {}
 			,iLen = 8
-			,mExample;
+			,l = getList.bind(null,iLen)
+			,mExample
+		;
 		if (sId==='xattr'||sId==='xret'){
 			selector += '*'+iLen+'>span.a${b$}';
-			oParse = {a:ls(),b:l()};//a=brnd?striked
+			oParse = {a:'t',b:'s'};
 		} else if (sId==='xsub'){
 			selector += '*'+iLen+'>span{a$}+span{b$}';
-			oParse = {a:l(),b:l()};
+			oParse = {a:'s',b:'s'};
 		} else if (sId==='xval'){
-			selector += '*'+iLen+'>span{a$}+a[href=#b$ title=c$]{d$}';
-			oParse = {a:l(),b:l(),c:l(),d:l()};
+			selector += '*'+iLen+'>span{a$}+{ }+a[href=#b$ title=c$]{d$}';
+			oParse = {a:'s',b:'s',c:'s',d:'s'};
 		} else if (sId==='xdta'){
 			selector += '*'+iLen+'>span{a$}+a[href=# data-foo=b$]{c$}';
-			oParse = {a:l(),b:l(),c:l()};
+			oParse = {a:'s',b:'s',c:'s'};
 		} else if (sId==='xinp'){
 			/*case 'xinp':
 				for (i=0;i<num;i++) {
@@ -232,22 +200,27 @@ iddqd.ns('jsdoc',(function($,u){
 			break;*/
 		} else if (sId==='xany'){
 			selector = 'div#'+sId+'>span{a$}*'+iLen;
-			oParse = {a:l()};
+			oParse = {a:'s'};
 		} else if (sId==='ximg'){
 			selector = 'div#'+sId+'>img[src=style/logo.png title=a$ style=$b]*'+iLen;
-			oParse = {a:l(),b:l()};
+			oParse = {a:'s',b:'s'};
 		} else if (sId==='xcst'){
 			selector += '{a$}*'+iLen;
-			oParse = {a:n()};
+			oParse = {a:'i'};
 		} else if (sId==='xnum'){
 			selector += '{a$}*'+iLen;
-			oParse = {a:fn()};
+			oParse = {a:'n '};
+		} else if (sId==='xmix'){
+			selector += '{a$}*'+iLen;
+			oParse = {a:l('si',4)};
+		} else if (sId==='xmul'){
+			selector += '*'+iLen+'>span.name{a$}+span.date[data-timestamp=b$]{b$}';
+			oParse = {a:l('s ',4),b:'i'};
 		} else {
 			selector += '{a$}*'+iLen;
-			oParse = {a:l()};
+			oParse = {a:'s'};
 		}
 		mExample = zen(selector,oParse).pop();
-		console.log('fn',fn()); // log
 //
 //	case 'xcst':	for (i=0;i<num;i++) mEl.append('<li>'+rand(0,999)+'</li>'); break;
 //	case 'xnum':	for (i=0;i<num;i++) mEl.append('<li>'+(brnd()?getPassword(6):(rand(0,999)/(brnd()?1:10)))+'</li>'); break;
@@ -290,8 +263,44 @@ iddqd.ns('jsdoc',(function($,u){
 //}
 //}
 		/////////////////////////////////////////////////////
+		for (var s in oParse) {
+			var sVal = oParse[s];
+			if (typeof sVal==='string') oParse[s] = l(sVal);
+		}
 		while (parent.firstChild) parent.removeChild(parent.firstChild);
 		parent.appendChild(mExample);
+	}
+
+	function getList(len,type,max){
+		var iNum = 1E3
+			,iLen = len||8
+			,a = [];
+		for (var i=0;i<iLen;i++) {
+			var aType = type.split('');
+			aType.forEach(function(s,n){
+				if (s==='s') {
+					var aLorem = 'a et at in mi ac id eu ut non dis cum sem dui nam sed est nec sit mus vel leo urna duis quam cras nibh enim quis arcu orci diam nisi nisl nunc elit odio amet eget ante erat eros ipsum morbi nulla neque vitae purus felis justo massa donec metus risus curae dolor etiam fusce lorem augue magna proin mauris nullam rutrum mattis libero tellus cursus lectus varius auctor sociis ornare magnis turpis tortor semper dictum primis ligula mollis luctus congue montes vivamus aliquam integer quisque feugiat viverra sodales gravida laoreet pretium natoque iaculis euismod posuere blandit egestas dapibus cubilia pulvinar bibendum faucibus lobortis ultrices interdum maecenas accumsan vehicula nascetur molestie sagittis eleifend facilisi suscipit volutpat venenatis fringilla elementum tristique penatibus porttitor imperdiet curabitur malesuada vulputate ultricies convallis ridiculus tincidunt fermentum dignissim facilisis phasellus consequat adipiscing parturient vestibulum condimentum ullamcorper scelerisque suspendisse consectetur pellentesque'.split(' ');
+					if (max) aLorem.length = max;
+					aLorem.sort(function(){return brnd()?1:-1;});
+					aType[n] = aLorem.pop();
+				} else if (s==='n') {
+					var fRnd = Math.random()*iNum;
+					aType[n] = brnd()?fRnd:fRnd<<0;
+				} else if (s==='i') {
+					aType[n] = Math.random()*iNum<<0;
+				} else if (s==='f') {
+					aType[n] = Math.random()*iNum;
+				} else if (s==='t') {
+					aType[n] = brnd()?'':'striked';
+				}
+			});
+			a.push(aType.join(''));
+		}
+		return a;
+	}
+
+	function brnd(){
+		return Math.random()<0.5;
 	}
 
 

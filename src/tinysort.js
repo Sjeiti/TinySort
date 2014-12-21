@@ -1,7 +1,7 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.83 beta
+ * @version 2.0.84 beta
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -19,13 +19,12 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		,fnIndexOf = Array.prototype.indexOf
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
-		,aPluginPrepare = []
-		,aPluginSort = []
+		,aPlugins = []
 		,iCriteria = 0
 		,iCriterium = 0
 		////////////////////////////
 //		id: 'TinySort'
-		,sVersion = '2.0.83'
+		,sVersion = '2.0.84'
 //		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 //		,uri: 'http://tinysort.sjeiti.com/'
 //		,licensed: {
@@ -218,8 +217,10 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 				var oCriterium = aCriteria[iCriterium]
 					,rxLast = oCriterium.ignoreDashes?rxLastNrNoDash:rxLastNr;
 				//
-				// todo: fnPluginPrepare(oSett);
-				pluginPrepare(oCriterium);
+				loop(aPlugins,function(o){
+					var pluginPrepare = o.prepare;
+					if (pluginPrepare) pluginPrepare(oCriterium);
+				});
 				//
 				if (oCriterium.sortFunction) { // custom sort
 					iReturn = oCriterium.sortFunction(a,b);
@@ -252,9 +253,14 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 					}
 				}
 				//
-				loop(aPluginSort,function(fn){
-					iReturn = fn.call(fn,oCriterium,bNumeric,sA,sB,iReturn);
+//				loop(aPluginSort,function(fn){
+//					iReturn = fn.call(fn,oCriterium,bNumeric,sA,sB,iReturn);
+//				});
+				loop(aPlugins,function(o){
+					var pluginSort = o.sort;
+					if (pluginSort) iReturn = pluginSort(oCriterium,bNumeric,sA,sB,iReturn);
 				});
+//				console.log('sA,sB,iReturn',sA,sB,iReturn); // log
 				//
 				if (iReturn===0) iCriterium++;
 			}
@@ -290,21 +296,13 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 			// strings should be ordered in lowercase (unless specified)
 			if (isString(sReturn)&&!criterium.cases) sReturn = sReturn.toLowerCase();
 			//
+			/*loop(aPlugin,function(o){
+				var pluginSortBy = o.sortBy;
+				if (pluginSortBy) sReturn = pluginSortBy(elementObject,criterium,sReturn);
+			});*/
+			//
 			return sReturn;
 		}
-
-//		function prepareSortElement(settings,element){
-//			if (typeof element=='string') {
-//				// if !settings.cases
-//				if (!settings.cases) element = toLowerCase(element);
-//				element = element.replace(/^\s*(.*?)\s*$/i, '$1');
-//			}
-//			return element;
-//		}
-//		function toLowerCase(s) {
-//			return s&&s.toLowerCase?s.toLowerCase():s;
-//		}
-
 
 		/**
 		 * Applies the sorted list to the DOM
@@ -312,6 +310,9 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		 * @private
 		 */
 		function applyToDOM(){
+//			console.log('aoSort',aoSort,aoSort.map(function(o){
+//				return o.elm.textContent;
+//			})); // log
 			var bAllSorted = aoSort.length===aoFull.length;
 			if (bSameParent&&bAllSorted) {
 				aoSort.forEach(function(elmObj){
@@ -319,16 +320,16 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 				});
 				mParent.appendChild(mFragment);
 				//
-			} else if (bSameParent&&!bAllSorted) {
-				aoSort.forEach(function(elmObj){
-					var iToPos = aoSort[elmObj.posn].pos;
-					aoFull[iToPos] = elmObj;
-				});
-				aoFull.forEach(function(o) {
-					mFragment.appendChild(o.elm);
-				});
-				mParent.appendChild(mFragment);
-				//
+//			} else if (bSameParent&&!bAllSorted) { // faulty
+//				aoSort.forEach(function(elmObj){
+//					var iToPos = aoSort[elmObj.posn].pos;
+//					aoFull[iToPos] = elmObj;
+//				});
+//				aoFull.forEach(function(o) {
+//					mFragment.appendChild(o.elm);
+//				});
+//				mParent.appendChild(mFragment);
+//				//
 			} else {
 				aoSort.forEach(function(elmObj) {
 					var mElm = elmObj.elm
@@ -399,20 +400,8 @@ if (!window.tinysort) window.tinysort = (function(undefined){
 		return obj;
 	}
 
-	function plugin(prepare,sort){
-		aPluginPrepare.push(prepare);	// function(settings){doStuff();}
-		aPluginSort.push(sort);			// function(valuesAreNumeric,sA,sB,iReturn){doStuff();return iReturn;}
-	}
-
-	/**
-	 * Change criterium by looping through plugins
-	 * @param {criterium} criterium
-	 */
-	function pluginPrepare(criterium){
-		//loop(aPluginPrepare,bind)
-		loop(aPluginPrepare,function(fn){
-			fn.call(fn,criterium);
-		});
+	function plugin(prepare,sort,sortBy){
+		aPlugins.push({prepare:prepare,sort:sort,sortBy:sortBy});
 	}
 
 	// extend the plugin to expose stuff

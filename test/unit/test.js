@@ -19,10 +19,10 @@
 	// load test scripts
 	[
 		'../../src/tinysort.js'
+		,'../../src/tinysort.charorder.js'
 		,'test-api.js'
 		,'test-private.js'
 		,'test-regression.js'
-		,'../../src/tinysort.charorder.js'
 		,'test-charorder.js'
 	].forEach(function(script){
 		/*jslint evil: true */
