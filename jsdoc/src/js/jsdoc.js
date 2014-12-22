@@ -7,26 +7,21 @@ iddqd.ns('jsdoc',(function(undefined){
 		,forEach = Array.prototype.forEach;
 
 	function init(){
-		//initFirstParagraph();
 		initTableOfContents();
 		initBootstrapNoCSS();
 		initPreCode();
 		initTutorials();
 		//initHash();
 		//initSmoothScroll();
-		loadScript('scripts/jsdoc.tinysort.js').then(jsdoc.tinysort);
+//		loadScript('scripts/jsdoc.tinysort.js').then(function(){
+//			jsdoc.tinysort();
+//		});
+		loadScript('scripts/jsdoc.tinysort.js').then(function(){
+			jsdoc.tinysort();
+		});
 		//account: 'UA-37777223-1'
 		//,domain: 'sjeiti.com'
 	}
-
-	/*function initFirstParagraph(){
-		var mArticle = document.querySelector('#main article')
-			,mJumbo = createElement('div','firstparagraph');
-		while (mArticle.firstChild.nodeName!=='H2') {
-			mJumbo.appendChild(mArticle.firstChild);
-		}
-		mArticle.insertBefore(mJumbo,mArticle.firstChild);
-	}*/
 
 	function initTableOfContents(){
 		var mList = document.createDocumentFragment()
@@ -165,7 +160,6 @@ iddqd.ns('jsdoc',(function(undefined){
 				,mCode
 			;
 			pre.classList.remove('prettyprint');
-			console.log('sLang',sLang); // log
 			if (sLang) {
 				mCode = pre.querySelector('code');
 				if (mCode.textContent.split(/\n/g).length<10) {

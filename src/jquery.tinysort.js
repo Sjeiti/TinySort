@@ -60,7 +60,7 @@
 	// init plugin
 	$.tinysort = {
 		 id: 'TinySort'
-		,version: '2.0.86'
+		,version: '2.0.87'
 		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'
 		,licensed: {

@@ -9,10 +9,14 @@
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 	<link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 	<link type="text/css" rel="stylesheet" href="styles/site.<?js= this.navOptions.theme ?>.css">
+	<!--<link rel="icon" type="image/svg+xml" sizes="any" href="styles/logo.svg">-->
+	<link rel="icon" type="image/png" href="styles/logo.svg" sizes="16x16">
+	<!--<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">-->
+	<!--<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">-->
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-	<div class="container-fluid">
+	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
 				<span class="sr-only">Toggle navigation</span>
@@ -43,9 +47,8 @@
 		</div>
 	</div>
 </nav>
-
-<div class="container-fluid">
-	<div class="row-fluid">
+<div class="container">
+	<!--<div class="row-fluid">-->
 
 		<?js if(docs && docs[0].kind !== "source"){ ?>
 		<div class="span8">
@@ -67,7 +70,7 @@
 			<br clear="both">
 		</div>
 
-	</div>
+	<!--</div>-->
 	<footer id="colophon">
 		<?js if (that.navOptions.footer.length > 0){ ?>
 		<?js= that.navOptions.footer ?>
@@ -78,8 +81,9 @@
 		<?js } ?>
 		<span class="jsdoc-message"><?js= (new Date()) ?></span>
 	</footer>
+</div>
 
-	<!-- bower:js -->
+<!-- bower:js -->
 <script src="vendor/es6-promise-polyfill/promise.js"></script>
 <script src="vendor/iddqd/src/iddqd.js"></script>
 <script src="vendor/iddqd/src/iddqd.pattern.js"></script>
@@ -92,22 +96,9 @@
 <script src="vendor/rainbow/js/language/javascript.js"></script>
 <script src="vendor/rainbow.linenumbers/js/rainbow.linenumbers.min.js"></script>
 <script src="vendor/zenjs/dist/zen.js"></script>
-	<!-- endbower -->
+<!-- endbower -->
 
-	<!--<script src="scripts/toc.js"></script>-->
-
-	<script src="scripts/jsdoc.js"></script>
-	<!--<script src="scripts/jsdoc.tutorials.callback.js"></script>-->
-	<script>jsdoc.init();</script>
-
-	<!--<script src="scripts/main.min.js"></script>-->
-
-
-	<!--<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>-->
-	<!--<script src="scripts/jquery.scrollTo.js"></script>-->
-	<!--<script src="scripts/jquery.localScroll.js"></script>-->
-	<!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>-->
-
-</div>
+<script src="scripts/jsdoc.js"></script>
+<script>jsdoc.init();</script>
 </body>
 </html>

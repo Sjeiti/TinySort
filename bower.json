@@ -1,24 +1,20 @@
 {
   "name": "tinysort",
-  "version": "2.0.86",
-  "main": "dist/jquery.tinysort.min.js",
-  "license": "MIT",
+  "version": "2.0.87",
+  "main": "dist/tinysort.min.js",
+  "license": "MIT/GPL",
   "ignore": [
     "**/.*",
     "test",
     "libs",
+    "jsdoc",
     "style",
-    "*.md",
     "Gruntfile.js",
     "package.json"
   ],
-  "dependencies": {
-    "jquery": ">=1.6",
-    "es5-shim": "~4.0.5"
-  },
+  "dependencies": {},
   "keywords": [
-    "sort",
-    "jquery plugin"
+	  "sort","list","table","dom","html"
   ],
   "devDependencies": {
     "qunit": "~1.16.0",

@@ -1,7 +1,7 @@
 /**
  * TinySort Charorder: a TinySort plugin to sort non-latin characters.
  * @summary A nodeElement sorting script.
- * @version 2.0.86 beta
+ * @version 2.0.87 beta
  * @requires tinysort v2.0.81 beta
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
@@ -18,7 +18,7 @@
 		,frCrCd = String.fromCharCode		// minify placeholder
 		,mathmn = Math.min					// minify placeholder
 		,nll = null							// minify placeholder
-		,plugin = tinysort.plugin
+		,plugin = window.tinysort.plugin
 		,fnIndexOf = plugin.indexOf
 		,loop = plugin.loop
 		//

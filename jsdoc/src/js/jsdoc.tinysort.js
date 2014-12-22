@@ -1,18 +1,59 @@
-/*global zen*/
+/*global zen, tinysort*/
 iddqd.ns('jsdoc.tinysort',(function(undefined){
 	'use strict';
 
 	var loadScript = iddqd.pattern.callbackToPromise(iddqd.loadScript)
+		,createElement = iddqd.createElement
 		,forEach = Array.prototype.forEach;
 
 	function init(){
+		initFirstParagraph();
 		initScripts()
 		.then(initExamples);
 	}
 
+	function initTitle(){
+		createElement('small',null,document.querySelector('.navbar-brand'),null,tinysort.version);
+	}
+
+	function initFirstParagraph(){
+		// put shit in wide green div
+		var sPath = location.pathname;
+		if (sPath.indexOf('.html')===-1||sPath.indexOf('index.html')!==-1) {
+			var mContainer = document.querySelector('body>.container')
+				,mArticle = document.querySelector('#main article')
+				,mFirstP = createElement('div','firstparagraph')
+				,mFirstC = createElement('div','container',mFirstP)
+				,mFirst8 = createElement('div','col-sm-10',mFirstC)
+				,mFirst4 = createElement('div','col-sm-2',mFirstC);
+			while (mArticle.firstChild.nodeName!=='H2') {
+				mFirst8.appendChild(mArticle.firstChild);
+			}
+			mContainer.parentNode.insertBefore(mFirstP,mContainer);
+			// add download button
+//			var mDown = createElement('div','download',mFirstC);
+			createElement('a','btn btn-lg btn-primary',mFirst4,{href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'download');
+			// add github banner
+
+			createElement('a','repo',mFirst4,{href:'https://github.com/Sjeiti/TinySort.git'});
+			createElement('strong','bower',mFirst4,null,'bower install tinysort --save');
+			//<a href="https://github.com/Sjeiti/TinySort.git" class="repo" data-type="git" rel="external" target="_blank"></a>
+			/*createElement('img',null,
+				createElement('a',null,mFirstC,{href:'https://github.com/Sjeiti/TinySort'})
+			,{
+				style: 'position:absolute;top:'+document.querySelector('nav.navbar').clientHeight+'px;right:0;border:0;'
+				,src: 'https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67'
+				,alt: 'Fork me on GitHub'
+				,'data-canonical-src': 'https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png'
+			});*/
+		}
+	}
+
 	function initScripts(){
 		return loadScript('../src/tinysort.js')//todo:change paths
-			.then(loadScript.bind(null,'../src/tinysort.charorder.js'));
+			.then(initTitle)// in here, otherwise shit fails
+			.then(loadScript.bind(null,'../src/tinysort.charorder.js'))
+		;
 	}
 
 	function initExamples(){
@@ -222,6 +263,5 @@ iddqd.ns('jsdoc.tinysort',(function(undefined){
 		return Math.random()<0.5;
 	}
 
-
-	return {init:init};
+	return init;
 })());

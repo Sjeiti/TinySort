@@ -1,6 +1,8 @@
 @import 'mixins';
 @import '../vendor/bootstrap/less/variables';
 
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:700,600,400);
+
 @padding: 50px;
 @navHeight: 40px;
 @footerHeight: 24px;
@@ -31,10 +33,10 @@ html, body {
 }
 body {
 	height: auto;
-	padding-top: 7rem;
 	@introHeight: 10px;
 	.gradientVerticalThree(#888888,#e5e5e5,#fafafa,0,@navHeight+@introHeight,@navHeight+@introHeight+150px);
 	background-repeat: repeat-x;
+	font-family: 'Open Sans', sans-serif;
 }
 body>div {
 	min-height: 100%;
@@ -44,23 +46,29 @@ body>div {
 
 h1, h2, h3, h4, h5, h6 {
 	margin: 6rem 0 1.5rem;
-	font-family: Arial, sans;
 	line-height: 120%;
-	font-weight: bold;
+	font-weight: 600;
 }
 h4, h5, h6 { margin: 2rem 0 .5rem; }
-h1 { font-size: 18px; }
-h2 { font-size: 17px; }
-h3 { font-size: 16px; }
-h4 { font-size: 13px; }
 
 ul, ol {
 	.spacing();
 	list-style: none;
 }
 
+// title
+.navbar-brand {
+	padding-left: 4rem;
+	background: url('logo.svg') .5rem center no-repeat;
+	background-size: 15%;
+	small {
+		padding-left: 1rem;
+	}
+}
+
 // navigation
 .navbar {
+//	margin-bottom: 0;
 	.gradBlack();
 	.navbar-header button {
 		.rt;
@@ -105,8 +113,19 @@ article {
 	padding-bottom: 2rem;
 }
 .firstparagraph {
+	position: relative;
+	padding-top: 9rem;
 	.gradientVertical(#f2f7e2,#d3e795);
 	h1 { display: none; }
+//	.download {
+//		float: right;
+//		height: 100%;
+//		width: 20%;
+//	}
+	.btn {
+		position: relative;
+		z-index: 1;
+	}
 }
 
 article {
@@ -160,7 +179,8 @@ menu[type=toolbar] {
 .example {
 	padding: 1px;
 	margin-bottom: 1rem;
-	background-color: #EEE;
+	background-color: #FFFDD3;
+	border: 1px solid #E2DFA4;
 	ul {
 		list-style: disc;
 		padding-left: 2rem;

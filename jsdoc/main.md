@@ -185,7 +185,7 @@ Here are some example languages:
     </tbody>
 </table>
 
-### sort by value
+### sort by value (todo)
 
 The value property is primarily used to get the values of form elements, but list-elements also have the value property. By setting the useVal option you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.
 
