@@ -119,12 +119,12 @@ module.exports = function (grunt) {
 			tinysort: {
 				options: { banner: bannerTinysort+'\n' },
 				src: 'src/jquery.tinysort.js',
-				dest: 'dist/jquery.tinysort.min.js'
+				dest: 'dist/tinysort.min.js'
 			},
 			charorder: {
 				options: { banner: bannerCharorder+'\n' },
 				src: 'src/jquery.tinysort.charorder.js',
-				dest: 'dist/jquery.tinysort.charorder.min.js'
+				dest: 'dist/tinysort.charorder.min.js'
 			},
 			tinysortgz: {
 				src: 'src/jquery.tinysort.js',
@@ -133,13 +133,7 @@ module.exports = function (grunt) {
 			},
 			charordergz: {
 				src: 'src/jquery.tinysort.charorder.js',
-				dest: 'dist/jquery.tinysort.charorder.jgz',
-				compress: true
-			},
-			opensource: {
-				options: { banner: bannerTinysort },
-				src: '../opensource/web/scripts/jquery.opensource.js',
-				dest: 'libs/jquery.opensource.min.js',
+				dest: 'dist/tinysort.charorder.jgz',
 				compress: true
 			}
 		},
@@ -147,36 +141,22 @@ module.exports = function (grunt) {
 		copy: {
 			external: {
 				files: [
-					{
-						expand: true,
-						flatten: true,
-						src: '../opensource/web/scripts/jquery.opensource.min.js',
-						dest: 'libs/'
-					},
-					{
-						expand: true,
-						cwd: '../opensource/web/style/',
-						src: ['*.!(less|php|*.php)','*/**'],
-						dest: 'style/'
-					},
-					{
-						expand: true,
-						flatten: true,
-						src: '../zen/dist/*.min.js',
-						dest: 'libs/'
-					}
+//					{
+//						expand: true,
+//						cwd: '../opensource/web/style/',
+//						src: ['*.!(less|php|*.php)','*/**'],
+//						dest: 'style/'
+//					},
+//					{
+//						expand: true,
+//						flatten: true,
+//						src: '../zen/dist/*.min.js',
+//						dest: 'libs/'
+//					}
 				]
 			}
 		}
 	});
-
-//	grunt.registerMultiTask('distill', '', function() {
-//		var sFile = fs.readFileSync(this.data.src).toString(),
-//			sBanner = sFile.match(/\/\*!([\s\S]*?)\*\//g),
-//			sToBanner = this.data.options.banner;
-//		fs.writeFileSync(this.data.dest,sBanner!==null&&sBanner!==sToBanner?sFile.replace(sBanner,sToBanner):sFile);
-//		grunt.log.writeln('File "'+this.data.dest+'" created.');
-//	});
 
 	grunt.registerTask('default',[
 		'jshint'

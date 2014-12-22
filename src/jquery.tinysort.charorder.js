@@ -39,7 +39,7 @@
 	aAllChars.sort();
 	tinysort.charorder = {
 		 id: 'TinySort CharOrder'
-		,version: '2.0.85'
+		,version: '2.0.86'
 		,requires: 'TinySort 1.4'
 		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 		,uri: 'http://tinysort.sjeiti.com/'

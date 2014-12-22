@@ -7,6 +7,7 @@
     "iddqd": "git://github.com/Sjeiti/iddqd.git",
     "rainbow": "~1.1.9",
     "rainbow.linenumbers": "~1.1.2",
-    "zenjs": "~0.1.7"
+    "zenjs": "~0.1.7",
+    "bootstrap": "~3.3.1"
   }
 }

@@ -5,6 +5,8 @@
 			"main":[
 				"src/iddqd.js"
 				,"src/iddqd.pattern.js"
+				,"src/iddqd.internal.js"
+				,"src/iddqd.internal.native.string.js"
 			]
 		}
 		,"rainbow": { "main":[
@@ -17,5 +19,6 @@
 		,"es6-promise": { "main":["promise.min.js"] }
 		,"js-signals": { "main":[] }
 		,"es5-shim": { "main":[]}
+		,"bootstrap": { "main":[]}
 	}
 }
