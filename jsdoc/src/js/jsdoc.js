@@ -8,7 +8,7 @@ iddqd.ns('jsdoc',(function(undefined){
 
 	function init(){
 		initTableOfContents();
-		initBootstrapNoCSS();
+//		initBootstrapNoCSS();
 		initPreCode();
 		initTutorials();
 		//initHash();
@@ -19,6 +19,18 @@ iddqd.ns('jsdoc',(function(undefined){
 		loadScript('scripts/jsdoc.tinysort.js').then(function(){
 			jsdoc.tinysort();
 		});
+
+		/*var mClone = document.querySelector('a[href="namespaces.list.html"').parentNode
+			,mRL = mClone.cloneNode(true)
+			,mPrn = mClone.parentNode
+			,mExp = mPrn.querySelector('a[href="#examples"').parentNode
+			;
+		mRL.querySelector('a').setAttribute('href','#');
+		console.log('mClone',mClone); // log
+		mPrn.appendChild(mRL);
+		mPrn.appendChild(mExp);*/
+
+		loadScript('http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js');
 		//account: 'UA-37777223-1'
 		//,domain: 'sjeiti.com'
 	}
@@ -55,6 +67,12 @@ iddqd.ns('jsdoc',(function(undefined){
 						mALast.classList.add('dropdown-toggle');
 						mALast.setAttribute('data-toggle','dropdown');
 						createElement('b','caret',mALast);
+//						jQuery(mALast).dropdown();
+//						jQuery(mALast).parent().dropdown();
+						/*mALast.addEventListener('click',function(e){
+							e.currentTarget.parentNode.classList.toggle('open');
+						});*/
+
 					}
 					mList = createElement('ul',wasH1?'dropdown-menu':null,mLiLast,{role:'menu'});
 					aList.push(mList);
@@ -71,6 +89,8 @@ iddqd.ns('jsdoc',(function(undefined){
 			,mFirstNav = mNav.firstChild;
 		if (mFirstNav) mNav.insertBefore(aList[0],mFirstNav);
 		else mNav.appendChild(aList[0]);
+		//
+//		jQuery('.dropdown-toggle').dropdown();
 	}
 
 	function initBootstrapNoCSS(){

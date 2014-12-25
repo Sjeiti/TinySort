@@ -128,7 +128,7 @@ module.exports = function (grunt) {
 			},
 			tinysortgz: {
 				src: 'src/jquery.tinysort.js',
-				dest: 'dist/jquery.tinysort.jgz',
+				dest: 'dist/tinysort.jgz',
 				compress: true
 			},
 			charordergz: {
@@ -155,6 +155,30 @@ module.exports = function (grunt) {
 //					}
 				]
 			}
+			,src2dist: {
+				files: [
+					{
+						expand: true
+						,cwd: './src/'
+						,src: ['tinysort.js','tinysort.charorder.js']
+						,dest: 'dist/'
+						,filter: 'isFile'
+						,dot: true
+					}
+				]
+			}
+			,dist2doc: {
+				files: [
+					{
+						expand: true
+						,cwd: './'
+						,src: ['dist/**']
+						,dest: 'doc/'
+						,filter: 'isFile'
+						,dot: true
+					}
+				]
+			}
 		}
 	});
 
@@ -164,6 +188,7 @@ module.exports = function (grunt) {
 		,'uglify:charorder'
 		,'uglify:tinysortgz'
 		,'uglify:charordergz'
+		,'copy:src2dist'
 	]);
 
 	grunt.registerTask('opensource',[
@@ -181,6 +206,7 @@ module.exports = function (grunt) {
 		'clean:jsdoc'
 		,'cli:jsdocprepare'
 		,'cli:jsdoc'
+		,'copy:dist2doc'
 //		,'copy:jsdoc'
 //		,'renderPages:docs'
 //		,'extendDocs'

@@ -7,6 +7,8 @@
 				,"src/iddqd.pattern.js"
 				,"src/iddqd.internal.js"
 				,"src/iddqd.internal.native.string.js"
+				,"src/iddqd.internal.native.number.js"
+				,"src/iddqd.network.xhttp.js"
 			]
 		}
 		,"rainbow": { "main":[

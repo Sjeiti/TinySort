@@ -3,11 +3,15 @@
 
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:700,600,400);
 
-@padding: 50px;
-@navHeight: 40px;
-@footerHeight: 24px;
+@padding: 5rem;
+@navHeight: 5rem;
+@footerHeight: 2.4rem;
 @leftColWidth: 20%;
 @rightColWidth: 100% - @leftColWidth - 10%;
+@firstPad: 9rem;
+
+@colorB1: #525252;
+@colorB2: #2f3130;
 
 @colorFooter: #444;
 
@@ -70,6 +74,10 @@ ul, ol {
 .navbar {
 //	margin-bottom: 0;
 	.gradBlack();
+	min-height: @navHeight;
+	max-height: @navHeight;
+	.box-shadow(0 0 32px fade(#000,30%));
+	border-bottom: 1px solid #d3e795;
 	.navbar-header button {
 		.rt;
 	}
@@ -114,19 +122,86 @@ article {
 }
 .firstparagraph {
 	position: relative;
-	padding-top: 9rem;
+	padding-top: @firstPad;
 	.gradientVertical(#f2f7e2,#d3e795);
 	h1 { display: none; }
-//	.download {
-//		float: right;
-//		height: 100%;
-//		width: 20%;
-//	}
 	.btn {
 		position: relative;
 		z-index: 1;
 	}
 }
+.download {
+	.lt(0,@navHeight - @firstPad,relative);
+	&>* {
+		display: block;
+		width: 100%;
+		margin: .6rem 0 1rem;
+		overflow: hidden;
+		&:first-child { margin-top: 0; }
+	}
+	h3 {
+		position: relative;
+		background-color: @colorB2;
+		color: #DDD;
+		font-size: 1.2rem;
+		line-height: 160%;
+		text-align: center;
+		border-radius: 0 0 1rem 1rem;
+		overflow: visible;
+		&:before {
+			content: '';
+			.dim(100%,1px);
+			.lt(0,-1px);
+			z-index: 9999;
+			background-color: @colorB2;
+		}
+	}
+}
+.filesize {
+	&:after {
+		content: ' 'attr(data-filesize)'';
+	}
+}
+.repo {
+	display: block;
+	overflow: hidden;
+	padding: 5px 5px 6px 0;
+	border: 1px solid #388db0;
+	border-radius: 5px;
+	.box-shadow(inset 2px 2px 6px 0 #a7bec7);
+	background: #c7e2ed;
+	color: #204f62;
+	white-space: nowrap;
+	text-decoration: none;
+	font-size: 1rem;
+	line-height: 120%;
+	&:before {
+		content: attr(data-type) ': ';
+		margin: 0 10px 0 0;
+		padding: 5px 8px 6px;
+		background: #daecf3;
+		font-weight: bold;
+		border-right: 1px solid #eef6f9;
+		.box-shadow(2px 2px 6px 0 #a7bec7);
+		border-radius: 5px 0 0 5px;
+		background-clip: padding-box;
+		text-transform: uppercase;
+		&:hover { text-decoration: none; }
+	}
+	&:hover { text-decoration: none; }
+	&:after { content: attr(href); }
+}
+.bower {
+	padding: 5px 6px;
+	white-space: nowrap;
+	font-size: 1.1rem;
+	line-height: 120%;
+	text-align: center;
+	background-color: #555;//#444;
+	color: #FFF;//#FC2;
+}
+//
+
 
 article {
 	dt,dd { .spacing(); }

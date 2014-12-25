@@ -3,6 +3,7 @@ iddqd.ns('jsdoc.tinysort',(function(undefined){
 	'use strict';
 
 	var loadScript = iddqd.pattern.callbackToPromise(iddqd.loadScript)
+		,formatSize = iddqd.internal.native.number.formatSize
 		,createElement = iddqd.createElement
 		,forEach = Array.prototype.forEach;
 
@@ -24,19 +25,38 @@ iddqd.ns('jsdoc.tinysort',(function(undefined){
 				,mArticle = document.querySelector('#main article')
 				,mFirstP = createElement('div','firstparagraph')
 				,mFirstC = createElement('div','container',mFirstP)
-				,mFirst8 = createElement('div','col-sm-10',mFirstC)
-				,mFirst4 = createElement('div','col-sm-2',mFirstC);
+				,mFirst8 = createElement('div','col-sm-9',mFirstC)
+				,mFirst4 = createElement('div','col-sm-3 download',mFirstC);
 			while (mArticle.firstChild.nodeName!=='H2') {
 				mFirst8.appendChild(mArticle.firstChild);
 			}
 			mContainer.parentNode.insertBefore(mFirstP,mContainer);
 			// add download button
 //			var mDown = createElement('div','download',mFirstC);
-			createElement('a','btn btn-lg btn-primary',mFirst4,{href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'download');
+			createElement('h3',null,mFirst4,{},'download');
+			createElement('a','btn btn-lg btn-primary',mFirst4,{href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'zip');
+//			createElement('a','btn btn-md btn-primary',mFirst4,{href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'download');
+			//
+			//
+			var sSrc = 'dist/tinysort.js'
+				,sMin = 'dist/tinysort.min.js'
+				,mASrc = createElement('a','btn btn-sm btn-primary filesize',mFirst4,{download:'tinysort.js',href:sSrc},'source')
+				,mAMin = createElement('a','btn btn-sm btn-primary filesize',mFirst4,{download:'tinysort.min.js',href:sMin},'minified')
+			;
+			iddqd.network.xhttp(sSrc,function(e){
+				mASrc.setAttribute('data-filesize',formatSize(e.response.length));
+			});
+			iddqd.network.xhttp(sMin,function(e){
+				mAMin.setAttribute('data-filesize',formatSize(e.response.length));
+			});
+			//
+			//
+			//
+//			createElement('a','btn btn-sm btn-primary',mFirst4,{download:1,href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'download gzip');
 			// add github banner
 
-			createElement('a','repo',mFirst4,{href:'https://github.com/Sjeiti/TinySort.git'});
-			createElement('strong','bower',mFirst4,null,'bower install tinysort --save');
+			createElement('a','repo',mFirst4,{'data-type':'git',href:'https://github.com/Sjeiti/TinySort.git'});
+			createElement('code','bower',mFirst4,null,'bower install tinysort');
 			//<a href="https://github.com/Sjeiti/TinySort.git" class="repo" data-type="git" rel="external" target="_blank"></a>
 			/*createElement('img',null,
 				createElement('a',null,mFirstC,{href:'https://github.com/Sjeiti/TinySort'})
