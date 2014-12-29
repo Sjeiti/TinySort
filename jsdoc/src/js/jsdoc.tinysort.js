@@ -8,13 +8,18 @@ iddqd.ns('jsdoc.tinysort',(function(undefined){
 		,forEach = Array.prototype.forEach;
 
 	function init(){
-		initFirstParagraph();
-		initScripts()
-		.then(initExamples);
+		var sPage = location.href.split('#').shift().split('/').pop();
+		if (sPage==='index.html'||sPage==='') {
+			initFirstParagraph();
+			initScripts()
+			.then(initExamples);
+		}
 	}
 
 	function initTitle(){
-		createElement('small',null,document.querySelector('.navbar-brand'),null,tinysort.version);
+		var aVersion = tinysort.version.split('.')
+			,mSmall = createElement('small',null,document.querySelector('.navbar-brand'),null,aVersion.slice(0,2).join('.'));
+		createElement('span',null,mSmall,null,'.'+aVersion.pop());
 	}
 
 	function initFirstParagraph(){
@@ -50,9 +55,10 @@ iddqd.ns('jsdoc.tinysort',(function(undefined){
 //			createElement('a','btn btn-sm btn-primary',mFirst4,{download:1,href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'download gzip');
 			// add github banner
 
-			createElement('a','repo',mFirst4,{'data-type':'git',href:'https://github.com/Sjeiti/TinySort.git'});
-			createElement('code','bower',mFirst4,null,'bower install tinysort');
+			//createElement('a','repo',mFirst4,{'data-type':'git',href:'https://github.com/Sjeiti/TinySort.git'});
+			createElement('a',null,mFirst4,{href:'https://github.com/Sjeiti/TinySort'},'https://github.com/Sjeiti/TinySort');
 			createElement('code','bower',mFirst4,null,'https://github.com/Sjeiti/TinySort.git');
+			createElement('code','bower',mFirst4,null,'bower install tinysort');
 			//<a href="https://github.com/Sjeiti/TinySort.git" class="repo" data-type="git" rel="external" target="_blank"></a>
 			/*createElement('img',null,
 				createElement('a',null,mFirstC,{href:'https://github.com/Sjeiti/TinySort'})
