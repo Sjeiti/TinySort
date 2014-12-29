@@ -94,6 +94,25 @@ module.exports = function (grunt) {
 			,jsdocInitBower: { cwd: './jsdoc', command: 'bower install', output: true }
 		}
 
+		// uses Phantomjs to render pages and inject a js file
+		,renderPages: {
+			template: {
+				baseUri: 'src/'
+				,dest: './temp/stripped/'
+				,pages: ['widget.html'] // todo: change to {"dest":src} style
+				,inject: 'src-dev/js/phantomStripWidget.js'
+				,renderImage: false
+			}
+			,docs: {
+				baseUri: 'doc/'
+				,dest: './temp/'
+				,destType: 'json'
+				,pages: ['tinysort.html'] // todo: change to {"dest":src} style
+				,inject: 'src-dev/js/phantomRenderDocs.js'
+				,renderImage: false
+			}
+		}
+
 		// clean
 		,clean: {
 			dist: {

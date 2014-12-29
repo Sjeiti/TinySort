@@ -44,6 +44,8 @@ tinysort.defaults.attr = 'title';
 
 The options object can have the following settings:
 
+### options
+
 
 ## examples
 
