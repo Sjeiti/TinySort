@@ -46,6 +46,7 @@ The options object can have the following settings:
 
 ### options
 
+{{options}}
 
 ## examples
 

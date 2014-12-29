@@ -113,6 +113,14 @@ module.exports = function (grunt) {
 			}
 		}
 
+		,extendDocs: {
+			main: {
+				src: './doc/index.html'
+				,dest: './doc/index.html'
+				,json: './temp/tinysort.json'
+			}
+		}
+
 		// clean
 		,clean: {
 			dist: {
@@ -227,7 +235,7 @@ module.exports = function (grunt) {
 		,'cli:jsdoc'
 		,'copy:dist2doc'
 //		,'copy:jsdoc'
-//		,'renderPages:docs'
-//		,'extendDocs'
+		,'renderPages:docs'
+		,'extendDocs'
 	]);
 };

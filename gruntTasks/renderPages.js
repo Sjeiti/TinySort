@@ -31,13 +31,6 @@ module.exports = function(grunt) {
 
 		nextPage();
 
-		function handleExecPhantomRender(error, stdout){//, stderr){
-			// save the file
-			if (sDestType!=='') sTarget = sTarget.replace(/\.\w+$/,'.'+sDestType);
-			console.log('writing:',sTargetPath+sTarget); // log
-			fs.writeFile(sTargetPath+sTarget, stdout, handleWriteHTML);
-		}
-
 		function handleWriteHTML(err){
 			console.log(err||'file '+(iPages-iPage)+' \''+sTarget+'\' saved');
 			whatNext();
@@ -61,6 +54,13 @@ module.exports = function(grunt) {
 //			var aExec = ['phantomjs','src/js/phantomRender.js',sUrl];
 			bRenderImage&&aExec.push(sTargetPath);
 			exec(aExec.join(' '), handleExecPhantomRender);
+		}
+
+		function handleExecPhantomRender(error, stdout){//, stderr){
+			// save the file
+			if (sDestType!=='') sTarget = sTarget.replace(/\.\w+$/,'.'+sDestType);
+			console.log('writing:',sTargetPath+sTarget); // log
+			fs.writeFile(sTargetPath+sTarget, stdout, handleWriteHTML);
 		}
 	});
 };

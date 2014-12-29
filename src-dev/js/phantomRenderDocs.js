@@ -6,8 +6,11 @@
 		,sSrcUri = args[1]
 	;
 
+
+
 	page.viewportSize = { width: 800, height: 600 };
 	page.onLoadFinished = handleLoadFinished;
+	page.onError = handleError;
 	page.open(sSrcUri);
 
 	function handleLoadFinished(){
@@ -37,6 +40,8 @@
 		console.log(sHtml);
 		phantom.exit(sHtml);
 	}
+
+	function handleError(){}
 
 })(require('webpage').create());
 
