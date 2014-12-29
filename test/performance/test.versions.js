@@ -16,7 +16,7 @@
 	test.add(sTest,function(){
 		aCompare.length = 0;
 		wait()
-			.then(loadScript('src/jquery.tinysort.1.5.4.js'))
+			.then(loadScript('jquery.tinysort.1.5.4.js'))
 			.then(versionLoaded.bind(null,true))
 			.then(loadScript('../../src/tinysort.js'))
 			.then(wait)
@@ -83,9 +83,11 @@
 
 	function handleSuiteComplete(e) {
 		console.log('handleSuiteComplete',e); // log
+		var oSuite = e.currentTarget;
 		test.log('=');
-		test.log('Fastest is ' + e.currentTarget.filter('fastest').pluck('name'));
+		test.log('Fastest is ' + oSuite.filter('fastest').pluck('name'));
 //		test.log('Fastest is ' + this.filter('fastest').pluck('name'));
+//		console.log('t1/t2',t1.stats.mean/t2.stats.mean); // log
 	}
 
 })(test);
