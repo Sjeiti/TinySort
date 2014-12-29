@@ -1,14 +1,14 @@
-(function($,tinysort){
+(function($,test){
 	'use strict';
 	var sTestName = 'Differently sized lists';
 	$(function(){
-		tinysort.add(sTestName,test);
+		test.add(sTestName,testr);
 	});
-	function test(e){
+	function testr(e){
 		e.preventDefault();
 
-		tinysort.log.clear();
-		tinysort.log('start:',sTestName,"\n"); // log
+		test.log.clear();
+		test.log('start:',sTestName,"\n"); // log
 
 		// prepare DOM
 		var aTenten = [], i, j;
@@ -32,10 +32,10 @@
 		// add listeners
 		suite
 			.on('cycle', function(event) {
-			  tinysort.log(String(event.target));
+			  test.log(String(event.target));
 			})
 			.on('complete', function(e) {
-				tinysort.log('=');
+				test.log('=');
 				var suite = e.currentTarget
 					,sort = [];
 				for (var k=0,l=suite.length;k<l;k++) {
@@ -51,7 +51,7 @@
 					return a.hz>b.hz?-1:(a.hz<b.hz?1:0);
 				});
 				_.each(sort,function(bench){
-					tinysort.log(bench.name,bench.hz);
+					test.log(bench.name,bench.hz);
 				});
 			})
 			.run({ 'async': true });
@@ -67,4 +67,4 @@
 			return mUl;
 		}
 	}
-})(jQuery,tinysort);
+})(jQuery,test);

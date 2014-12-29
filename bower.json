@@ -1,6 +1,6 @@
 {
   "name": "tinysort",
-  "version": "2.0.88",
+  "version": "2.0.89",
   "main": "dist/tinysort.min.js",
   "license": "MIT/GPL",
   "ignore": [
@@ -14,10 +14,15 @@
   ],
   "dependencies": {},
   "keywords": [
-	  "sort","list","table","dom","html"
+    "sort",
+    "list",
+    "table",
+    "dom",
+    "html"
   ],
   "devDependencies": {
     "qunit": "~1.16.0",
-    "zenjs": "~0.1.7"
+    "zenjs": "~0.1.7",
+    "iddqd": "~2.4.64"
   }
 }

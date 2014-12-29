@@ -38,18 +38,13 @@ iddqd.ns('jsdoc.tinysort',(function(undefined){
 //			createElement('a','btn btn-md btn-primary',mFirst4,{href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'download');
 			//
 			//
-			var sSrc = 'dist/tinysort.js'
-				,sMin = 'dist/tinysort.min.js'
-				,mASrc = createElement('a','btn btn-sm btn-primary filesize',mFirst4,{download:'tinysort.js',href:sSrc},'source')
-				,mAMin = createElement('a','btn btn-sm btn-primary filesize',mFirst4,{download:'tinysort.min.js',href:sMin},'minified')
-			;
-			iddqd.network.xhttp(sSrc,function(e){
-				mASrc.setAttribute('data-filesize',formatSize(e.response.length));
+			['dist/tinysort.js','dist/tinysort.min.js','dist/tinysort.charorder.js','dist/tinysort.charorder.min.js'].forEach(function(uri){
+				var sFile = uri.split('/').pop()
+					,mA = createElement('a','btn btn-sm btn-primary filesize',mFirst4,{download:sFile,href:uri},sFile	);
+				iddqd.network.xhttp(uri,function(e){
+					mA.setAttribute('data-filesize',formatSize(e.response.length));
+				});
 			});
-			iddqd.network.xhttp(sMin,function(e){
-				mAMin.setAttribute('data-filesize',formatSize(e.response.length));
-			});
-			//
 			//
 			//
 //			createElement('a','btn btn-sm btn-primary',mFirst4,{download:1,href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'download gzip');
@@ -57,6 +52,7 @@ iddqd.ns('jsdoc.tinysort',(function(undefined){
 
 			createElement('a','repo',mFirst4,{'data-type':'git',href:'https://github.com/Sjeiti/TinySort.git'});
 			createElement('code','bower',mFirst4,null,'bower install tinysort');
+			createElement('code','bower',mFirst4,null,'https://github.com/Sjeiti/TinySort.git');
 			//<a href="https://github.com/Sjeiti/TinySort.git" class="repo" data-type="git" rel="external" target="_blank"></a>
 			/*createElement('img',null,
 				createElement('a',null,mFirstC,{href:'https://github.com/Sjeiti/TinySort'})
