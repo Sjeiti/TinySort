@@ -1,6 +1,6 @@
 {
   "name": "TinySort",
-  "version": "2.0.93",
+  "version": "2.0.94",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib": "~0.7.0",
@@ -15,10 +15,7 @@
   },
   "description": "TinySort",
   "main": "Gruntfile.js",
-  "dependencies": {
-    "grunt": "~0.4.1",
-    "uglify-js": "~2.3.6"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/Sjeiti/TinySort.git"

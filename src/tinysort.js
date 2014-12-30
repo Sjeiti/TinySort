@@ -1,14 +1,16 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.93 beta
+ * @version 2.0.94 beta
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
  * @todo check place option
  */
+/*jshint unused:false */
 if (!window.tinysort) var tinysort = (function(undefined){
+	/*jshint unused:true */
 	'use strict';
 
 	// private vars
@@ -24,7 +26,7 @@ if (!window.tinysort) var tinysort = (function(undefined){
 		,iCriterium = 0
 		////////////////////////////
 //		id: 'TinySort'
-		,sVersion = '2.0.93'
+		,sVersion = '2.0.94'
 //		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 //		,uri: 'http://tinysort.sjeiti.com/'
 //		,licensed: {
@@ -110,7 +112,7 @@ if (!window.tinysort) var tinysort = (function(undefined){
 			if (arguments.length===0) {
 				addCriterium({}); // have at least one criterium
 			} else {
-				loop(arguments,function(param,i){
+				loop(arguments,function(param){
 					console.log('isString(param)',param,isString(param)); // log
 					addCriterium(isString(param)?{selector:param}:param);
 				});
