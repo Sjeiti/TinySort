@@ -5,7 +5,7 @@ The examples below should help getting you on your way.
 
 If you find a bug, have a feature request or a code improvement you can [file them here](https://github.com/Sjeiti/TinySort/issues). Please [provide code examples](http://jsfiddle.net/) where applicable.</small>
 
-<div class="alert alert-warning" role="alert"><p>TinySort used to be a jQuery plugin but was rewritten to remove the jQuery dependency. It is now smaller *and* faster. Functionality is the same but changes have been made to the parameters and options.</p></div>
+<div class="alert alert-warning" role="alert"><p>TinySort used to be a jQuery plugin but was rewritten to remove the jQuery dependency. It is now smaller *and* faster (and has no dependencies). Functionality is the same but changes have been made to the parameters and options.</p></div>
 
 ## usage
 
@@ -50,7 +50,7 @@ The options object can have the following settings:
 
 ### default sorting
 
-The default sort simply sorts the textContent of each element
+The default sort simply sorts the text of each element
 
 ``` javascript
 tinysort('ul#xdflt>li');
@@ -61,7 +61,7 @@ tinysort('ul#xdflt>li');
 TinySort works on any nodeType. The following is a div with spans.
 
 ``` javascript
-tinysort('div#xany>span','',{order:'desc'});
+tinysort('div#xany>span');
 ```
 
 ### sorted numbers

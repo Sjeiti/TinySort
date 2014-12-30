@@ -90,7 +90,6 @@ iddqd.ns('jsdoc.tinysort',(function(){
 	}
 
 	function doSort(code){
-		console.log('doSort',code); // log
 		/*jshint evil:true*/
 		eval(code);
 		/*jshint evil:false*/

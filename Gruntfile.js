@@ -32,7 +32,7 @@ module.exports = function (grunt) {
 			}
 			,default: {
 				files: ['src/*.js']
-				,tasks: ['jshint']
+				,tasks: ['dist']
 				,options: { spawn: false }
 			}
 			,revision: {
@@ -165,6 +165,9 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('default',[
+		'watch'
+	]);
+	grunt.registerTask('dist',[
 		'jshint'
 		,'uglify:tinysort'
 		,'uglify:charorder'
@@ -178,10 +181,9 @@ module.exports = function (grunt) {
 	]);
 	grunt.registerTask('jsdoc',[
 		/*'clean:jsdoc'
-		,*/'cli:jsdocprepare'
-		,'cli:jsdoc'
+		,'cli:jsdocprepare'
+		,*/'cli:jsdoc'
 		,'copy:dist2doc'
-//		,'copy:jsdoc'
 		,'renderPages:docs'
 		,'extendDocs'
 		,'extendMarkdown'
