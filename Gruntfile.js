@@ -132,6 +132,10 @@ module.exports = function (grunt) {
 			}
 		}
 
+		,extendMarkdown: {
+			bar:{}
+		}
+
 		,copy: {
 			src2dist: {
 				files: [
@@ -173,12 +177,13 @@ module.exports = function (grunt) {
 		,'cli:jsdocInitBower'
 	]);
 	grunt.registerTask('jsdoc',[
-		'clean:jsdoc'
-		,'cli:jsdocprepare'
+		/*'clean:jsdoc'
+		,*/'cli:jsdocprepare'
 		,'cli:jsdoc'
 		,'copy:dist2doc'
 //		,'copy:jsdoc'
 		,'renderPages:docs'
 		,'extendDocs'
+		,'extendMarkdown'
 	]);
 };

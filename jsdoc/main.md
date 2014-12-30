@@ -1,4 +1,4 @@
-#TinySort
+# TinySort
 
 TinySort is a small script that sorts HTMLElements. It sorts by text- or attribute value, or by that of one of it's children.
 The examples below should help getting you on your way.
@@ -42,9 +42,9 @@ tinysort.defaults.order = 'desc';
 tinysort.defaults.attr = 'title';
 ```
 
-The options object can have the following settings:
-
 ### options
+
+The options object can have the following settings:
 
 {{options}}
 

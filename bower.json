@@ -1,6 +1,6 @@
 {
   "name": "tinysort",
-  "version": "2.0.94",
+  "version": "2.0.95",
   "main": "dist/tinysort.min.js",
   "license": "MIT/GPL",
   "ignore": [

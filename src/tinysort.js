@@ -1,7 +1,7 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.94 beta
+ * @version 2.0.95 beta
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -26,7 +26,7 @@ if (!window.tinysort) var tinysort = (function(undefined){
 		,iCriterium = 0
 		////////////////////////////
 //		id: 'TinySort'
-		,sVersion = '2.0.94'
+		,sVersion = '2.0.95'
 //		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
 //		,uri: 'http://tinysort.sjeiti.com/'
 //		,licensed: {
@@ -60,9 +60,8 @@ if (!window.tinysort) var tinysort = (function(undefined){
 	 * @memberof tinysort
 	 * @public
 	 * @param {NodeList|HTMLElement[]|String} nodeList The nodelist or array of elements to be sorted. If a string is passed it should be a valid CSS selector.
-	 * @param {String} [selector] An optional CSS selector.
 	 * @param {Object} [options] A list of options.
-	 * @param {String} [options.selector] XXXXXXXXXXXXXXXX
+	 * @param {String} [options.selector] A CSS selector to select the element to sort to.
 	 * @param {String} [options.order='asc'] The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.
 	 * @param {String} [options.attr=null] Order by attribute value (ie title, href, class)
 	 * @param {String} [options.data=null] Use the data attribute for sorting.

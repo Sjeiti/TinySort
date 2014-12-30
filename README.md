@@ -1,7 +1,7 @@
 <img src="http://tinysort.sjeiti.com/style/logo.svg" width="32" alt="TinySort" style="vertical-align:middle;" /> TinySort
 =======
 
-TinySort is a small and simple jQuery plugin that will sort any nodetype by its text- or attribute value, or by that of one of its children.
+TinySort is a small script that sorts HTMLElements. It sorts by text- or attribute value, or by that of one of it's children.
 
 Documentation and examples are at [tinysort.sjeiti.com](http://tinysort.sjeiti.com).
 
@@ -38,55 +38,39 @@ tinysort.defaults.order = 'desc';
 tinysort.defaults.attr = 'title';
 ```
 
-The options object can have the following settings:
-
 ### options
 
-selector
-String
-XXXXXXXXXXXXXXXX
+The options object can have the following settings:
 
-order
-String
-'asc'
-The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.
+**selector** (String)
+<p>A CSS selector to select the element to sort to.</p>
 
-attr
-String
-null
-Order by attribute value (ie title, href, class)
+**order** (String='asc')
+<p>The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.</p>
 
-data
-String
-null
-Use the data attribute for sorting.
+**attr** (String)
+<p>Order by attribute value (ie title, href, class)</p>
 
-place
-String
-'org'
-Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first' or 'org'.
+**data** (String)
+<p>Use the data attribute for sorting.</p>
 
-useVal
-Boolean
-false
-Use element value instead of text.
+**place** (String='org')
+<p>Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first' or 'org'.</p>
 
-cases
-Boolean
-false
-A case sensitive sort (orders [aB,aa,ab,bb])
+**useVal** (Boolean=false)
+<p>Use element value instead of text.</p>
 
-forceStrings
-Boolean
-false
-If false the string '2' will sort with the value 2, not the string '2'.
+**cases** (Boolean=false)
+<p>A case sensitive sort (orders [aB,aa,ab,bb])</p>
 
-ignoreDashes
-Boolean
-false
-Ignores dashes when looking for numerals.
+**forceStrings** (Boolean=false)
+<p>If false the string '2' will sort with the value 2, not the string '2'.</p>
 
-sortFunction
-function
-null
-Override the default sort function.
+**ignoreDashes** (Boolean=false)
+<p>Ignores dashes when looking for numerals.</p>
+
+**sortFunction** (function)
+<p>Override the default sort function.</p>
+
+
+
