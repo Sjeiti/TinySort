@@ -1,7 +1,7 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.95 beta
+ * @version 2.0.96 beta
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -14,28 +14,20 @@ if (!window.tinysort) var tinysort = (function(undefined){
 	'use strict';
 
 	// private vars
-	var fls = !1							// minify placeholder
-		,nll = null							// minify placeholder
-		,parsefloat = parseFloat			// minify placeholder
-//		,mathmn = Math.min					// minify placeholder
+	var fls = !1
+		,nll = null
+		,parsefloat = parseFloat
 		,fnIndexOf = Array.prototype.indexOf
+		//,getSortByMem = memoize(getSortBy)
 		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
 		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
 		,aPlugins = []
 		,iCriteria = 0
 		,iCriterium = 0
-		////////////////////////////
-//		id: 'TinySort'
-		,sVersion = '2.0.95'
-//		,copyright: 'Copyright (c) 2008-2013 Ron Valstar'
-//		,uri: 'http://tinysort.sjeiti.com/'
-//		,licensed: {
-//			MIT: 'http://www.opensource.org/licenses/mit-license.php'
-//			,GPL: 'http://www.gnu.org/licenses/gpl.html'
-//		}
+		,sVersion = '2.0.96'
 		,defaults = { // default settings
 
-			selector: undefined	// order: asc, desc or rand
+			selector: nll			// order: asc, desc or rand
 
 			,order: 'asc'			// order: asc, desc or rand
 
@@ -70,7 +62,7 @@ if (!window.tinysort) var tinysort = (function(undefined){
 	 * @param {Boolean} [options.cases=false] A case sensitive sort (orders [aB,aa,ab,bb])
 	 * @param {Boolean} [options.forceStrings=false] If false the string '2' will sort with the value 2, not the string '2'.
 	 * @param {Boolean} [options.ignoreDashes=false] Ignores dashes when looking for numerals.
-	 * @param {Function} [options.sortFunction=null] Override the default sort function.
+	 * @param {Function} [options.sortFunction=null] Override the default sort function. The parameters are of a type {elementObject}.
 	 * @returns {HTMLElement[]}
 	 */
 	function tinysort(nodeList){
@@ -112,7 +104,6 @@ if (!window.tinysort) var tinysort = (function(undefined){
 				addCriterium({}); // have at least one criterium
 			} else {
 				loop(arguments,function(param){
-					console.log('isString(param)',param,isString(param)); // log
 					addCriterium(isString(param)?{selector:param}:param);
 				});
 			}
@@ -253,56 +244,13 @@ if (!window.tinysort) var tinysort = (function(undefined){
 						iReturn = oCriterium.iAsc*(sA<sB?-1:(sA>sB?1:0));
 					}
 				}
-				//
-//				loop(aPluginSort,function(fn){
-//					iReturn = fn.call(fn,oCriterium,bNumeric,sA,sB,iReturn);
-//				});
 				loop(aPlugins,function(o){
 					var pluginSort = o.sort;
 					if (pluginSort) iReturn = pluginSort(oCriterium,bNumeric,sA,sB,iReturn);
 				});
-//				console.log('sA,sB,iReturn',sA,sB,iReturn); // log
-				//
 				if (iReturn===0) iCriterium++;
 			}
 			return iReturn;
-//			return a.text>b.text?1:-1;
-		}
-
-		/**
-		 * Get the string/number to be sorted by checking the elementObject with the criterium.
-		 * @memberof tinysort
-		 * @private
-		 * @param {elementObject} elementObject
-		 * @param {criterium} criterium
-		 * @returns {String}
-		 * @todo memoize
-		 */
-		function getSortBy(elementObject,criterium){
-			var sReturn
-				,mElement = elementObject.elm;
-			// element
-			if (criterium.selector) {
-				if (criterium.bFilter) {
-					if (!mElement.matchesSelector(criterium.selector)) mElement = nll;
-				} else {
-					mElement = mElement.querySelector(criterium.selector);
-				}
-			}
-			// value
-			if (criterium.bAttr) sReturn = mElement.getAttribute(criterium.attr);
-			else if (criterium.useVal) sReturn = mElement.value ;
-			else if (criterium.bData) sReturn = mElement.getAttribute('data-'+criterium.data);
-			else if (mElement) sReturn = mElement.textContent;
-			// strings should be ordered in lowercase (unless specified)
-			if (isString(sReturn)&&!criterium.cases) sReturn = sReturn.toLowerCase();
-			//
-			/*loop(aPlugin,function(o){
-				var pluginSortBy = o.sortBy;
-				if (pluginSortBy) sReturn = pluginSortBy(elementObject,criterium,sReturn);
-			});*/
-			//
-			return sReturn;
 		}
 
 		/**
@@ -311,26 +259,12 @@ if (!window.tinysort) var tinysort = (function(undefined){
 		 * @private
 		 */
 		function applyToDOM(){
-//			console.log('aoSort',aoSort,aoSort.map(function(o){
-//				return o.elm.textContent;
-//			})); // log
 			var bAllSorted = aoSort.length===aoFull.length;
 			if (bSameParent&&bAllSorted) {
 				aoSort.forEach(function(elmObj){
 					mFragment.appendChild(elmObj.elm);
 				});
 				mParent.appendChild(mFragment);
-				//
-//			} else if (bSameParent&&!bAllSorted) { // faulty
-//				aoSort.forEach(function(elmObj){
-//					var iToPos = aoSort[elmObj.posn].pos;
-//					aoFull[iToPos] = elmObj;
-//				});
-//				aoFull.forEach(function(o) {
-//					mFragment.appendChild(o.elm);
-//				});
-//				mParent.appendChild(mFragment);
-//				//
 			} else {
 				aoSort.forEach(function(elmObj) {
 					var mElm = elmObj.elm
@@ -351,6 +285,47 @@ if (!window.tinysort) var tinysort = (function(undefined){
 			return o.elm;
 		});
 	}
+
+	/**
+	 * Get the string/number to be sorted by checking the elementObject with the criterium.
+	 * @memberof tinysort
+	 * @private
+	 * @param {elementObject} elementObject
+	 * @param {criterium} criterium
+	 * @returns {String}
+	 * @todo memoize
+	 */
+	function getSortBy(elementObject,criterium){
+		var sReturn
+			,mElement = elementObject.elm;
+		// element
+		if (criterium.selector) {
+			if (criterium.bFilter) {
+				if (!mElement.matchesSelector(criterium.selector)) mElement = nll;
+			} else {
+				mElement = mElement.querySelector(criterium.selector);
+			}
+		}
+		// value
+		if (criterium.bAttr) sReturn = mElement.getAttribute(criterium.attr);
+		else if (criterium.useVal) sReturn = mElement.value ;
+		else if (criterium.bData) sReturn = mElement.getAttribute('data-'+criterium.data);
+		else if (mElement) sReturn = mElement.textContent;
+		// strings should be ordered in lowercase (unless specified)
+		if (isString(sReturn)&&!criterium.cases) sReturn = sReturn.toLowerCase();
+		//
+		return sReturn;
+	}
+
+
+	/*function memoize(fnc) {
+		var oCache = {}
+			, sKeySuffix = 0;
+		return function () {
+			var sKey = sKeySuffix + JSON.stringify(arguments); // todo: circular dependency on Nodes
+			return (sKey in oCache)?oCache[sKey]:oCache[sKey] = fnc.apply(fnc,arguments);
+		};
+	}*/
 
 	/**
 	 * Test if an object is a string

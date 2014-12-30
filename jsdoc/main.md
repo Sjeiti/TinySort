@@ -3,11 +3,9 @@
 TinySort is a small script that sorts HTMLElements. It sorts by text- or attribute value, or by that of one of it's children.
 The examples below should help getting you on your way.
 
-For those interested: there is a [unit/regression test here](test/unit).
-
 If you find a bug, have a feature request or a code improvement you can [file them here](https://github.com/Sjeiti/TinySort/issues). Please [provide code examples](http://jsfiddle.net/) where applicable.</small>
 
-<div class="alert alert-warning" role="alert"><p>TinySort used to be a jQuery plugin but was rewritten to remove the jQuery dependency. The original functionality is still there but some changes have been made, notably to the parameters.</p></div>
+<div class="alert alert-warning" role="alert"><p>TinySort used to be a jQuery plugin but was rewritten to remove the jQuery dependency. It is now smaller *and* faster. Functionality is the same but changes have been made to the parameters and options.</p></div>
 
 ## usage
 
@@ -188,14 +186,12 @@ Here are some example languages:
     </tbody>
 </table>
 
-### sort by value (todo)
+### sort by value
 
-The value property is primarily used to get the values of form elements, but list-elements also have the value property. By setting the useVal option you can also sort by this form element value. Everything is in the first line, I added some extra code to show the values it sorts on.
+The value property is primarily used to get the values of form elements, but list-elements also have the value property. By setting the useVal option you can also sort by this form element value.
 
 ``` javascript
-tinysort('ul#xinp>li',{selector:'>input,>select',useVal:true}).forEach(function(elm){
-    elm.querySelector('span').textContent = elm.querySelector('>input,>select').value;
-});
+tinysort('ul#xinp>li',{selector:'input',useVal:true});
 ```
 
 ### sort by data
@@ -222,33 +218,54 @@ TinySort can also order randomly (or is that a contradiction).
 tinysort('ul#xrnd>li',{order:'rand'});
 ```
 
-### parsing a custom sort function (todo)
+### parsing a custom sort function
 
-Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type. These objects contains three variables: a variable 'e' containing the jQuery object of the element passing through the sort, an integer 'n' containing the original order of the element, and a string 's' containing the string value we want to sort. The latter is not necessarily the text value of the node, should you parse the 'attr' property then 's' will contain the value of that property.
+Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type {elementObject}, an object with the following properties:
+
+ * elm {HTMLElement}: The element
+ * pos {number}: original position
+ * posn {number}: original position on the partial list
 
 ``` javascript
-tinysort('ul#xcst>li','',{sortFunction:function(a,b){
-var iCalcA = parseInt(a.s)%16;
-var iCalcB = parseInt(b.s)%16;
+tinysort('ul#xcst>li',{sortFunction:function(a,b){
+var iCalcA = a.elm.textContent.length
+    ,iCalcB = b.elm.textContent.length;
 return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
 }});
 ```
 
-### sorting tables (todo)
+### sorting tables
 
-With a little extra code you can create a sortable table. The anchors in this table header call the function sortTable which basicly does this:
+With a little extra code you can create a sortable table:
 
 ``` javascript
-var aAsc = [];
-function sortTable(e) {
-var nr = $(e.currentTarget).index();
-aAsc[nr] = aAsc[nr]=='asc'?'desc':'asc';
-tinysort('#xtable>tbody>tr','td:eq('+nr+')[abbr]',{order:aAsc[nr]});
-}
-tinysort('#xtable'.find('thead th:last').siblings().on('click',sortTable);
+var mTable = document.getElementById('xtable')
+    ,mTHead = mTable.querySelector('thead')
+    ,amTh = mTHead.querySelectorAll('th')
+    ,mTBody = mTable.querySelector('tbody')
+;
+mTHead.addEventListener('click',function(e){
+    var mTarget = e.target
+        ,sTarget = mTarget.textContent
+        ,mTh,iIndex,bAsc,sOrder
+    ;
+    if (sTarget!=='add row') {
+        mTh = mTarget;
+        while (mTh.nodeName!=='TH') mTh = mTh.parentNode;
+        iIndex = Array.prototype.indexOf.call(amTh,mTh);
+        bAsc = mTh.getAttribute('data-order')==='asc';
+        sOrder = bAsc?'desc':'asc';
+        mTh.setAttribute('data-order',sOrder);
+        tinysort(
+            mTBody.querySelectorAll('tr')
+            ,{
+                selector:'td:nth-child('+(iIndex+1)+')'
+                ,order: sOrder
+            }
+        );
+    }
+});
 ```
-
-Note that the mixed column only sorts those rows of which the td's have the abbr attribute set, and because of the default place value the non-sorted elements always remain at the bottom
 
 <table class="props xmpl" id="xtable">
     <thead>
@@ -257,31 +274,41 @@ Note that the mixed column only sorts those rows of which the td's have the abbr
             <th><a>int</a></th>
             <th><a>float</a></th>
             <th><a>mixed</a></th>
-            <th><a>mixed</a></th>
             <th><a>add row</a></th>
         </tr>
     </thead>
-    <tbody><tr><td></td></tr></tbody>
+    <tbody></tbody>
 </table>
 
-### animated sorting (todo)
+### animated sorting
 
 Tinysort has no built in animating features but it can quite easily be accomplished through regular js/jQuery.
 
+<style type="text/css">
+	ul#xanim {
+	    position: relative;
+	    display: block;
+	}
+	ul#xanim li {
+		transition: top 500ms;
+		-webkit-transition: top 500ms;
+	}
+</style>
+
 ``` javascript
-var $Ul = tinysort('ul#xanim');
-$Ul.css({position:'relative',height:$Ul.height(),display:'block'});
-var iLnH;
-var $Li = tinysort('ul#xanim>li');
-$Li.each(function(i,el){
-	var iY = $(el).position().top;
-	$.data(el,'h',iY);
-	if (i===1) iLnH = iY;
+var mUl = document.getElementById('xanim')
+	,amLi = mUl.querySelectorAll('li')
+	,iLiHeight = amLi[0].offsetHeight
+;
+mUl.style.height = mUl.offsetHeight+'px';
+for (var i= 0,l=amLi.length;i<l;i++) {
+	var mLi = amLi[i];
+	mLi.style.position = 'absolute';
+	mLi.style.top = i*iLiHeight+'px';
+}
+tinysort('ul#xanim>li').forEach(function(elm,i){
+    setTimeout((function(elm,i){
+        elm.style.top = i*iLiHeight+'px';
+    }).bind(null,elm,i),40);
 });
-$Li,).each(function(i,el){
-	var $El = $(el);
-	var iFr = $.data(el,'h');
-	var iTo = i*iLnH;
-	$El.css({position:'absolute',top:iFr}).animate({top:iTo},500);
-})
 ```

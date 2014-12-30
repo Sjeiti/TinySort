@@ -70,7 +70,7 @@ The options object can have the following settings:
 <p>Ignores dashes when looking for numerals.</p>
 
 **sortFunction** (function)
-<p>Override the default sort function.</p>
+<p>Override the default sort function. The parameters are of a type {elementObject}.</p>
 
 
 
