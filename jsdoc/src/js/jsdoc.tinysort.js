@@ -13,7 +13,8 @@ iddqd.ns('jsdoc.tinysort',(function(){
 			initFirstParagraph();
 			initScripts()
 			.then(initTitle)
-			.then(initExamples);
+			.then(initExamples)
+			.then(initAnalytics);
 		}
 	}
 
@@ -88,6 +89,17 @@ iddqd.ns('jsdoc.tinysort',(function(){
 		});
 		// table example
 		initTableSort();
+	}
+
+	function initAnalytics(){
+		if (location.hostname==='tinysort.sjeiti.com'){
+			loadScript('//www.google-analytics.com/analytics.js')
+			.then(function(){
+				/*global ga*/
+				ga('create', 'UA-37777223-1', 'auto');
+				ga('send', 'pageview');
+			});
+		}
 	}
 
 	function doSort(code){
