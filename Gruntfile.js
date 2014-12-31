@@ -2,6 +2,9 @@
 module.exports = function (grunt) {
 	'use strict';
 
+	var t = require('./src/tinysort.js');
+	console.log('t.version',t.version); // log
+
 	var sPackage = 'package.json',
 		oPackage = grunt.file.readJSON(sPackage)
 		,sDistBanner = '<%'

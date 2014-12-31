@@ -51,6 +51,9 @@ iddqd.ns('jsdoc.tinysort',(function(){
 				});
 			});
 			//
+			// todo: http://cdnjs.com/libraries/tinysort
+			// see: https://github.com/cdnjs/cdnjs#adding-a-new-or-updating-an-existing-library
+			// and http://ifandelse.com/its-not-hard-making-your-library-support-amd-and-commonjs/
 			createElement('a',null,mFirst4,{href:'https://github.com/Sjeiti/TinySort'},'https://github.com/Sjeiti/TinySort');
 			createElement('code','bower',mFirst4,null,'https://github.com/Sjeiti/TinySort.git');
 			createElement('code','bower',mFirst4,null,'bower install tinysort');

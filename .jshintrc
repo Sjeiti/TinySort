@@ -1,6 +1,8 @@
 {
     "globals": {
 		"tinysort": true
+		,"define": true
+		,"module": true
 	},
     "strict": true,
     "browser": true,

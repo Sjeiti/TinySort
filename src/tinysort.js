@@ -1,20 +1,29 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.99
+ * @version 2.0.101
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
  * @todo check place option
  */
-/*jshint unused:false */
-var tinysort = (function(undefined){
-	/*jshint unused:true */
+(function (root,factory) {
+	'use strict';
+
+	if (typeof define==='function' && define.amd) {
+		define((root.tinysort = factory(root)));
+	} else if (typeof module==='object' && module.exports) {
+		module.exports = (root.tinysort = factory(root));
+	} else {
+		root.tinysort = factory(root);
+	}
+}(this,function(window,undefined) {
 	'use strict';
 
 	var fls = !1
 		,nll = null
+		,document = window.document
 		,parsefloat = parseFloat
 		,fnIndexOf = Array.prototype.indexOf
 		//,getSortByMem = memoize(getSortBy)
@@ -23,7 +32,7 @@ var tinysort = (function(undefined){
 		,aPlugins = []
 		,iCriteria = 0
 		,iCriterium = 0
-		,sVersion = '2.0.99'
+		,sVersion = '2.0.101'
 		,defaults = { // default settings
 
 			selector: nll			// order: asc, desc or rand
@@ -380,23 +389,7 @@ var tinysort = (function(undefined){
 		aPlugins.push({prepare:prepare,sort:sort,sortBy:sortBy});
 	}
 
-	// extend the plugin to expose stuff
-	extend(plugin,{
-		indexOf: fnIndexOf
-		,loop: loop
-	});
-
-	return extend(tinysort,{
-		plugin: plugin
-		,version: sVersion
-		,defaults: defaults
-	});
-})();
-
-// todo: add as dependency
-(function(){
-	'use strict';
-
+	// matchesSelector shim
 	window.Element && function(ElementPrototype) {
 		ElementPrototype.matchesSelector = ElementPrototype.matchesSelector ||
 		ElementPrototype.mozMatchesSelector ||
@@ -409,4 +402,16 @@ var tinysort = (function(undefined){
 			return !!nodes[i];
 		};
 	}(Element.prototype);
-})();
+
+	// extend the plugin to expose stuff
+	extend(plugin,{
+		indexOf: fnIndexOf
+		,loop: loop
+	});
+
+	return extend(tinysort,{
+		plugin: plugin
+		,version: sVersion
+		,defaults: defaults
+	});
+}));
