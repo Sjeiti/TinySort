@@ -111,6 +111,18 @@
 			return sSorted==='_égypte_équateur_érythrée_estonie_états-unis_éthiopie_2345_9876';
 		})(),'French');
 	});
+	test('issue 76', function() {
+		ok( (function(){
+			var aSorted = tinysort(zenLi('ul>li[data-foo=$]*9'))
+				,sSorted = eachElement(aSorted,function(elm){return '_'+elm.getAttribute('data-foo');});
+			return sSorted==='_1_2_3_4_5_6_7_8_9';
+		})(),'keep original order for same order values (9)');
+		ok( (function(){
+			var aSorted = tinysort(zenLi('ul>li[data-foo=$]*11'))
+				,sSorted = eachElement(aSorted,function(elm){return '_'+elm.getAttribute('data-foo');});
+			return sSorted==='_1_2_3_4_5_6_7_8_9_10_11';
+		})(),'keep original order for same order values (11)');
+	});
 	test('issue 78', function() {
 		ok( (function(){
 			var aTest = (function(a,i){
