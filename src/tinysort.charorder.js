@@ -1,8 +1,8 @@
 /**
  * TinySort Charorder: a TinySort plugin to sort non-latin characters.
  * @summary A nodeElement sorting script.
- * @version 2.0.101 beta
- * @requires tinysort v2.0.81 beta
+ * @version 2.0.102 beta
+ * @requires tinysort v2.0.81
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -10,7 +10,19 @@
  * @example
  * tinysort(document.querySelector('ul#danish>li'),{charOrder:'æøå[{Aa}]'});
  */
-;(function() {
+(function (root,factory) {
+	'use strict';
+
+	if (typeof define==='function' && define.amd) {
+		define(['tinysort'],function(tinysort) {
+			return factory(tinysort);
+		});
+	} else if (typeof module==='object' && module.exports) {
+		module.exports = factory(require('tinysort'));
+	} else {
+		factory(root.tinysort);
+	}
+}(this,function(tinysort) {
 	'use strict';
 
 	var sVersion = '2.0.81'
@@ -18,7 +30,7 @@
 		,frCrCd = String.fromCharCode		// minify placeholder
 		,mathmn = Math.min					// minify placeholder
 		,nll = null							// minify placeholder
-		,plugin = window.tinysort.plugin
+		,plugin = tinysort.plugin
 		,fnIndexOf = plugin.indexOf
 		,loop = plugin.loop
 		//
@@ -173,4 +185,4 @@
 	/*function getSortBy(elementObject,criterium,subject){
 		return subject;
 	}*/
-})();
+}));

@@ -3,6 +3,7 @@
 		"tinysort": true
 		,"define": true
 		,"module": true
+		,"require": true
 	},
     "strict": true,
     "browser": true,
