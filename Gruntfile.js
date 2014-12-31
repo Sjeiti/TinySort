@@ -180,9 +180,9 @@ module.exports = function (grunt) {
 		,'cli:jsdocInitBower'
 	]);
 	grunt.registerTask('jsdoc',[
-		/*'clean:jsdoc'
+		'clean:jsdoc'
 		,'cli:jsdocprepare'
-		,*/'cli:jsdoc'
+		,'cli:jsdoc'
 		,'copy:dist2doc'
 		,'renderPages:docs'
 		,'extendDocs'

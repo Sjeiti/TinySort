@@ -5,6 +5,7 @@ TinySort is a small script that sorts HTMLElements. It sorts by text- or attribu
 
 Documentation and examples are at [tinysort.sjeiti.com](http://tinysort.sjeiti.com).
 
+
 ## usage
 
 The first (and only required) argument is a [NodeList](https://developer.mozilla.org/en/docs/Web/API/NodeList), an array of HTMLElements or a string (which is converted to a NodeList using document.querySelectorAll).

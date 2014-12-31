@@ -12,6 +12,7 @@ iddqd.ns('jsdoc.tinysort',(function(){
 		if (sPage==='index.html'||sPage==='') {
 			initFirstParagraph();
 			initScripts()
+			.then(initTitle)
 			.then(initExamples);
 		}
 	}
@@ -57,9 +58,9 @@ iddqd.ns('jsdoc.tinysort',(function(){
 
 	function initScripts(){
 		return loadScript('dist/tinysort.js')
-			.then(initTitle)// in here, otherwise shit fails
-			.then(loadScript.bind(null,'dist/tinysort.charorder.js'))
+			.then(loadScript.bind(null,'dist/tinysort.charorder.js',null))
 		;
+
 	}
 
 	function initExamples(){
