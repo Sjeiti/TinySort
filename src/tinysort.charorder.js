@@ -1,7 +1,7 @@
 /**
  * TinySort Charorder: a TinySort plugin to sort non-latin characters.
  * @summary A nodeElement sorting script.
- * @version 2.0.102 beta
+ * @version 2.0.103 beta
  * @requires tinysort v2.0.81
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
@@ -14,16 +14,29 @@
 	'use strict';
 
 	if (typeof define==='function' && define.amd) {
-		define(['tinysort'],function(tinysort) {
-			return factory(tinysort);
-		});
+		console.log('chardefine'); // log
+//		console.log('this',this); // log
+//		console.log('root',root); // log
+//		console.log('define.amd',define.amd); // log
+//		console.log('define',define); // log
+		define(['tinysort'],factory);
+//		define(factory.bind(null,require(['tinysort'])));
+//		define(factory.bind(null,root.tinysort));
+//        define('tinysort', ['tinysort'], factory);
+		/*define(['tinysort'],function(tinysort) {
+			return factory.bind(null,tinysort);
+		});*/
 	} else if (typeof module==='object' && module.exports) {
-		module.exports = factory(require('tinysort'));
+		module.exports = factory;
+		/*require('tinysort');
+		module.exports = factory;*/
 	} else {
 		factory(root.tinysort);
 	}
 }(this,function(tinysort) {
 	'use strict';
+
+	console.log('charorder',arguments.length,arguments); // log
 
 	var sVersion = '2.0.81'
 		//
