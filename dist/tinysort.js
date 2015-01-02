@@ -1,29 +1,39 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.102
+ * @version 2.0.104
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
  * @todo check place option
  */
-(function (root,factory) {
+(function (root,tinysort) {
 	'use strict';
 
-	if (typeof define==='function' && define.amd) {
-		define((root.tinysort = factory(root)));
-	} else if (typeof module==='object' && module.exports) {
-		module.exports = (root.tinysort = factory(root));
+//	if ( typeof module === "object" && typeof module.exports === "object" ) {
+//		module.exports = singleton;
+	if (typeof define==='function'&&define.amd) {
+		define('tinysort',singleton);
+//		define(singleton);
+	} else if (typeof module==='object'&&module.exports) {
+		module.exports = singleton;
 	} else {
-		root.tinysort = factory(root);
+		root.tinysort = tinysort;
 	}
-}(this,function(window,undefined) {
+	function singleton(){
+		console.log('singleton',arguments); // log
+		return tinysort;
+	}
+}(this,(function() {
 	'use strict';
+
 
 	var fls = !1
+		,undef
 		,nll = null
-		,document = window.document
+		,win = window
+		,doc = win.document
 		,parsefloat = parseFloat
 		,fnIndexOf = Array.prototype.indexOf
 		//,getSortByMem = memoize(getSortBy)
@@ -32,7 +42,7 @@
 		,aPlugins = []
 		,iCriteria = 0
 		,iCriterium = 0
-		,sVersion = '2.0.102'
+		,sVersion = '2.0.104'
 		,defaults = { // default settings
 
 			selector: nll			// order: asc, desc or rand
@@ -53,7 +63,7 @@
 
 			,sortFunction: nll		// override the default sort function
 		}
-	;
+	;undef;
 
 	/**
 	 * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
@@ -74,12 +84,12 @@
 	 * @returns {HTMLElement[]}
 	 */
 	function tinysort(nodeList){
-		if (isString(nodeList)) nodeList = document.querySelectorAll(nodeList);
+		if (isString(nodeList)) nodeList = doc.querySelectorAll(nodeList);
 		if (nodeList.length===0) {
 			console.warn('No elements to sort');
 		}
 
-		var mFragment = document.createDocumentFragment()
+		var mFragment = doc.createDocumentFragment()
 			/** both sorted and unsorted elements
 			 * @type {elementObject[]} */
 			,aoFull = []
@@ -246,7 +256,7 @@
 							}
 						}
 					}
-					if (sA===undefined||sB===undefined) {
+					if (sA===undef||sB===undef) {
 						iReturn = 0;
 					} else {
 						iReturn = oCriterium.iAsc*(sA<sB?-1:(sA>sB?1:0));
@@ -277,7 +287,7 @@
 			} else {
 				aoSort.forEach(function(elmObj) {
 					var mElm = elmObj.elm
-						,mGhost = document.createElement('div')
+						,mGhost = doc.createElement('div')
 					;
 					elmObj.ghost = mGhost;
 					mElm.parentNode.insertBefore(mGhost,mElm);
@@ -378,7 +388,7 @@
 	 */
 	function extend(obj,fns,overwrite){
 		for (var s in fns) {
-			if (overwrite||obj[s]===undefined) {
+			if (overwrite||obj[s]===undef) {
 				obj[s] = fns[s];
 			}
 		}
@@ -390,7 +400,7 @@
 	}
 
 	// matchesSelector shim
-	window.Element && function(ElementPrototype) {
+	win.Element && function(ElementPrototype) {
 		ElementPrototype.matchesSelector = ElementPrototype.matchesSelector ||
 		ElementPrototype.mozMatchesSelector ||
 		ElementPrototype.msMatchesSelector ||
@@ -414,4 +424,4 @@
 		,version: sVersion
 		,defaults: defaults
 	});
-}));
+})()));
