@@ -1,8 +1,13 @@
-/* global module, test, ok, zen, zenLi, eachElement */ //expect
+/* global QUnit, zen, zenLi, eachElement */ //expect
 (function(){
 	'use strict';
 
-	var aList = ['eek-','oif-','myr-','aar-','oac-','eax-']
+	var test = QUnit.test
+		,module = QUnit.module
+		,ok = QUnit.ok
+		,assert = QUnit.assert
+		,async = assert.async
+		,aList = ['eek-','oif-','myr-','aar-','oac-','eax-']
 		,sJoin = aList.slice(0).sort().join('')
 		,sHfJn = aList.slice(0,4).sort().join('')
 		,sSRvr = aList.slice(0).sort().reverse().join('')
@@ -126,5 +131,15 @@
 				,sSorted = eachElement(aSorted,function(elm){ return ' '+elm.textContent+'_'+elm.getAttribute('title'); });
 			return sSorted===' aaaa_id1 bbaa_id3 ccaa_id4 bbaa_id11 aabb_id5 aabb_id12 aacc_id2 cccc_id6';
 		})(),'tinysort(nodeList,\'p:eq(1)\',{attr:\'title\'});');
+	});
+
+	test('default functionality: AMD', function() {
+		var done = async();
+		/*global requirejs*/
+		require.config({baseUrl: '../../src/'});
+		requirejs(['tinysort'],function(sort){
+			ok(!!sort,'test AMD functionality with RequireJS');
+			done();
+		});
 	});
 })();

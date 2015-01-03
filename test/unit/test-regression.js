@@ -1,8 +1,11 @@
-/* global module, test, ok, zenLi, eachElement */
+/* global QUnit, zenLi, eachElement */
 (function(){
 	'use strict';
 
-	var aList = ['eek-','oif-','myr-','aar-','oac-','eax-']
+	var test = QUnit.test
+		,module = QUnit.module
+		,ok = QUnit.ok
+		,aList = ['eek-','oif-','myr-','aar-','oac-','eax-']
 		,sJoin = aList.slice(0).sort().join('')
 	;
 

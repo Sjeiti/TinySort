@@ -11,23 +11,16 @@
 (function (root,tinysort) {
 	'use strict';
 
-//	if ( typeof module === "object" && typeof module.exports === "object" ) {
-//		module.exports = singleton;
 	if (typeof define==='function'&&define.amd) {
 		define('tinysort',singleton);
-//		define(singleton);
-	} else if (typeof module==='object'&&module.exports) {
-		module.exports = singleton;
 	} else {
 		root.tinysort = tinysort;
 	}
 	function singleton(){
-		console.log('singleton',arguments); // log
 		return tinysort;
 	}
 }(this,(function() {
 	'use strict';
-
 
 	var fls = !1
 		,undef

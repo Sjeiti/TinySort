@@ -1,8 +1,13 @@
-/* global module, test, ok, zenLi, eachElement */
+/* global QUnit, zenLi, eachElement */
 (function(){
 	'use strict';
 
-	var aLangSR = ['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']
+	var test = QUnit.test
+		,module = QUnit.module
+		,ok = QUnit.ok
+		,assert = QUnit.assert
+		,async = assert.async
+		,aLangSR = ['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']
 		,aLangDA = ['Åben','Æble','Åse','København','Aarhus','Øresund'];
 
 	module('charorder plugin');
@@ -17,5 +22,15 @@
 				,sSorted = eachElement(aSorted,function(elm){ return ' '+elm.textContent; });
 			return sSorted==' København Æble Øresund Åben Aarhus Åse';
 		})(),'tinysort(nodeList,{charOrder:\'æøå[{Aa}]\'}); // Danisch');
+	});
+
+	test('charorder AMD', function() {
+		var done = async();
+		/*global requirejs*/
+		require.config({baseUrl: '../../src/'});
+		requirejs(['tinysort','tinysort.charorder'],function(sort){
+			ok(!!sort.defaults.hasOwnProperty('charOrder'),'test AMD functionality with RequireJS');
+			done();
+		});
 	});
 })();

@@ -1,6 +1,9 @@
-/*global QUnit, zen*/
+/*global QUnit, iddqd, zen*/
 (function(){
 	'use strict';
+
+	var loadScript = iddqd.pattern.callbackToPromise(iddqd.loadScript)
+		,oLoad;
 
 	// config qUnit
 	QUnit.config.hidepassed = true;
@@ -20,15 +23,16 @@
 	[
 		'../../src/tinysort.js'
 		,'../../src/tinysort.charorder.js'
+		,'../../vendor/requirejs/require.js'
 		,'test-api.js'
-		,'test-private.js'
 		,'test-regression.js'
 		,'test-charorder.js'
 	].forEach(function(script){
-		/*jslint evil: true */
-		document.write('<script src="'+script+'"></script>');
+		oLoad = oLoad?oLoad.then(loadScript.bind(null,script,null)):loadScript(script);
 	});
+	oLoad.then(setTimeout.bind(window,setHeader,140));
 
-	//$('#qunit-header').text($.tinysort.id+' '+$.tinysort.version);
-
+	function setHeader(){
+		document.getElementById('qunit-header').textContent = 'TinySort '+tinysort.version;
+	}
 })();
