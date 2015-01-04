@@ -1,7 +1,7 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.104
+ * @version 2.1.0
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -35,7 +35,7 @@
 		,aPlugins = []
 		,iCriteria = 0
 		,iCriterium = 0
-		,sVersion = '2.0.104'
+		,sVersion = '2.1.0'
 		,defaults = { // default settings
 
 			selector: nll			// order: asc, desc or rand

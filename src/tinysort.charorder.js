@@ -1,8 +1,8 @@
 /**
  * TinySort Charorder: a TinySort plugin to sort non-latin characters.
  * @summary A nodeElement sorting script.
- * @version 2.0.104 beta
- * @requires tinysort v2.0.81
+ * @version 2.1.0
+ * @requires tinysort v2.1.0
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -176,9 +176,4 @@
 		}
 		return sortReturn;
 	}
-
-	return {};
-	/*function getSortBy(elementObject,criterium,subject){
-		return subject;
-	}*/
 }));

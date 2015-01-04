@@ -1,32 +1,32 @@
 {
-  "name": "TinySort",
-  "version": "2.0.110",
-  "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib": "~0.7.0",
-    "grunt-contrib-jshint": "~0.6.2",
-    "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-copy": "~0.4.1",
-    "grunt-version-git": "~0.1.7",
-    "load-grunt-tasks": "~1.0.0",
-    "jsdoc": "~3.3.0-alpha11",
-    "grunt-contrib-clean": "~0.6.0",
-    "mkdirp": "~0.5.0",
-    "grunt-bump": "0.0.16"
-  },
-  "description": "TinySort",
-  "main": "Gruntfile.js",
-  "dependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Sjeiti/TinySort.git"
-  },
-  "keywords": [
-    "jQuery",
-    "plugin",
-    "sorting",
-    "sort"
-  ],
-  "author": "Ron Valstar",
-  "license": "MIT/GPL"
+	"name": "TinySort",
+	"version": "2.1.0",
+	"devDependencies": {
+		"grunt": "~0.4.1",
+		"grunt-contrib": "~0.7.0",
+		"grunt-contrib-jshint": "~0.6.2",
+		"grunt-contrib-uglify": "~0.2.2",
+		"grunt-contrib-copy": "~0.4.1",
+		"grunt-version-git": "~0.2.1",
+		"load-grunt-tasks": "~1.0.0",
+		"jsdoc": "~3.3.0-alpha11",
+		"grunt-contrib-clean": "~0.6.0",
+		"mkdirp": "~0.5.0"
+	},
+	"description": "TinySort",
+	"main": "Gruntfile.js",
+	"dependencies": {},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Sjeiti/TinySort.git"
+	},
+	"keywords": [
+		"sort",
+		"list",
+		"table",
+		"dom",
+		"html"
+	],
+	"author": "Ron Valstar (http://www.sjeiti.com/)",
+	"license": "MIT/GPL"
 }

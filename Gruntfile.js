@@ -35,11 +35,11 @@ module.exports = function (grunt) {
 				,tasks: ['dist']
 				,options: { spawn: false }
 			}
-			,revision: {
+			/*,revision: {
 				files: ['.git/COMMIT_EDITMSG']
 				,tasks: ['version_git']
 				,options: { spawn: false }
-			}
+			}*/
 			,jsdoc: {
 				files: [
 					'jsdoc/template/tmpl/*.tmpl'
@@ -52,19 +52,10 @@ module.exports = function (grunt) {
 			}
 		}
 
-		// update revision
+		// versioning
 		,version_git: {
-			main: {
-				files: {
-					src: 'src/*.js'
-					,package: './package.json'
-					,bower: './bower.json'
-				}
-			}
-			,mainVar: {
-				files: {src:'src/tinysort.js'}
-				,options: {regex: /sVersion\s*=\s*'(\d+\.\d+\.\d+)'/}
-			}
+			tinysort: { files: {src:'src/tinysort.js'} }
+			,charorder: { files: {src:'src/tinysort.charorder.js'} }
 		}
 
 		// command line interface
@@ -73,6 +64,33 @@ module.exports = function (grunt) {
 			,jsdocprepare: { cwd: './jsdoc', command: 'grunt prepare', output: true }
 			,jsdocInitNpm: { cwd: './jsdoc', command: 'npm install', output: true }
 			,jsdocInitBower: { cwd: './jsdoc', command: 'bower install', output: true }
+		}
+
+		// map source js jsdoc variables to json variables
+		,map_json: {
+			package: {
+				src: 'src/tinysort.js'
+				,dest: 'package.json'
+				,map: {
+					title:'summary'
+				}
+			}
+			,bower: {
+				src: 'src/tinysort.js'
+				,dest: 'bower.json'
+				,map: {
+					title:'summary'
+				}
+			}
+			/*,jsdoc : {
+				src: 'src/tinysort.js'
+				,dest: 'jsdoc.json'
+				,map: {
+					summary:'templates.systemName'
+					,copyright:'templates.copyright'
+					,author:'templates.author'
+				}
+			}*/
 		}
 
 		// uses Phantomjs to render pages and inject a js file
@@ -178,6 +196,10 @@ module.exports = function (grunt) {
 	grunt.registerTask('jsdocInit',[
 		'cli:jsdocInitNpm'
 		,'cli:jsdocInitBower'
+	]);
+	grunt.registerTask('version',[
+		'version_git:tinysort'
+		,'map_json'
 	]);
 	grunt.registerTask('jsdoc',[
 		'clean:jsdoc'
