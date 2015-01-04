@@ -1,6 +1,6 @@
 {
   "name": "TinySort",
-  "version": "2.0.107",
+  "version": "2.0.108",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib": "~0.7.0",
