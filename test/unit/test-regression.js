@@ -126,6 +126,16 @@
 			return sSorted==='_1_2_3_4_5_6_7_8_9_10_11';
 		})(),'keep original order for same order values (11)');
 	});
+	test('issue 77', function() {
+		ok( (function(){
+			var aLi = zenLi('ul>li{a $}*6'),aSorted,sSorted;
+			aLi[3].innerHTML = 'a\n4';
+			aLi[1].innerHTML = 'a  2';
+			aSorted = tinysort(aLi);
+			sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+			return sSorted==='a 1a  2a 3a\n4a 5a 6';
+		})(),'newlines and multiple spaces');
+	});
 	test('issue 78', function() {
 		ok( (function(){
 			var aTest = (function(a,i){

@@ -1,8 +1,8 @@
 /**
  * TinySort Charorder: a TinySort plugin to sort non-latin characters.
  * @summary A nodeElement sorting script.
- * @version 2.0.104 beta
- * @requires tinysort v2.0.81
+ * @version 2.1.0
+ * @requires tinysort v2.1.0
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -13,33 +13,13 @@
 (function (root,factory) {
 	'use strict';
 
-	if (typeof define==='function' && define.amd) {
-
-//		http://ifandelse.com/its-not-hard-making-your-library-support-amd-and-commonjs/
-//		http://addyosmani.com/writing-modular-js/
-
-//		define('tinysort.charorder',['tinysort'],factory);
-		define(factory);
-		//define("jquery.tinysort", ['jquery'], factory);
-//		define(factory.bind(null,root.tinysort));
-//		define(factory.bind(null,require(['tinysort'])));
-//		define(factory.bind(null,root.tinysort));
-//        define('tinysort', ['tinysort'], factory);
-//		define(['tinysort'],function(tinysort) {
-//			return factory.bind(null,tinysort);
-//		});
-	} else if (typeof module==='object' && module.exports) {
-		module.exports = factory;
-		/*require('tinysort');
-		module.exports = factory;*/
+	if (typeof define==='function'&&define.amd) {
+		define(['tinysort'],factory);
 	} else {
 		factory(root.tinysort);
 	}
-}(this,function() {
+}(this,function(tinysort) {
 	'use strict';
-
-	var tinysort = require('tinysort');
-	console.log('charorder',!!tinysort,tinysort); // log
 
 	var sVersion = '2.0.81'
 		//
@@ -196,8 +176,4 @@
 		}
 		return sortReturn;
 	}
-
-	/*function getSortBy(elementObject,criterium,subject){
-		return subject;
-	}*/
 }));

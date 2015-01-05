@@ -1,7 +1,7 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.0.104
+ * @version 2.1.1
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -11,23 +11,16 @@
 (function (root,tinysort) {
 	'use strict';
 
-//	if ( typeof module === "object" && typeof module.exports === "object" ) {
-//		module.exports = singleton;
 	if (typeof define==='function'&&define.amd) {
 		define('tinysort',singleton);
-//		define(singleton);
-	} else if (typeof module==='object'&&module.exports) {
-		module.exports = singleton;
 	} else {
 		root.tinysort = tinysort;
 	}
 	function singleton(){
-		console.log('singleton',arguments); // log
 		return tinysort;
 	}
 }(this,(function() {
 	'use strict';
-
 
 	var fls = !1
 		,undef
@@ -42,7 +35,7 @@
 		,aPlugins = []
 		,iCriteria = 0
 		,iCriterium = 0
-		,sVersion = '2.0.104'
+		,sVersion = '2.1.0'
 		,defaults = { // default settings
 
 			selector: nll			// order: asc, desc or rand
@@ -331,7 +324,10 @@
 		else if (criterium.bData) sReturn = mElement.getAttribute('data-'+criterium.data);
 		else if (mElement) sReturn = mElement.textContent;
 		// strings should be ordered in lowercase (unless specified)
-		if (isString(sReturn)&&!criterium.cases) sReturn = sReturn.toLowerCase();
+		if (isString(sReturn)) {
+			if (!criterium.cases) sReturn = sReturn.toLowerCase();
+			sReturn = sReturn.replace(/\s+/g,' '); // spaces/newlines
+		}
 		//
 		return sReturn;
 	}

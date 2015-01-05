@@ -1,7 +1,7 @@
 /**
  * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.1.0
+ * @version 2.1.1
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -324,7 +324,10 @@
 		else if (criterium.bData) sReturn = mElement.getAttribute('data-'+criterium.data);
 		else if (mElement) sReturn = mElement.textContent;
 		// strings should be ordered in lowercase (unless specified)
-		if (isString(sReturn)&&!criterium.cases) sReturn = sReturn.toLowerCase();
+		if (isString(sReturn)) {
+			if (!criterium.cases) sReturn = sReturn.toLowerCase();
+			sReturn = sReturn.replace(/\s+/g,' '); // spaces/newlines
+		}
 		//
 		return sReturn;
 	}
