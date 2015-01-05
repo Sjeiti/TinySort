@@ -27,6 +27,7 @@
 		,'test-api.js'
 		,'test-regression.js'
 		,'test-charorder.js'
+		,'test-jquerywrapper.js'
 	].forEach(function(script){
 		oLoad = oLoad?oLoad.then(loadScript.bind(null,script,null)):loadScript(script);
 	});

@@ -11,7 +11,14 @@
  * @namespace tinysort
  * @todo check place option
  */
-;(function($) {
+(function (factory) {
+	'use strict';
+	if (typeof define==='function'&&define.amd) {
+		define(['jquery','tinysort'],factory);
+	} else if (jQuery && !jQuery.fn.tsort) {
+		factory(jQuery,tinysort);
+	}
+}(function ($,tinysort) {
 	'use strict';
 	$.tinysort = { defaults: tinysort.defaults	};
 	$.fn.extend({
@@ -30,4 +37,4 @@
 		}
 	});
 	$.fn.tsort = $.fn.tinysort;
-})(jQuery);
+}));
