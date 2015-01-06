@@ -2,28 +2,11 @@
 module.exports = function (grunt) {
 	'use strict';
 
-	var sPackage = 'package.json',
-		oPackage = grunt.file.readJSON(sPackage)
-		,sDistBanner = '<%'
-			+'var subtask = uglify[grunt.task.current.target];'
-			+'var file = subtask?subtask.src:\'\';'
-			+'var filename = file.split(\'/\').pop();'
-			+'%>'
-			+'/*! <%= filename %>'
-			+'\n * version: <%= pkg.version %>'
-			+'\n * author: <%= pkg.author %>'
-			+'\n * license: <%= pkg.license %>'
-			+'\n * build: <%= grunt.template.today("yyyy-mm-dd") %>'
-			//+'\n<% for ( var s in this) { %> \nthis.<%=s%><% } %>'
-			+'\n */\n'
-	;
-
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('gruntTasks');
 
 	grunt.initConfig({
-		pkg: oPackage,
 
 		watch: {
 			gruntfile: {
@@ -35,11 +18,6 @@ module.exports = function (grunt) {
 				,tasks: ['dist']
 				,options: { spawn: false }
 			}
-			/*,revision: {
-				files: ['.git/COMMIT_EDITMSG']
-				,tasks: ['version_git']
-				,options: { spawn: false }
-			}*/
 			,jsdoc: {
 				files: [
 					'jsdoc/template/tmpl/*.tmpl'
@@ -54,8 +32,9 @@ module.exports = function (grunt) {
 
 		// versioning
 		,version_git: {
-			tinysort: { files: {src:'src/tinysort.js'} }
+			tinysort:	{ files: {src:'src/tinysort.js'} }
 			,charorder: { files: {src:'src/tinysort.charorder.js'} }
+			,jquery:	{ files: {src:'src/jquery.tinysort.js'} }
 		}
 
 		// command line interface
@@ -72,44 +51,14 @@ module.exports = function (grunt) {
 				src: 'src/tinysort.js'
 				,dest: 'package.json'
 				,map: {
-					title:'summary'
+					namespace:'name'
+					,title:'description'
 				}
 			}
 			,bower: {
 				src: 'src/tinysort.js'
 				,dest: 'bower.json'
-				,map: {
-					title:'summary'
-				}
-			}
-			/*,jsdoc : {
-				src: 'src/tinysort.js'
-				,dest: 'jsdoc.json'
-				,map: {
-					summary:'templates.systemName'
-					,copyright:'templates.copyright'
-					,author:'templates.author'
-				}
-			}*/
-		}
-
-		// uses Phantomjs to render pages and inject a js file
-		,renderPages: {
-			docs: {
-				baseUri: 'doc/'
-				,dest: './temp/'
-				,destType: 'json'
-				,pages: ['tinysort.html']
-				,inject: 'src-dev/js/phantomRenderDocs.js'
-				,renderImage: false
-			}
-		}
-
-		,extendDocs: {
-			main: {
-				src: './doc/index.html'
-				,dest: './doc/index.html'
-				,json: './temp/tinysort.json'
+				,map: { namespace:'name' }
 			}
 		}
 
@@ -124,35 +73,41 @@ module.exports = function (grunt) {
 			,files: [
 				'src/tinysort.js'
 				,'src/tinysort.charorder.js'
+				,'src/jquery.tinysort.js'
 			]
 		}
 
 		,uglify: {
 			tinysort: {
-				options: { banner: sDistBanner }
+				options: { preserveComments: 'some' }
 				,src: 'src/tinysort.js'
 				,dest: 'dist/tinysort.min.js'
 			}
 			,charorder: {
-				options: { banner: sDistBanner }
+				options: { preserveComments: 'some' }
 				,src: 'src/tinysort.charorder.js'
 				,dest: 'dist/tinysort.charorder.min.js'
 			}
+			,jquerytinysort: {
+				options: { preserveComments: 'some' }
+				,src: 'src/jquery.tinysort.js'
+				,dest: 'dist/jquery.tinysort.min.js'
+			}
 			,tinysortgz: {
-				src: 'src/tinysort.js'
+				options: { compress: true }
+				,src: 'src/tinysort.js'
 				,dest: 'dist/tinysort.jgz'
 				,compress: true
 			}
 			,charordergz: {
-				src: 'src/tinysort.charorder.js'
+				options: { compress: true }
+				,src: 'src/tinysort.charorder.js'
 				,dest: 'dist/tinysort.charorder.jgz'
 				,compress: true
 			}
 		}
 
-		,extendMarkdown: {
-			bar:{}
-		}
+		,extendMarkdown: { bar:{} }
 
 		,copy: {
 			src2dist: {
@@ -160,7 +115,7 @@ module.exports = function (grunt) {
 					{
 						expand: true
 						,cwd: './src/'
-						,src: ['tinysort.js','tinysort.charorder.js']
+						,src: ['tinysort.js','tinysort.charorder.js','jquery.tinysort.js']
 						,dest: 'dist/'
 						,filter: 'isFile'
 						,dot: true
@@ -180,6 +135,27 @@ module.exports = function (grunt) {
 				]
 			}
 		}
+
+		// uses Phantomjs to render pages and inject a js file
+		,renderPages: {
+			docs: {
+				baseUri: 'doc/'
+				,dest: './temp/'
+				,destType: 'json'
+				,pages: ['tinysort.html']
+				,inject: 'src-dev/js/phantomRenderDocs.js'
+				,renderImage: false
+			}
+		}
+
+		// extend the rendered jsdoc files with data
+		,extendDocs: {
+			main: {
+				src: './doc/index.html'
+				,dest: './doc/index.html'
+				,json: './temp/tinysort.json'
+			}
+		}
 	});
 
 	grunt.registerTask('default',[
@@ -187,10 +163,7 @@ module.exports = function (grunt) {
 	]);
 	grunt.registerTask('dist',[
 		'jshint'
-		,'uglify:tinysort'
-		,'uglify:charorder'
-		,'uglify:tinysortgz'
-		,'uglify:charordergz'
+		,'uglify'
 		,'copy:src2dist'
 	]);
 	grunt.registerTask('jsdocInit',[

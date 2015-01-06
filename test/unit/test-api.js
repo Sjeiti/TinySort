@@ -12,7 +12,6 @@
 		,sHfJn = aList.slice(0,4).sort().join('')
 		,sSRvr = aList.slice(0).sort().reverse().join('')
 	;
-
 	module('TinySort');
 	test('default functionality', function() {
 		ok( (function(){
@@ -65,24 +64,34 @@
 		})(),'tinysort(nodeList,\'li\',{data:\'foo\'})');
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li{a$}*6',{a:aList}),':nth-child(-n+4)',{returns:true})
-				,sSorted = eachElement(aSorted,function(elm){ return elm.textContent; });
+				,sSorted = eachElement(aSorted);
 			return sSorted==sHfJn;
 		})(),'tinysort(nodeList,{returns:true});');
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li{a$}*6',{a:aList}),{order:'desc'})
-				,sSorted = eachElement(aSorted,function(elm){ return elm.textContent; });
+				,sSorted = eachElement(aSorted);
 			return sSorted==sSRvr;
 		})(),'tinysort(nodeList,{order:\'desc\'});');
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li{a$}*5',{a:[6,1,5,2,4]}))
-				,sSorted = eachElement(aSorted,function(elm){ return elm.textContent; });
+				,sSorted = eachElement(aSorted);
 			return sSorted=='12456';
 		})(),'tinysort(nodeList); with integers');
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li{a$}*5',{a:[4.6,3.1,2.5,5.2,7.4]}))
-				,sSorted = eachElement(aSorted,function(elm){ return elm.textContent; });
+				,sSorted = eachElement(aSorted);
 			return sSorted=='2.53.14.65.27.4';
 		})(),'tinysort(nodeList); with floats');
+		ok( (function(){
+			var aSorted = tinysort(zenLi('ul>li{a$}*3',{a:[123,1.23,12.3]}))
+				,sSorted = eachElement(aSorted);
+			return sSorted=='1.2312.3123';
+		})(),'tinysort(nodeList); mixed float and integers');
+		ok( (function(){
+			var aSorted = tinysort(zenLi('ul>li{a$}*6',{a:['123 ','1.23 ','12.3 ','1 ','2 ','3 ']}))
+				,sSorted = eachElement(aSorted);
+			return sSorted=='1 1.23 2 3 12.3 123 ';
+		})(),'tinysort(nodeList); mixed float and integers suffixed space');
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li{a$}*15',{a:[4.6,'c',7.4,6,'a',11,1,5,3.1,'d',2.5,5.2,'b',2,4]}))
 				,sSorted = eachElement(aSorted,function(elm){ return ' '+elm.textContent; });
@@ -110,7 +119,7 @@
 		})(),'tinysort(nodeList); multiple parents');
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>li{a$}*5',{a:['a-2','a-5','a-6','a-4','a-1']}),{ignoreDashes:true})
-				,sSorted = eachElement(aSorted,function(elm){ return elm.textContent; });
+				,sSorted = eachElement(aSorted);
 			return sSorted=='a-1a-2a-4a-5a-6';
 		})(),'tinysort(nodeList,{ignoreDashes:true}); ignore dashes');
 	});

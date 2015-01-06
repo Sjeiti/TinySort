@@ -15,6 +15,7 @@
 
 	window.eachElement = function eachElement(nodeList,fn){
 		var s = '';
+		if (fn===undefined) fn = function(elm){ return elm.textContent; };
 		nodeList.forEach(function(elm){ s += fn(elm); });
 		return s;
 	};

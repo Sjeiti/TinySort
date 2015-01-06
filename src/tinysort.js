@@ -1,12 +1,11 @@
 /**
- * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
+ * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.1.1
+ * @version 2.1.2
  * @license MIT/GPL
- * @author Ron Valstar (http://www.sjeiti.com/)
+ * @author Ron Valstar <ron@ronvalstar.nl> (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
- * @todo check place option
  */
 (function (root,tinysort) {
 	'use strict';
@@ -30,12 +29,11 @@
 		,parsefloat = parseFloat
 		,fnIndexOf = Array.prototype.indexOf
 		//,getSortByMem = memoize(getSortBy)
-		,rxLastNr = /(-?\d+\.?\d*)$/g		// regex for testing strings ending on numbers
-		,rxLastNrNoDash = /(\d+\.?\d*)$/g	// regex for testing strings ending on numbers ignoring dashes
+		,rxLastNr = /(-?\d+\.?\d*)\s*$/g		// regex for testing strings ending on numbers
+		,rxLastNrNoDash = /(\d+\.?\d*)\s*$/g	// regex for testing strings ending on numbers ignoring dashes
 		,aPlugins = []
 		,iCriteria = 0
 		,iCriterium = 0
-		,sVersion = '2.1.0'
 		,defaults = { // default settings
 
 			selector: nll			// order: asc, desc or rand
@@ -46,6 +44,7 @@
 			,data: nll				// use the data attribute for sorting
 			,useVal: fls			// use element value instead of text
 
+			//todo check place option
 			,place: 'start'			// place ordered elements at position: start, end, org (original position), first
 			,returns: fls			// return all elements or only the sorted ones (true/false)
 
@@ -238,7 +237,8 @@
 					if (!oCriterium.forceStrings) {
 						// cast to float if both strings are numeral (or end numeral)
 						var  aAnum = isString(sA)?sA&&sA.match(rxLast):fls// todo: isString superfluous because getSortBy returns string|undefined
-							,aBnum = isString(sB)?sB&&sB.match(rxLast):fls;
+							,aBnum = isString(sB)?sB&&sB.match(rxLast):fls
+						;
 						if (aAnum&&aBnum) {
 							var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
 								,sBprv = sB.substr(0,sB.length-aBnum[0].length);
@@ -417,7 +417,6 @@
 
 	return extend(tinysort,{
 		plugin: plugin
-		,version: sVersion
 		,defaults: defaults
 	});
 })()));

@@ -1,6 +1,6 @@
 {
-	"name": "TinySort",
-	"version": "2.1.1",
+	"name": "tinysort",
+	"version": "2.1.2",
 	"main": "dist/tinysort.min.js",
 	"license": "MIT/GPL",
 	"ignore": [
@@ -15,6 +15,9 @@
 	"dependencies": {},
 	"keywords": [
 		"sort",
+		"element",
+		"HTMLElement",
+		"Node",
 		"list",
 		"table",
 		"dom",

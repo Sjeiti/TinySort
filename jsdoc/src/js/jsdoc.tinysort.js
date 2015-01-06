@@ -5,23 +5,18 @@ iddqd.ns('jsdoc.tinysort',(function(){
 	var loadScript = iddqd.pattern.callbackToPromise(iddqd.loadScript)
 		,formatSize = iddqd.internal.native.number.formatSize
 		,createElement = iddqd.createElement
+		,xhttp = iddqd.network.xhttp
 		,forEach = Array.prototype.forEach;
 
 	function init(){
 		var sPage = location.href.split('#').shift().split('/').pop();
+		initAnalytics();
 		if (sPage==='index.html'||sPage==='') {
 			initFirstParagraph();
 			initScripts()
-			.then(initTitle)
 			.then(initExamples)
-			.then(initAnalytics);
+			.then(initTitle);
 		}
-	}
-
-	function initTitle(){
-		var aVersion = tinysort.version.split('.')
-			,mSmall = createElement('small',null,document.querySelector('.navbar-brand'),null,aVersion.slice(0,2).join('.'));
-		createElement('span',null,mSmall,null,'.'+aVersion.pop());
 	}
 
 	function initFirstParagraph(){
@@ -39,32 +34,67 @@ iddqd.ns('jsdoc.tinysort',(function(){
 			}
 			mContainer.parentNode.insertBefore(mFirstP,mContainer);
 			//
-			// add download button
-			createElement('h3',null,mFirst4,{},'download');
-			createElement('a','btn btn-lg btn-primary',mFirst4,{href:'https://github.com/Sjeiti/TinySort/archive/master.zip'},'zip');
+			// source
+			createElement('h3','nav-label',mFirst4,{},'source');
 			//
-			['dist/tinysort.js','dist/tinysort.min.js','dist/tinysort.charorder.js','dist/tinysort.charorder.min.js'].forEach(function(uri){
+			createElement('a','btn btn-sm btn-download',mFirst4,{href:'https://github.com/Sjeiti/TinySort'},'https://github.com/Sjeiti/TinySort');
+			createElement('input','btn btn-sm btn-source',mFirst4,{value:'https://github.com/Sjeiti/TinySort.git',style:'text-align:right;text-indent:-10rem;'});
+			createElement('input','btn btn-sm btn-source',mFirst4,{value:'bower install tinysort'});
+			//
+			// use
+			createElement('input','unveal',mFirst4,{type:'radio',name:'wrap',id:'wrap-cdn',checked:'checked'});
+			createElement('label','btn btn-sm',mFirst4,{for:'wrap-cdn'},'cdn');
+			createElement('input','unveal',mFirst4,{type:'radio',name:'wrap',id:'wrap-download'});
+			createElement('label','btn btn-sm',mFirst4,{for:'wrap-download'},'download');
+			//
+			// download
+			var mWrapDownload = createElement('div','wrap wrap-download',mFirst4);
+			[
+				'dist/tinysort.js'
+				,'dist/tinysort.min.js'
+				,'dist/tinysort.charorder.js'
+				,'dist/tinysort.charorder.min.js'
+				,'dist/jquery.tinysort.js'
+				,'dist/jquery.tinysort.min.js'
+			].forEach(function(uri){
 				var sFile = uri.split('/').pop()
-					,mA = createElement('a','btn btn-sm btn-primary filesize',mFirst4,{download:sFile,href:uri},sFile	);
-				iddqd.network.xhttp(uri,function(e){
+					,mA = createElement('a','btn btn-sm btn-download filesize',mWrapDownload,{download:sFile,href:uri},sFile	);
+				xhttp(uri,function(e){
 					mA.setAttribute('data-filesize',formatSize(e.response.length));
 				});
 			});
 			//
-			// todo: http://cdnjs.com/libraries/tinysort
-			// see: https://github.com/cdnjs/cdnjs#adding-a-new-or-updating-an-existing-library
-			// and http://ifandelse.com/its-not-hard-making-your-library-support-amd-and-commonjs/
-			createElement('a',null,mFirst4,{href:'https://github.com/Sjeiti/TinySort'},'https://github.com/Sjeiti/TinySort');
-			createElement('code','bower',mFirst4,null,'https://github.com/Sjeiti/TinySort.git');
-			createElement('code','bower',mFirst4,null,'bower install tinysort');
+			// CDN
+			var mWrapCDN = createElement('div','wrap wrap-cdn',mFirst4);
+			createElement('a','btn btn-sm btn-cdn',mWrapCDN,{href:'http://cdnjs.com/libraries/tinysort'},'http://cdnjs.com/libraries/tinysort');
+			[
+				 'https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.1.1/tinysort.js'
+				,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.1.1/tinysort.min.js'
+				,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.1.1/tinysort.charorder.js'
+				,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.1.1/tinysort.charorder.min.js'
+			].forEach(function(uri){
+				createElement('input','btn btn-sm btn-cdn',mWrapCDN,{value:uri} );
+			});
+			//
+			// focus input
+			Array.prototype.forEach.call(mFirst4.querySelectorAll('input'),function(elm){
+				elm.addEventListener('focus',handleInputFocus);
+			});
 		}
 	}
 
 	function initScripts(){
 		return loadScript('dist/tinysort.js')
-			.then(loadScript.bind(null,'dist/tinysort.charorder.js',null))
-		;
+			.then(loadScript.bind(null,'dist/tinysort.charorder.js',null));
+	}
 
+	function initTitle(){
+		xhttp('dist/tinysort.js',function(e){
+			var sVersion = e.response.match(/@version\s*(.*)/).pop()
+				,aVersion = sVersion.split('.')
+				,mSmall = createElement('small',null,document.querySelector('.navbar-brand'),null,aVersion.slice(0,2).join('.'));
+			createElement('span',null,mSmall,null,'.'+aVersion.pop());
+		});
 	}
 
 	function initExamples(){
@@ -142,7 +172,7 @@ iddqd.ns('jsdoc.tinysort',(function(){
 			oParse = {a:'s'};
 		} else if (sId==='xnum'){
 			selector += '{a$}*'+iLen;
-			oParse = {a:'n '};
+			oParse = {a:'n'};
 		} else if (sId==='xmix'){
 			selector += '{a$}*'+iLen;
 			oParse = {a:l('si',4)};
@@ -190,11 +220,11 @@ iddqd.ns('jsdoc.tinysort',(function(){
 					aType[n] = aLorem.pop();
 				} else if (s==='n') {
 					var fRnd = Math.random()*iNum;
-					aType[n] = brnd()?fRnd:fRnd<<0;
+					aType[n] = brnd()?roundDec(fRnd):fRnd<<0;
 				} else if (s==='i') {
-					aType[n] = Math.random()*iNum<<0;
+					aType[n] = roundDec(Math.random()*iNum);
 				} else if (s==='f') {
-					aType[n] = Math.random()*iNum;
+					aType[n] = 0.01*(Math.random()*iNum*100<<0);
 				} else if (s==='t') {
 					aType[n] = brnd()?'':'striked';
 				}
@@ -206,6 +236,10 @@ iddqd.ns('jsdoc.tinysort',(function(){
 
 	function brnd(){
 		return Math.random()<0.5;
+	}
+
+	function roundDec(f){
+		return Math.round((f + 0.00001) * 100) / 100;
 	}
 
 	function initTableSort(){
@@ -237,6 +271,10 @@ iddqd.ns('jsdoc.tinysort',(function(){
 			while (mTr.nodeName!=='TR') mTr = mTr.parentNode;
 			mTr.parentNode.removeChild(mTr);
 		}
+	}
+
+	function handleInputFocus(e){
+		e.currentTarget.select();
 	}
 
 	function addTableRow(amth,body){

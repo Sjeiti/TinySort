@@ -162,6 +162,7 @@ tinysort('ul#serb>li',{charOrder:'cčćd{dž}đl{lj}n{nj}sšzž'});
 
 Here are some example languages:
 
+<div class="table-responsive">
 <table class="props">
     <thead><tr>
         <th>Language</th>
@@ -185,6 +186,7 @@ Here are some example languages:
         <tr><td>Swedish</td><td>åäö</td></tr>
     </tbody>
 </table>
+</div>
 
 ### sort by value
 
@@ -267,6 +269,7 @@ mTHead.addEventListener('click',function(e){
 });
 ```
 
+<div class="table-responsive">
 <table class="props xmpl" id="xtable">
     <thead>
         <tr>
@@ -279,6 +282,7 @@ mTHead.addEventListener('click',function(e){
     </thead>
     <tbody></tbody>
 </table>
+</div>
 
 ### animated sorting
 
