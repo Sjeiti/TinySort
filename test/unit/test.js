@@ -32,9 +32,4 @@
 	].forEach(function(script){
 		oLoad = oLoad?oLoad.then(loadScript.bind(null,script,null)):loadScript(script);
 	});
-	oLoad.then(setTimeout.bind(window,setHeader,140));
-
-	function setHeader(){
-		document.getElementById('qunit-header').textContent = 'TinySort '+tinysort.version;
-	}
 })();
