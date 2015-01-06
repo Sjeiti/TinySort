@@ -1,11 +1,3 @@
 {
     "directory": "vendor"
-    ,"overrides": {
-		"devicejs": {
-			"main": ["lib/device.min.js"]
-		}
-		,"geoPosition": {
-			"main": ["js/geoPosition.js"]
-		}
-	}
 }
