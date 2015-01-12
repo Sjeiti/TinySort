@@ -253,7 +253,7 @@ iddqd.ns('jsdoc.tinysort',(function(){
 		mTBody.addEventListener('click',handleTbodyClick);
 		for (var i=0;i<5;i++) addTableRow(amTh,mTBody);
 		//
-		mPre = mTable;
+		mPre = mTable.parentNode;
 		while (mPre.nodeName!=='PRE') mPre = mPre.previousSibling;
 		/*jshint evil:true*/
 		eval(mPre.textContent);
