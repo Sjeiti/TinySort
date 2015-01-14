@@ -5,6 +5,7 @@ module.exports = function (grunt) {
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('gruntTasks');
+	require('time-grunt')(grunt);
 
 	grunt.initConfig({
 
