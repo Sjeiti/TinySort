@@ -128,6 +128,11 @@
 				,sSorted = eachElement(aSorted);
 			return sSorted==='a-1a-2a-4a-5a-6';
 		})(),'tinysort(nodeList,{ignoreDashes:true}); ignore dashes');
+		ok( (function(){
+			var aSorted = tinysort(zenLi('ul>li[value=b$]{a$}*4',{a:['c','','b','a'],b:[3,4,2,1]}),{emptyEnd:true})
+				,sSorted = eachElement(aSorted,function(elm){ return elm.getAttribute('value'); });
+			return sSorted==='1234';
+		})(),'tinysort(nodeList,{emptyEnd:true}); empty values to end');
 	});
 
 	test('default functionality: multiple criteria', function() {

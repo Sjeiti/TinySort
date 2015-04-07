@@ -1,7 +1,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.1.6
+ * @version 2.2.0
  * @license MIT/GPL
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -52,6 +52,9 @@
 			,ignoreDashes:fls		// ignores dashes when looking for numerals
 
 			,sortFunction: nll		// override the default sort function
+
+			,useFlex:fls
+			,emptyEnd:fls
 		}
 	;undef;
 
@@ -72,6 +75,7 @@
 	 * @param {Boolean} [options.ignoreDashes=false] Ignores dashes when looking for numerals.
 	 * @param {Function} [options.sortFunction=null] Override the default sort function. The parameters are of a type {elementObject}.
 	 * @param {Function} [options.useFlex=true] If one parent and display flex, ordering is done by CSS (instead of DOM)
+	 * @param {Function} [options.emptyEnd=true] Sort empty values to the end instead of the start
 	 * @returns {HTMLElement[]}
 	 */
 	function tinysort(nodeList,options){
@@ -239,37 +243,41 @@
 						// prepare sort elements
 						,valueA = getSortBy(a,criterium)
 						,valueB = getSortBy(b,criterium)
+						,noA = valueA===''||valueA===undef
+						,noB = valueB===''||valueB===undef
 					;
-					if (!criterium.forceStrings) {
-						// cast to float if both strings are numeral (or end numeral)
-						var  valuesA = isString(valueA)?valueA&&valueA.match(regexLast):fls// todo: isString superfluous because getSortBy returns string|undefined
-							,valuesB = isString(valueB)?valueB&&valueB.match(regexLast):fls
-						;
-						if (valuesA&&valuesB) {
-							var  previousA = valueA.substr(0,valueA.length-valuesA[0].length)
-								,previousB = valueB.substr(0,valueB.length-valuesB[0].length);
-							if (previousA==previousB) {
-								isNumeric = !fls;
-								valueA = parsefloat(valuesA[0]);
-								valueB = parsefloat(valuesB[0]);
+					if (valueA===valueB) {
+						sortReturnNumber = 0;
+					} else if (criterium.emptyEnd&&(noA||noB)) {
+						sortReturnNumber = noA&&noB?0:noA?1:-1;
+					} else {
+						if (!criterium.forceStrings) {
+							// cast to float if both strings are numeral (or end numeral)
+							var  valuesA = isString(valueA)?valueA&&valueA.match(regexLast):fls// todo: isString superfluous because getSortBy returns string|undefined
+								,valuesB = isString(valueB)?valueB&&valueB.match(regexLast):fls
+							;
+							if (valuesA&&valuesB) {
+								var  previousA = valueA.substr(0,valueA.length-valuesA[0].length)
+									,previousB = valueB.substr(0,valueB.length-valuesB[0].length);
+								if (previousA==previousB) {
+									isNumeric = !fls;
+									valueA = parsefloat(valuesA[0]);
+									valueB = parsefloat(valuesB[0]);
+								}
 							}
 						}
-					}
-					if (valueA===undef||valueB===undef) {
-						sortReturnNumber = 0;
-					} else {
-						sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0);
+						if (valueA===undef||valueB===undef) {
+							sortReturnNumber = 0;
+						} else {
+							sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0);
+						}
 					}
 				}
 				loop(plugins,function(o){
 					var pluginSort = o.sort;
 					if (pluginSort) sortReturnNumber = pluginSort(criterium,isNumeric,valueA,valueB,sortReturnNumber);
 				});
-				//
-				//
 				sortReturnNumber *= criterium.sortReturnNumber; // lastly assign asc/desc
-				//
-				//
 				if (sortReturnNumber===0) criteriumIndex++;
 			}
 			if (sortReturnNumber===0) sortReturnNumber = a.pos>b.pos?1:-1;
