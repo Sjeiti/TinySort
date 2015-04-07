@@ -1,10 +1,10 @@
 /**
- * jQuery plugin wrapper for TinySort v2.1.0
+ * jQuery plugin wrapper for TinySort
  * Does not use the first argument in tinysort.js since that is handled internally by the jQuery selector.
  * Sub-selections (option.selector) do not use the jQuery selector syntax but regular CSS3 selector syntax.
- * @summary jQuery plugin wrapper for TinySort v2.1.0
- * @version 2.0.0
- * @requires tinysort v2.1.0
+ * @summary jQuery plugin wrapper for TinySort
+ * @version 2.1.6
+ * @requires tinysort
  * @license MIT/GPL
  * @author Ron Valstar (http://www.sjeiti.com/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>

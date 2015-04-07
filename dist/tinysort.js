@@ -1,9 +1,9 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.1.2
+ * @version 2.1.6
  * @license MIT/GPL
- * @author Ron Valstar <ron@ronvalstar.nl> (http://www.sjeiti.com/)
+ * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
  */
@@ -27,14 +27,12 @@
 		,win = window
 		,doc = win.document
 		,parsefloat = parseFloat
-		,fnIndexOf = Array.prototype.indexOf
-		//,getSortByMem = memoize(getSortBy)
-		,rxLastNr = /(-?\d+\.?\d*)\s*$/g		// regex for testing strings ending on numbers
-		,rxLastNrNoDash = /(\d+\.?\d*)\s*$/g	// regex for testing strings ending on numbers ignoring dashes
-		,aPlugins = []
-		,iCriteria = 0
-		,iCriterium = 0
-		,defaults = { // default settings
+		,regexLastNr = /(-?\d+\.?\d*)\s*$/g		// regex for testing strings ending on numbers
+		,regexLastNrNoDash = /(\d+\.?\d*)\s*$/g	// regex for testing strings ending on numbers ignoring dashes
+		,plugins = []
+		,numCriteria = 0
+		,criteriumIndex = 0
+		,defaults = {				// default settings
 
 			selector: nll			// order: asc, desc or rand
 
@@ -73,32 +71,34 @@
 	 * @param {Boolean} [options.forceStrings=false] If false the string '2' will sort with the value 2, not the string '2'.
 	 * @param {Boolean} [options.ignoreDashes=false] Ignores dashes when looking for numerals.
 	 * @param {Function} [options.sortFunction=null] Override the default sort function. The parameters are of a type {elementObject}.
+	 * @param {Function} [options.useFlex=true] If one parent and display flex, ordering is done by CSS (instead of DOM)
 	 * @returns {HTMLElement[]}
 	 */
-	function tinysort(nodeList){
+	function tinysort(nodeList,options){
 		if (isString(nodeList)) nodeList = doc.querySelectorAll(nodeList);
 		if (nodeList.length===0) {
 			console.warn('No elements to sort');
 		}
 
-		var mFragment = doc.createDocumentFragment()
+		var fragment = doc.createDocumentFragment()
 			/** both sorted and unsorted elements
 			 * @type {elementObject[]} */
-			,aoFull = []
+			,elmObjsAll = []
 			/** sorted elements
 			 * @type {elementObject[]} */
-			,aoSort = []
+			,elmObjsSorted = []
 			/** unsorted elements
 			 * @type {elementObject[]} */
-			,aoNot = []
+			,elmObjsUnsorted = []
 			/** sorted elements before sort
 			 * @type {elementObject[]} */
-			,aoSortBeforeSort
-			/** @type {criterium[]} */
-			,aCriteria = []
+			,elmObjsSortedInitial
+			/** @type {criteriumIndex[]} */
+			,criteria = []
 			/** @type {HTMLElement} */
-			,mParent
-			,bSameParent = true
+			,parentNode
+			,isSameParent = true
+			,isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&getComputedStyle(nodeList[0].parentNode,null).display.indexOf('flex')!==-1
 		;
 
 		initCriteria.apply(nll,Array.prototype.slice.call(arguments,1));
@@ -117,7 +117,7 @@
 					addCriterium(isString(param)?{selector:param}:param);
 				});
 			}
-			iCriteria = aCriteria.length;
+			numCriteria = criteria.length;
 		}
 
 		/**
@@ -134,31 +134,37 @@
 		 * @property {Boolean} forceStrings - if false the string '2' will sort with the value 2, not the string '2'
 		 * @property {Boolean} ignoreDashes - ignores dashes when looking for numerals
 		 * @property {Function} sortFunction - override the default sort function
+		 *
+		 * @property {Function} sortReturnNumber - The return value related to option.order ('asc' = 1, 'desc' = -1)
+		 * @todo document below
+		 * @property {boolean} hasSelector
+		 * @property {boolean} hasFilter
+		 * @property {boolean} hasAttr
+		 * @property {boolean} hasData
+		 * @property {number} sortReturnNumber
 		 */
 
 		/**
 		 * Adds a criterium
 		 * @memberof tinysort
 		 * @private
-		 * @param {String} [selector]
 		 * @param {Object} [options]
+		 * @todo param {String} [selector]
 		 */
 		function addCriterium(options){
-			var bFind = !!options.selector
-				,bFilter = bFind&&options.selector[0]===':'
-				,oOptions = extend(options||{},defaults)
+			var hasSelector = !!options.selector
+				,hasFilter = hasSelector&&options.selector[0]===':'
+				,allOptions = extend(options||{},defaults)
 			;
-			aCriteria.push(extend({ // todo: only used locally, find a way to minify properties
+			criteria.push(extend({
 				// has find, attr or data
-				bFind: bFind
-				,bAttr: !(oOptions.attr===nll||oOptions.attr==='')
-				,bData: oOptions.data!==nll
+				hasSelector: hasSelector
+				,hasAttr: !(allOptions.attr===nll||allOptions.attr==='')
+				,hasData: allOptions.data!==nll
 				// filter
-				,bFilter: bFilter
-				,mFilter: nll//bFilter?oThis.filter(select):oThis
-				,fnSort: oOptions.sortFunction
-				,iAsc: oOptions.order==='asc'?1:-1
-			},oOptions));
+				,hasFilter: hasFilter
+				,sortReturnNumber: allOptions.order==='asc'?1:-1
+			},allOptions));
 		}
 
 		/**
@@ -177,30 +183,30 @@
 		 */
 		function initSortList(){
 			loop(nodeList,function(elm,i){
-				if (!mParent) mParent = elm.parentNode;
-				else if (mParent!==elm.parentNode) bSameParent = false;
-				var criterium = aCriteria[0]
-					,bFilter = criterium.bFilter
-					,sSelector = criterium.selector
-					,idd = !sSelector||(bFilter&&elm.matchesSelector(sSelector))||(sSelector&&elm.querySelector(sSelector))
-					,aListPartial = idd?aoSort:aoNot
+				if (!parentNode) parentNode = elm.parentNode;
+				else if (parentNode!==elm.parentNode) isSameParent = false;
+				var criterium = criteria[0]
+					,hasFilter = criterium.hasFilter
+					,selector = criterium.selector
+					,isPartial = !selector||(hasFilter&&elm.matchesSelector(selector))||(selector&&elm.querySelector(selector))
+					,listPartial = isPartial?elmObjsSorted:elmObjsUnsorted
 				;
-				var oElementObject = {
+				var elementObject = {
 					elm: elm
 					,pos: i
-					,posn: aListPartial.length
+					,posn: listPartial.length
 				};
-				aoFull.push(oElementObject);
-				aListPartial.push(oElementObject);
+				elmObjsAll.push(elementObject);
+				listPartial.push(elementObject);
 			});
-			aoSortBeforeSort = aoSort.slice(0);
+			elmObjsSortedInitial = elmObjsSorted.slice(0);
 		}
 
 		/**
 		 * Sorts the sortList
 		 */
 		function sort(){
-			aoSort.sort(sortFunction);
+			elmObjsSorted.sort(sortFunction);
 		}
 
 		/**
@@ -212,57 +218,62 @@
 		 * @returns {number}
 		 */
 		function sortFunction(a,b){
-			var iReturn = 0;
-			if (iCriterium!==0) iCriterium = 0;
-			while (iReturn===0&&iCriterium<iCriteria) {
+			var sortReturnNumber = 0;
+			if (criteriumIndex!==0) criteriumIndex = 0;
+			while (sortReturnNumber===0&&criteriumIndex<numCriteria) {
 				/** @type {criterium} */
-				var oCriterium = aCriteria[iCriterium]
-					,rxLast = oCriterium.ignoreDashes?rxLastNrNoDash:rxLastNr;
+				var criterium = criteria[criteriumIndex]
+					,regexLast = criterium.ignoreDashes?regexLastNrNoDash:regexLastNr;
 				//
-				loop(aPlugins,function(o){
+				loop(plugins,function(o){
 					var pluginPrepare = o.prepare;
-					if (pluginPrepare) pluginPrepare(oCriterium);
+					if (pluginPrepare) pluginPrepare(criterium);
 				});
 				//
-				if (oCriterium.sortFunction) { // custom sort
-					iReturn = oCriterium.sortFunction(a,b);
-				} else if (oCriterium.order=='rand') { // random sort
-					iReturn = Math.random()<0.5?1:-1;
+				if (criterium.sortFunction) { // custom sort
+					sortReturnNumber = criterium.sortFunction(a,b);
+				} else if (criterium.order=='rand') { // random sort
+					sortReturnNumber = Math.random()<0.5?1:-1;
 				} else { // regular sort
-					var bNumeric = fls
+					var isNumeric = fls
 						// prepare sort elements
-						,sA = getSortBy(a,oCriterium)
-						,sB = getSortBy(b,oCriterium)
+						,valueA = getSortBy(a,criterium)
+						,valueB = getSortBy(b,criterium)
 					;
-					if (!oCriterium.forceStrings) {
+					if (!criterium.forceStrings) {
 						// cast to float if both strings are numeral (or end numeral)
-						var  aAnum = isString(sA)?sA&&sA.match(rxLast):fls// todo: isString superfluous because getSortBy returns string|undefined
-							,aBnum = isString(sB)?sB&&sB.match(rxLast):fls
+						var  valuesA = isString(valueA)?valueA&&valueA.match(regexLast):fls// todo: isString superfluous because getSortBy returns string|undefined
+							,valuesB = isString(valueB)?valueB&&valueB.match(regexLast):fls
 						;
-						if (aAnum&&aBnum) {
-							var  sAprv = sA.substr(0,sA.length-aAnum[0].length)
-								,sBprv = sB.substr(0,sB.length-aBnum[0].length);
-							if (sAprv==sBprv) {
-								bNumeric = !fls;
-								sA = parsefloat(aAnum[0]);
-								sB = parsefloat(aBnum[0]);
+						if (valuesA&&valuesB) {
+							var  previousA = valueA.substr(0,valueA.length-valuesA[0].length)
+								,previousB = valueB.substr(0,valueB.length-valuesB[0].length);
+							if (previousA==previousB) {
+								isNumeric = !fls;
+								valueA = parsefloat(valuesA[0]);
+								valueB = parsefloat(valuesB[0]);
 							}
 						}
 					}
-					if (sA===undef||sB===undef) {
-						iReturn = 0;
+					if (valueA===undef||valueB===undef) {
+						sortReturnNumber = 0;
 					} else {
-						iReturn = oCriterium.iAsc*(sA<sB?-1:(sA>sB?1:0));
+						sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0);
 					}
 				}
-				loop(aPlugins,function(o){
+				loop(plugins,function(o){
 					var pluginSort = o.sort;
-					if (pluginSort) iReturn = pluginSort(oCriterium,bNumeric,sA,sB,iReturn);
+					if (pluginSort) sortReturnNumber = pluginSort(criterium,isNumeric,valueA,valueB,sortReturnNumber);
 				});
-				if (iReturn===0) iCriterium++;
+				//
+				//
+				sortReturnNumber *= criterium.sortReturnNumber; // lastly assign asc/desc
+				//
+				//
+				if (sortReturnNumber===0) criteriumIndex++;
 			}
-			if (iReturn===0) iReturn = a.pos>b.pos?1:-1;
-			return iReturn;
+			if (sortReturnNumber===0) sortReturnNumber = a.pos>b.pos?1:-1;
+			return sortReturnNumber;
 		}
 
 		/**
@@ -271,29 +282,35 @@
 		 * @private
 		 */
 		function applyToDOM(){
-			var bAllSorted = aoSort.length===aoFull.length;
-			if (bSameParent&&bAllSorted) {
-				aoSort.forEach(function(elmObj){
-					mFragment.appendChild(elmObj.elm);
-				});
-				mParent.appendChild(mFragment);
+			var hasSortedAll = elmObjsSorted.length===elmObjsAll.length;
+			if (isSameParent&&hasSortedAll) {
+				if (isFlex) {
+					elmObjsSorted.forEach(function(elmObj,i){
+						elmObj.elm.style.order = i;
+					});
+				} else {
+					elmObjsSorted.forEach(function(elmObj){
+						fragment.appendChild(elmObj.elm);
+					});
+					parentNode.appendChild(fragment);
+				}
 			} else {
-				aoSort.forEach(function(elmObj) {
-					var mElm = elmObj.elm
-						,mGhost = doc.createElement('div')
+				elmObjsSorted.forEach(function(elmObj) {
+					var element = elmObj.elm
+						,ghost = doc.createElement('div')
 					;
-					elmObj.ghost = mGhost;
-					mElm.parentNode.insertBefore(mGhost,mElm);
+					elmObj.ghost = ghost;
+					element.parentNode.insertBefore(ghost,element);
 				});
-				aoSort.forEach(function(elmObj,i) {
-					var mGhost = aoSortBeforeSort[i].ghost;
-					mGhost.parentNode.insertBefore(elmObj.elm,mGhost);
-					mGhost.parentNode.removeChild(mGhost);
+				elmObjsSorted.forEach(function(elmObj,i) {
+					var ghost = elmObjsSortedInitial[i].ghost;
+					ghost.parentNode.insertBefore(elmObj.elm,ghost);
+					ghost.parentNode.removeChild(ghost);
 				});
 			}
 		}
 
-		return aoSort.map(function(o) {
+		return elmObjsSorted.map(function(o) {
 			return o.elm;
 		});
 	}
@@ -308,30 +325,28 @@
 	 * @todo memoize
 	 */
 	function getSortBy(elementObject,criterium){
-		var sReturn
-			,mElement = elementObject.elm;
+		var sortBy
+			,element = elementObject.elm;
 		// element
 		if (criterium.selector) {
-			if (criterium.bFilter) {
-				if (!mElement.matchesSelector(criterium.selector)) mElement = nll;
+			if (criterium.hasFilter) {
+				if (!element.matchesSelector(criterium.selector)) element = nll;
 			} else {
-				mElement = mElement.querySelector(criterium.selector);
+				element = element.querySelector(criterium.selector);
 			}
 		}
 		// value
-		if (criterium.bAttr) sReturn = mElement.getAttribute(criterium.attr);
-		else if (criterium.useVal) sReturn = mElement.value ;
-		else if (criterium.bData) sReturn = mElement.getAttribute('data-'+criterium.data);
-		else if (mElement) sReturn = mElement.textContent;
+		if (criterium.hasAttr) sortBy = element.getAttribute(criterium.attr);
+		else if (criterium.useVal) sortBy = element.value||element.getAttribute('value');
+		else if (criterium.hasData) sortBy = element.getAttribute('data-'+criterium.data);
+		else if (element) sortBy = element.textContent;
 		// strings should be ordered in lowercase (unless specified)
-		if (isString(sReturn)) {
-			if (!criterium.cases) sReturn = sReturn.toLowerCase();
-			sReturn = sReturn.replace(/\s+/g,' '); // spaces/newlines
+		if (isString(sortBy)) {
+			if (!criterium.cases) sortBy = sortBy.toLowerCase();
+			sortBy = sortBy.replace(/\s+/g,' '); // spaces/newlines
 		}
-		//
-		return sReturn;
+		return sortBy;
 	}
-
 
 	/*function memoize(fnc) {
 		var oCache = {}
@@ -392,7 +407,7 @@
 	}
 
 	function plugin(prepare,sort,sortBy){
-		aPlugins.push({prepare:prepare,sort:sort,sortBy:sortBy});
+		plugins.push({prepare:prepare,sort:sort,sortBy:sortBy});
 	}
 
 	// matchesSelector shim
@@ -411,8 +426,7 @@
 
 	// extend the plugin to expose stuff
 	extend(plugin,{
-		indexOf: fnIndexOf
-		,loop: loop
+		loop: loop
 	});
 
 	return extend(tinysort,{

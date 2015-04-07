@@ -1,10 +1,10 @@
 /**
  * TinySort CharOrder: a TinySort plugin to sort non-latin characters.
  * @summary TinySort CharOrder
- * @version 2.1.1
- * @requires tinysort v2.1.0
+ * @version 2.1.6
+ * @requires tinysort
  * @license MIT/GPL
- * @author Ron Valstar (http://www.sjeiti.com/)
+ * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort.charorder
  */
@@ -19,29 +19,28 @@
 }(this,function(tinysort) {
 	'use strict';
 
-	var frCrCd = String.fromCharCode		// minify placeholder
+	var fromCharCode = String.fromCharCode	// minify placeholder
 		,mathmn = Math.min					// minify placeholder
 		,nll = null							// minify placeholder
+		,fnIndexOf = Array.prototype.indexOf// minify placeholder
 		,plugin = tinysort.plugin
-		,fnIndexOf = plugin.indexOf
 		,loop = plugin.loop
 		//
-		,sCharOrder							// equals the input oSettings.charOrder so we can test any changes
-		,aAllChars = (function(a){			// all latin chars 32-255
+		,charOrder							// equals the input oSettings.charOrder so we can test any changes
+		,allCharsList = (function(a){		// all latin chars 32-255
 				// using lowerCase instead of upperCase so _ will sort before
-				for (var i=32,s=frCrCd(i),len=255;i<len;i++,s=frCrCd(i).toLowerCase()) {
+				for (var i=32,s=fromCharCode(i),len=255;i<len;i++,s=fromCharCode(i).toLowerCase()) {
 					if (fnIndexOf.call(a,s)===-1) a.push(s);
 				}
 				return a.sort();
 			})([])
-		,aOrderChar							// similar to sAllChars but with the changed char order
-		,bDoubles							// boolean indicating double-non-latin chars, ie: lj, dž, Aa, ch, ss etc...
-		,iReplace = 0x2500					// doubles are replaced with Unicode char starting at 0x2500
-		,oReplace = {}						// replacement object
-		,rxNotLatin							// regular expression to test for non-latin chars
+		,orderedCharlist					// similar to sAllChars but with the changed char order
+		,replacementIndex = 0x2500			// doubles are replaced with Unicode char starting at 0x2500
+		,replacements = {}					// replacement object // todo: reset?
+		,regexNonLatin = /[^a-zA-Z]/g
 	;
 	// add to namespace
-	tinysort.defaults.charOrder = sCharOrder; // sets to undefined
+	tinysort.defaults.charOrder = charOrder; // sets to undefined
 	plugin(prepare,sort);
 
 	/**
@@ -52,89 +51,74 @@
 	 */
 	function prepare(criterium){
 		// check charOrder (non latin chars)
-		// sCharOrder only to check wether other vars are set
+		// charOrder only to check whether other vars are set
 		// variables used on sort
 		//		- oSettings.charOrder to test
-		//		- bDoubles to test
-		//		- oReplace for doubles
-		//		- rxNotLatin to test
-		//		- aOrderChar to order
+		//		- replacements
+		//		- orderedCharlist to order doubles
 		//
-		if (criterium.charOrder!=sCharOrder) {
-			sCharOrder = criterium.charOrder;
-			if (!criterium.charOrder) {
-				bDoubles = false;
-				iReplace = 0x2500;
-				oReplace = {};
-				rxNotLatin = aOrderChar = nll;
-			} else {
-				aOrderChar = aAllChars.slice(0); // first set to entire 32-255 charlist
-				bDoubles = false;
-				// then loop through the sCharOrder rule
+		if (criterium.charOrder!==charOrder) {
+			charOrder = criterium.charOrder;
+			replacementIndex = 0x2500;
+			replacements = {};
+			orderedCharlist = nll;
+			if (charOrder) {
+				orderedCharlist = allCharsList.slice(0); // first set to entire 32-255 charlist
+				// then loop through the charOrder rule
 				for (var
-					 aCharNotLatin = []
-					,fnAddNonLatinChar = function(key,nonLatin){
-							aCharNotLatin.push(nonLatin);
-							oReplace[criterium.cases?key:key.toLowerCase()] = nonLatin;
+					 charListNotLatin = []
+					,addReplacement = function(nonLatin,replacement){
+							charListNotLatin.push(replacement);
+							replacements[criterium.cases?nonLatin:nonLatin.toLowerCase()] = replacement;
 						}
-					,sAllCharNotLatin = ''
-					,sCharLatin = 'z' // if oSettings.charOrder has no [a-z] characters are appended to z
-					,l = sCharOrder.length
+					,lastLatinChar = 'z' // if oSettings.charOrder has no [a-z] characters are appended to z
+					,l = charOrder.length
 					,j,m // init
-				,i=0;i<l;i++) { // loop through chars to set 'rxNotLatin' and 'sOrderChar'
-					var  sChar = sCharOrder[i]
-						,iChar = sChar.charCodeAt()
-						,bIsLatin = iChar>96&&iChar<123; // 'a'.charCodeAt()===97 'z'.charCodeAt()===122
-					if (!bIsLatin){
-						if (sChar=='[') { // find replace chars: ë will sort similar to e
-							var iCharNotLatin = aCharNotLatin.length
-								,sLastChar = iCharNotLatin?aCharNotLatin[iCharNotLatin-1]:sCharLatin
-								,sReplaces = sCharOrder.substr(i+1).match(/[^\]]*/)[0]
-								,aDoubles = sReplaces.match(/{[^}]*}/g); // find doubles: dž, ss, lj ...
-							if (aDoubles) {
-								for (j=0,m=aDoubles.length;j<m;j++) {
-									var sCode = aDoubles[j];
+				,i=0;i<l;i++) { // loop through chars to set 'sOrderChar'
+					var  char = charOrder[i]
+						,charCode = char.charCodeAt()
+						,charIsLatin = charCode>96&&charCode<123; // 'a'.charCodeAt()===97 'z'.charCodeAt()===122
+					if (!charIsLatin){
+						if (char==='[') { // find replace chars: ë will sort similar to e
+							var charsNotLatinNum = charListNotLatin.length
+								,lastChar = charsNotLatinNum?charListNotLatin[charsNotLatinNum-1]:lastLatinChar
+								,replaces = charOrder.substr(i+1).match(/[^\]]*/)[0]
+								,doubles = replaces.match(/{[^}]*}/g); // find doubles: dž, ss, lj ...
+							if (doubles) {
+								for (j=0,m=doubles.length;j<m;j++) {
+									var sCode = doubles[j];
 									i += sCode.length; // increment i because of .replace(...
-									sReplaces = sReplaces.replace(sCode,'');
-									fnAddNonLatinChar(sCode.replace(/[{}]/g,''),sLastChar);
-									bDoubles = true;
+									replaces = replaces.replace(sCode,'');
+									addReplacement(sCode.replace(/[{}]/g,''),lastChar);
 								}
 							}
-							for (j=0,m=sReplaces.length;j<m;j++) fnAddNonLatinChar(sReplaces[j],sLastChar);
-//							for (j=0,m=sReplaces.length;j<m;j++) fnAddNonLatinChar(sLastChar,sReplaces[j]);
-							i += sReplaces.length+1;
-						} else if (sChar=='{') { // find doubles: dž, ss, lj ...
-							var sDouble = sCharOrder.substr(i+1).match(/[^}]*/)[0];
-							fnAddNonLatinChar(sDouble,frCrCd(iReplace++)); // replace the double with single Unicode 0x2500+
-							i += sDouble.length+1;
-							bDoubles = true;
+							for (j=0,m=replaces.length;j<m;j++) addReplacement(replaces[j],lastChar);
+							i += replaces.length+1;
+						} else if (char==='{') { // find doubles: dž, ss, lj ...
+							var doubleChars = charOrder.substr(i+1).match(/[^}]*/)[0];
+							addReplacement(doubleChars,fromCharCode(replacementIndex++)); // replace the double with single Unicode 0x2500+
+							i += doubleChars.length+1;
 						} else {
-							aCharNotLatin.push(sChar);
+							charListNotLatin.push(char);
 						}
 					}
-					if (aCharNotLatin.length&&(bIsLatin||i===l-1)) {
-						var sCharNotLatin = aCharNotLatin.join('');
-						sAllCharNotLatin += sCharNotLatin;
+					if (charListNotLatin.length&&(charIsLatin||i===l-1)) {
 						// first remove non latin chars
-						loop(sCharNotLatin.split(''),function(s){
-							aOrderChar.splice(fnIndexOf.call(aOrderChar,s),1);
+						loop(charListNotLatin,function(s){
+							orderedCharlist.splice(fnIndexOf.call(orderedCharlist,s),1);
 						});
 						// then append chars to latin char
-						var aParse = aCharNotLatin.slice(0);
-						aParse.splice(0,0,fnIndexOf.call(aOrderChar,sCharLatin)+1,0);
-						Array.prototype.splice.apply(aOrderChar,aParse);
+						var charListNotLatinCopy = charListNotLatin.slice(0);
+						charListNotLatinCopy.splice(0,0,fnIndexOf.call(orderedCharlist,lastLatinChar)+1,0);
+						Array.prototype.splice.apply(orderedCharlist,charListNotLatinCopy);
 						//
-						aCharNotLatin.length = 0;
+						charListNotLatin.length = 0;
 					}
-					if (i+1===l) rxNotLatin = new RegExp('['+sAllCharNotLatin+']','gi'); // make regex to test for chars
-					else if (bIsLatin) sCharLatin = sChar;
+					if (charIsLatin) lastLatinChar = char;
 				}
 			}
 		}
 		//'a[àâ]c[ç]e[éèêë]i[ïî]o[ôœ]u[ûù]'
-//		console.log('aCharNotLatin',aCharNotLatin); // log
-//		console.log('oReplace',oReplace); // log
-//		console.log('aOrderChar',aOrderChar); // log
 	}
 
 	/**
@@ -149,24 +133,25 @@
 	 * @returns {Number} A sorting number -1, 0 or 1
 	 */
 	function sort(criterium,isNumeric,a,b,sortReturn){
-//		console.log('a,b',a,b,criterium.charOrder,oReplace,bDoubles); // log
-		if (!isNumeric&&criterium.charOrder) {
-//			if (bDoubles) { // first replace doubles
-				for (var s in oReplace) {
-					var o = oReplace[s];
-					a = a.replace(s,o);
-					b = b.replace(s,o);
-				}
-//			}
+		if (a===b) {
+			sortReturn = 0;
+		} else if (!isNumeric&&criterium.charOrder) {
+			// replace chars (todo? first replace doubles?)
+			for (var replace in replacements) {
+				var replacement = replacements[replace];
+				a = a.replace(replace,replacement);
+				b = b.replace(replace,replacement);
+			}
 			// then test if either word has non latin chars
 			// we're using the slower string.match because strangely regex.test sometimes fails
-			if (a.match(rxNotLatin)!==nll||b.match(rxNotLatin)!==nll) {
+			if (a.match(regexNonLatin)!==nll||b.match(regexNonLatin)!==nll) {
 				for (var k=0,l=mathmn(a.length,b.length);k<l;k++) {
-					var iAchr = fnIndexOf.call(aOrderChar,a[k])
-						,iBchr = fnIndexOf.call(aOrderChar,b[k]);
-//					console.log('iAchr',iAchr,a[k],'\tiBchr',iBchr,b[k]); // log
-					if (sortReturn=criterium.iAsc*(iAchr<iBchr?-1:(iAchr>iBchr?1:0))) break;
+					var iAchr = fnIndexOf.call(orderedCharlist,a[k])
+						,iBchr = fnIndexOf.call(orderedCharlist,b[k]);
+					if (sortReturn=criterium.sortReturnNumber*(iAchr<iBchr?-1:(iAchr>iBchr?1:0))) break;
 				}
+			} else {
+				sortReturn = a===b?0:a>b?1:-1;
 			}
 		}
 		return sortReturn;

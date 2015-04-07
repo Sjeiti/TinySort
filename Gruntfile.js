@@ -33,9 +33,16 @@ module.exports = function (grunt) {
 
 		// versioning
 		,version_git: {
-			tinysort:	{ files: {src:'src/tinysort.js'} }
-			,charorder: { files: {src:'src/tinysort.charorder.js'} }
-			,jquery:	{ files: {src:'src/jquery.tinysort.js'} }
+			main: {
+				options: { regex: [/\d+\.\d+\.\d+/,/sVersion\s*=\s*'(\d+\.\d+\.\d+)'/] }
+				,src: [
+                    'src/tinysort.js'
+					,'src/tinysort.charorder.js'
+					,'src/jquery.tinysort.js'
+					,'package.json'
+					,'bower.json'
+				]
+			}
 		}
 
 		// command line interface
@@ -44,23 +51,7 @@ module.exports = function (grunt) {
 			,jsdocprepare: { cwd: './jsdoc', command: 'grunt prepare', output: true }
 			,jsdocInitNpm: { cwd: './jsdoc', command: 'npm install', output: true }
 			,jsdocInitBower: { cwd: './jsdoc', command: 'bower install', output: true }
-		}
-
-		// map source js jsdoc variables to json variables
-		,map_json: {
-			package: {
-				src: 'src/tinysort.js'
-				,dest: 'package.json'
-				,map: {
-					namespace:'name'
-					,title:'description'
-				}
-			}
-			,bower: {
-				src: 'src/tinysort.js'
-				,dest: 'bower.json'
-				,map: { namespace:'name' }
-			}
+			,selenium: { cwd: './bin', command: 'java -jar selenium-server-standalone-2.44.0.jar', output: true }
 		}
 
 		,clean: {
@@ -108,7 +99,12 @@ module.exports = function (grunt) {
 			}
 		}
 
-		,extendMarkdown: { bar:{} }
+		,connect: {
+			server: { options: { port: 9001 } }
+		}
+		,qunit: {
+			all: { options: { urls: ['http://localhost:9001/test/unit/index.html'] } }
+		}
 
 		,copy: {
 			src2dist: {
@@ -137,6 +133,8 @@ module.exports = function (grunt) {
 			}
 		}
 
+		,extendMarkdown: { bar:{} }
+
 		// uses Phantomjs to render pages and inject a js file
 		,renderPages: {
 			docs: {
@@ -162,18 +160,19 @@ module.exports = function (grunt) {
 	grunt.registerTask('default',[
 		'watch'
 	]);
+	grunt.registerTask('test',[
+		'connect'
+		,'qunit'
+	]);
 	grunt.registerTask('dist',[
 		'jshint'
+		,'test'
 		,'uglify'
 		,'copy:src2dist'
 	]);
 	grunt.registerTask('jsdocInit',[
 		'cli:jsdocInitNpm'
 		,'cli:jsdocInitBower'
-	]);
-	grunt.registerTask('version',[
-		'version_git:tinysort'
-		,'map_json'
 	]);
 	grunt.registerTask('jsdoc',[
 		'clean:jsdoc'
