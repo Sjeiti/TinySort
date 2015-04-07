@@ -1,7 +1,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.2.0
+ * @version 2.2.1
  * @license MIT/GPL
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -74,8 +74,8 @@
 	 * @param {Boolean} [options.forceStrings=false] If false the string '2' will sort with the value 2, not the string '2'.
 	 * @param {Boolean} [options.ignoreDashes=false] Ignores dashes when looking for numerals.
 	 * @param {Function} [options.sortFunction=null] Override the default sort function. The parameters are of a type {elementObject}.
-	 * @param {Function} [options.useFlex=true] If one parent and display flex, ordering is done by CSS (instead of DOM)
-	 * @param {Function} [options.emptyEnd=true] Sort empty values to the end instead of the start
+	 * @param {Boolean} [options.useFlex=true] If one parent and display flex, ordering is done by CSS (instead of DOM)
+	 * @param {Boolean} [options.emptyEnd=true] Sort empty values to the end instead of the start
 	 * @returns {HTMLElement[]}
 	 */
 	function tinysort(nodeList,options){

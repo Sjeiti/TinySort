@@ -73,5 +73,11 @@ The options object can have the following settings:
 **sortFunction** (function)
 <p>Override the default sort function. The parameters are of a type {elementObject}.</p>
 
+**useFlex** (function=true)
+<p>If one parent and display flex, ordering is done by CSS (instead of DOM)</p>
+
+**emptyEnd** (function=true)
+<p>Sort empty values to the end instead of the start</p>
+
 
 
