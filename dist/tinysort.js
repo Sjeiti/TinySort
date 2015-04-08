@@ -1,7 +1,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.2.0
+ * @version 2.2.2
  * @license MIT/GPL
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -42,8 +42,7 @@
 			,data: nll				// use the data attribute for sorting
 			,useVal: fls			// use element value instead of text
 
-			//todo check place option
-			,place: 'start'			// place ordered elements at position: start, end, org (original position), first
+			,place: 'org'			// place ordered elements at position: start, end, org (original position), first, last
 			,returns: fls			// return all elements or only the sorted ones (true/false)
 
 			,cases: fls				// a case sensitive sort orders [aB,aa,ab,bb]
@@ -68,14 +67,14 @@
 	 * @param {String} [options.order='asc'] The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.
 	 * @param {String} [options.attr=null] Order by attribute value (ie title, href, class)
 	 * @param {String} [options.data=null] Use the data attribute for sorting.
-	 * @param {String} [options.place='org'] Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first' or 'org'.
+	 * @param {String} [options.place='org'] Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first', 'last' or 'org'.
 	 * @param {Boolean} [options.useVal=false] Use element value instead of text.
 	 * @param {Boolean} [options.cases=false] A case sensitive sort (orders [aB,aa,ab,bb])
 	 * @param {Boolean} [options.forceStrings=false] If false the string '2' will sort with the value 2, not the string '2'.
 	 * @param {Boolean} [options.ignoreDashes=false] Ignores dashes when looking for numerals.
 	 * @param {Function} [options.sortFunction=null] Override the default sort function. The parameters are of a type {elementObject}.
-	 * @param {Function} [options.useFlex=true] If one parent and display flex, ordering is done by CSS (instead of DOM)
-	 * @param {Function} [options.emptyEnd=true] Sort empty values to the end instead of the start
+	 * @param {Boolean} [options.useFlex=true] If one parent and display flex, ordering is done by CSS (instead of DOM)
+	 * @param {Boolean} [options.emptyEnd=true] Sort empty values to the end instead of the start
 	 * @returns {HTMLElement[]}
 	 */
 	function tinysort(nodeList,options){
@@ -138,14 +137,11 @@
 		 * @property {Boolean} forceStrings - if false the string '2' will sort with the value 2, not the string '2'
 		 * @property {Boolean} ignoreDashes - ignores dashes when looking for numerals
 		 * @property {Function} sortFunction - override the default sort function
-		 *
-		 * @property {Function} sortReturnNumber - The return value related to option.order ('asc' = 1, 'desc' = -1)
-		 * @todo document below
-		 * @property {boolean} hasSelector
-		 * @property {boolean} hasFilter
-		 * @property {boolean} hasAttr
-		 * @property {boolean} hasData
-		 * @property {number} sortReturnNumber
+		 * @property {boolean} hasSelector - options has a selector
+		 * @property {boolean} hasFilter - options has a filter
+		 * @property {boolean} hasAttr - options has an attribute selector
+		 * @property {boolean} hasData - options has a data selector
+		 * @property {number} sortReturnNumber - the sort function return number determined by options.order
 		 */
 
 		/**
@@ -153,7 +149,6 @@
 		 * @memberof tinysort
 		 * @private
 		 * @param {Object} [options]
-		 * @todo param {String} [selector]
 		 */
 		function addCriterium(options){
 			var hasSelector = !!options.selector
@@ -194,12 +189,12 @@
 					,selector = criterium.selector
 					,isPartial = !selector||(hasFilter&&elm.matchesSelector(selector))||(selector&&elm.querySelector(selector))
 					,listPartial = isPartial?elmObjsSorted:elmObjsUnsorted
+					,elementObject = {
+						elm: elm
+						,pos: i
+						,posn: listPartial.length
+					}
 				;
-				var elementObject = {
-					elm: elm
-					,pos: i
-					,posn: listPartial.length
-				};
 				elmObjsAll.push(elementObject);
 				listPartial.push(elementObject);
 			});
@@ -229,8 +224,8 @@
 				var criterium = criteria[criteriumIndex]
 					,regexLast = criterium.ignoreDashes?regexLastNrNoDash:regexLastNr;
 				//
-				loop(plugins,function(o){
-					var pluginPrepare = o.prepare;
+				loop(plugins,function(plugin){
+					var pluginPrepare = plugin.prepare;
 					if (pluginPrepare) pluginPrepare(criterium);
 				});
 				//
@@ -297,84 +292,138 @@
 						elmObj.elm.style.order = i;
 					});
 				} else {
-					elmObjsSorted.forEach(function(elmObj){
-						fragment.appendChild(elmObj.elm);
-					});
-					parentNode.appendChild(fragment);
+					parentNode.appendChild(sortedIntoFragment());
 				}
 			} else {
-				elmObjsSorted.forEach(function(elmObj) {
-					var element = elmObj.elm
-						,ghost = doc.createElement('div')
-					;
-					elmObj.ghost = ghost;
-					element.parentNode.insertBefore(ghost,element);
-				});
-				elmObjsSorted.forEach(function(elmObj,i) {
-					var ghost = elmObjsSortedInitial[i].ghost;
-					ghost.parentNode.insertBefore(elmObj.elm,ghost);
-					ghost.parentNode.removeChild(ghost);
-				});
+				var criterium = criteria[0]
+					,place = criterium.place
+					,placeOrg = place==='org'
+					,placeStart = place==='start'
+					,placeEnd = place==='end'
+					,placeFirst = place==='first'
+					,placeLast = place==='last'
+				;
+				if (placeOrg) {
+					elmObjsSorted.forEach(addGhost);
+					elmObjsSorted.forEach(function(elmObj,i) {
+						replaceGhost(elmObjsSortedInitial[i],elmObj.elm);
+					});
+				} else if (placeStart||placeEnd) {
+					var startElmObj = elmObjsSortedInitial[placeStart?0:elmObjsSortedInitial.length-1]
+						,startParent = startElmObj.elm.parentNode
+						,startElm = placeStart?startParent.firstChild:startParent.lastChild;
+					if (startElm!==startElmObj.elm) startElmObj = {elm:startElm};
+					addGhost(startElmObj);
+					placeEnd&&startParent.appendChild(startElmObj.ghost);
+					replaceGhost(startElmObj,sortedIntoFragment());
+				} else if (placeFirst||placeLast) {
+					var firstElmObj = elmObjsSortedInitial[placeFirst?0:elmObjsSortedInitial.length-1];
+					replaceGhost(addGhost(firstElmObj),sortedIntoFragment());
+				}
 			}
+		}
+
+		/**
+		 * Adds all sorted elements to the document fragment and returns it.
+		 * @memberof tinysort
+		 * @private
+		 * @returns {DocumentFragment}
+		 */
+		function sortedIntoFragment(){
+			elmObjsSorted.forEach(function(elmObj){
+				fragment.appendChild(elmObj.elm);
+			});
+			return fragment;
+		}
+
+		/**
+		 * Adds a temporary element before an element before reordering.
+		 * @memberof tinysort
+		 * @private
+		 * @param {elementObject} elmObj
+		 * @returns {elementObject}
+		 */
+		function addGhost(elmObj){
+			var element = elmObj.elm
+				,ghost = doc.createElement('div')
+			;
+			elmObj.ghost = ghost;
+			element.parentNode.insertBefore(ghost,element);
+			return elmObj;
+		}
+
+		/**
+		 * Inserts an element before a ghost element and removes the ghost.
+		 * @memberof tinysort
+		 * @private
+		 * @param {elementObject} elmObjGhost
+		 * @param {HTMLElement} elm
+		 */
+		function replaceGhost(elmObjGhost,elm){
+			var ghost = elmObjGhost.ghost
+				,ghostParent = ghost.parentNode;
+			ghostParent.insertBefore(elm,ghost);
+			ghostParent.removeChild(ghost);
+			delete elmObjGhost.ghost;
+		}
+
+		/**
+		 * Get the string/number to be sorted by checking the elementObject with the criterium.
+		 * @memberof tinysort
+		 * @private
+		 * @param {elementObject} elementObject
+		 * @param {criterium} criterium
+		 * @returns {String}
+		 * @todo memoize
+		 */
+		function getSortBy(elementObject,criterium){
+			var sortBy
+				,element = elementObject.elm;
+			// element
+			if (criterium.selector) {
+				if (criterium.hasFilter) {
+					if (!element.matchesSelector(criterium.selector)) element = nll;
+				} else {
+					element = element.querySelector(criterium.selector);
+				}
+			}
+			// value
+			if (criterium.hasAttr) sortBy = element.getAttribute(criterium.attr);
+			else if (criterium.useVal) sortBy = element.value||element.getAttribute('value');
+			else if (criterium.hasData) sortBy = element.getAttribute('data-'+criterium.data);
+			else if (element) sortBy = element.textContent;
+			// strings should be ordered in lowercase (unless specified)
+			if (isString(sortBy)) {
+				if (!criterium.cases) sortBy = sortBy.toLowerCase();
+				sortBy = sortBy.replace(/\s+/g,' '); // spaces/newlines
+			}
+			return sortBy;
+		}
+
+		/*function memoize(fnc) {
+			var oCache = {}
+				, sKeySuffix = 0;
+			return function () {
+				var sKey = sKeySuffix + JSON.stringify(arguments); // todo: circular dependency on Nodes
+				return (sKey in oCache)?oCache[sKey]:oCache[sKey] = fnc.apply(fnc,arguments);
+			};
+		}*/
+
+		/**
+		 * Test if an object is a string
+		 * @memberOf tinysort
+		 * @method
+		 * @private
+		 * @param o
+		 * @returns {boolean}
+		 */
+		function isString(o){
+			return typeof o==='string';
 		}
 
 		return elmObjsSorted.map(function(o) {
 			return o.elm;
 		});
-	}
-
-	/**
-	 * Get the string/number to be sorted by checking the elementObject with the criterium.
-	 * @memberof tinysort
-	 * @private
-	 * @param {elementObject} elementObject
-	 * @param {criterium} criterium
-	 * @returns {String}
-	 * @todo memoize
-	 */
-	function getSortBy(elementObject,criterium){
-		var sortBy
-			,element = elementObject.elm;
-		// element
-		if (criterium.selector) {
-			if (criterium.hasFilter) {
-				if (!element.matchesSelector(criterium.selector)) element = nll;
-			} else {
-				element = element.querySelector(criterium.selector);
-			}
-		}
-		// value
-		if (criterium.hasAttr) sortBy = element.getAttribute(criterium.attr);
-		else if (criterium.useVal) sortBy = element.value||element.getAttribute('value');
-		else if (criterium.hasData) sortBy = element.getAttribute('data-'+criterium.data);
-		else if (element) sortBy = element.textContent;
-		// strings should be ordered in lowercase (unless specified)
-		if (isString(sortBy)) {
-			if (!criterium.cases) sortBy = sortBy.toLowerCase();
-			sortBy = sortBy.replace(/\s+/g,' '); // spaces/newlines
-		}
-		return sortBy;
-	}
-
-	/*function memoize(fnc) {
-		var oCache = {}
-			, sKeySuffix = 0;
-		return function () {
-			var sKey = sKeySuffix + JSON.stringify(arguments); // todo: circular dependency on Nodes
-			return (sKey in oCache)?oCache[sKey]:oCache[sKey] = fnc.apply(fnc,arguments);
-		};
-	}*/
-
-	/**
-	 * Test if an object is a string
-	 * @memberOf tinysort
-	 * @method
-	 * @private
-	 * @param o
-	 * @returns {boolean}
-	 */
-	function isString(o){
-		return typeof o==='string';
 	}
 
 	/**

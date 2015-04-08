@@ -133,6 +133,23 @@
 				,sSorted = eachElement(aSorted,function(elm){ return elm.getAttribute('value'); });
 			return sSorted==='1234';
 		})(),'tinysort(nodeList,{emptyEnd:true}); empty values to end');
+
+
+		ok( (function(){
+			return placeTest('org')==='bachfegd';
+		})(),'tinysort(nodeList,{place:\'org\'});');
+		ok( (function(){
+			return placeTest('start')==='acegbhfd';
+		})(),'tinysort(nodeList,{place:\'start\'});');
+		ok( (function(){
+			return placeTest('end')==='bhfdaceg';
+		})(),'tinysort(nodeList,{place:\'end\'});');
+		ok( (function(){
+			return placeTest('first')==='baceghfd';
+		})(),'tinysort(nodeList,{place:\'first\'});');
+		ok( (function(){
+			return placeTest('last')==='bhfacegd';
+		})(),'tinysort(nodeList,{place:\'last\'});');
 	});
 
 	test('default functionality: multiple criteria', function() {
@@ -162,4 +179,16 @@
 			done();
 		});
 	});
+
+	function placeTest(place){
+		var div = zen('div>(ul>li.a${b$}*4)+ul>li.a${c$}*4',{
+				a:'baab'.split('')
+				,b:'bagh'.split('')
+				,c:'fecd'.split('')
+			})[0];
+		tinysort(div.querySelectorAll('.a'),{place:place});
+		return Array.prototype.map.call(div.querySelectorAll('li'),function(li){
+			return li.textContent;
+		}).join('');
+	}
 })();
