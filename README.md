@@ -1,9 +1,10 @@
-<img src="http://tinysort.sjeiti.com/style/logo.svg" width="32" alt="TinySort" style="vertical-align:middle;" /> TinySort
+<img src="http://tinysort.sjeiti.com/styles/logo.svg" width="32" alt="TinySort" style="vertical-align:middle;" /> TinySort
 =======
 
 TinySort is a small script that sorts HTMLElements. It sorts by text- or attribute value, or by that of one of it's children.
 
 Documentation and examples are at [tinysort.sjeiti.com](http://tinysort.sjeiti.com).
+
 
 
 ## usage
@@ -56,7 +57,7 @@ The options object can have the following settings:
 <p>Use the data attribute for sorting.</p>
 
 **place** (String='org')
-<p>Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first' or 'org'.</p>
+<p>Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first', 'last' or 'org'.</p>
 
 **useVal** (Boolean=false)
 <p>Use element value instead of text.</p>
@@ -73,10 +74,10 @@ The options object can have the following settings:
 **sortFunction** (function)
 <p>Override the default sort function. The parameters are of a type {elementObject}.</p>
 
-**useFlex** (function=true)
+**useFlex** (Boolean=true)
 <p>If one parent and display flex, ordering is done by CSS (instead of DOM)</p>
 
-**emptyEnd** (function=true)
+**emptyEnd** (Boolean=true)
 <p>Sort empty values to the end instead of the start</p>
 
 

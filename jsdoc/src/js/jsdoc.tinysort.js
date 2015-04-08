@@ -1,12 +1,15 @@
-/*global zen, tinysort*/
+/*global zen */
 iddqd.ns('jsdoc.tinysort',(function(){
 	'use strict';
 
-	var loadScript = iddqd.pattern.callbackToPromise(iddqd.loadScript)
+	var callbackToPromise = iddqd.pattern.callbackToPromise
+		,loadScript = callbackToPromise(iddqd.loadScript)
 		,formatSize = iddqd.internal.native.number.formatSize
 		,createElement = iddqd.createElement
+		//,xhttp = callbackToPromise(iddqd.network.xhttp)
 		,xhttp = iddqd.network.xhttp
-		,forEach = Array.prototype.forEach;
+		,forEach = Array.prototype.forEach
+		,tinysortVersion;
 
 	function init(){
 		var sPage = location.href.split('#').shift().split('/').pop();
@@ -15,8 +18,29 @@ iddqd.ns('jsdoc.tinysort',(function(){
 			initFirstParagraph();
 			initScripts()
 			.then(initExamples)
+			.then(initVersion)
 			.then(initTitle);
 		}
+	}
+
+	function initScripts(){
+		return loadScript('dist/tinysort.js')
+			.then(loadScript.bind(null,'dist/tinysort.charorder.js',null));
+	}
+
+	function initVersion(){
+		var deferred = Promise.defer();
+		xhttp('dist/tinysort.js',function(e){
+			tinysortVersion = e.response.match(/@version\s*(.*)/).pop();
+			deferred.resolve();
+		});
+		return deferred.promise;
+	}
+
+	function initTitle(){
+		var aVersion = tinysortVersion.split('.')
+			,mSmall = createElement('small',null,document.querySelector('.navbar-brand'),null,aVersion.slice(0,2).join('.'));
+		createElement('span',null,mSmall,null,'.'+aVersion.pop());
 	}
 
 	function initFirstParagraph(){
@@ -65,36 +89,27 @@ iddqd.ns('jsdoc.tinysort',(function(){
 			});
 			//
 			// CDN
-			var mWrapCDN = createElement('div','wrap wrap-cdn',mFirst4);
-			createElement('a','btn btn-sm btn-cdn',mWrapCDN,{href:'http://cdnjs.com/libraries/tinysort'},'http://cdnjs.com/libraries/tinysort');
-			[
-				 'https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.1.1/tinysort.js'
-				,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.1.1/tinysort.min.js'
-				,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.1.1/tinysort.charorder.js'
-				,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.1.1/tinysort.charorder.min.js'
-			].forEach(function(uri){
-				createElement('input','btn btn-sm btn-cdn',mWrapCDN,{value:uri} );
-			});
-			//
-			// focus input
-			Array.prototype.forEach.call(mFirst4.querySelectorAll('input'),function(elm){
-				elm.addEventListener('focus',handleInputFocus);
+			xhttp('http://api.cdnjs.com/libraries?search=tinysort',function(e){
+				var response = JSON.parse(e.response)
+					,latest = response.results.pop().latest
+					,latestVersion = latest.match(/\d*\.\d*\.\d*/g).pop()
+					,mWrapCDN = createElement('div','wrap wrap-cdn',mFirst4);
+				createElement('a','btn btn-sm btn-cdn',mWrapCDN,{href:'http://cdnjs.com/libraries/tinysort'},'http://cdnjs.com/libraries/tinysort');
+				[
+					 'https://cdnjs.cloudflare.com/ajax/libs/tinysort/'+latestVersion+'/tinysort.js'
+					,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/'+latestVersion+'/tinysort.min.js'
+					,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/'+latestVersion+'/tinysort.charorder.js'
+					,'https://cdnjs.cloudflare.com/ajax/libs/tinysort/'+latestVersion+'/tinysort.charorder.min.js'
+				].forEach(function(uri){
+					createElement('input','btn btn-sm btn-cdn',mWrapCDN,{value:uri} );
+				});
+				//
+				// focus input
+				Array.prototype.forEach.call(mFirst4.querySelectorAll('input'),function(elm){
+					elm.addEventListener('focus',handleInputFocus);
+				});
 			});
 		}
-	}
-
-	function initScripts(){
-		return loadScript('dist/tinysort.js')
-			.then(loadScript.bind(null,'dist/tinysort.charorder.js',null));
-	}
-
-	function initTitle(){
-		xhttp('dist/tinysort.js',function(e){
-			var sVersion = e.response.match(/@version\s*(.*)/).pop()
-				,aVersion = sVersion.split('.')
-				,mSmall = createElement('small',null,document.querySelector('.navbar-brand'),null,aVersion.slice(0,2).join('.'));
-			createElement('span',null,mSmall,null,'.'+aVersion.pop());
-		});
 	}
 
 	function initExamples(){
