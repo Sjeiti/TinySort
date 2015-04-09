@@ -116,10 +116,11 @@ By default, all the elements are returned, even the ones excluded by your sub-se
 You can also adjust the placement of the sorted values by adding the 'place' attribute. In this case the original positions are maintained.
 
 ``` javascript
-var aSorted = tinysort('ul#xret>li','span:not([class=striked])',{returns:true,place:'org'});
-aSorted.forEach(function(elm){
-    elm.style.color = 'red';
-});
+tinysort('ul#xret>li','span:not([class=striked])',{returns:true,place:'org'})
+    .forEach(function(elm){
+        elm.style.color = 'red';
+    })
+;
 ```
 
 ### multiple sort criteria
@@ -230,9 +231,9 @@ Custom sort functions are similar to those you use with regular Javascript array
 
 ``` javascript
 tinysort('ul#xcst>li',{sortFunction:function(a,b){
-var iCalcA = a.elm.textContent.length
-    ,iCalcB = b.elm.textContent.length;
-return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
+var lenA = a.elm.textContent.length
+    ,lenB = b.elm.textContent.length;
+return lenA===lenB?0:(lenA>lenB?1:-1);
 }});
 ```
 
@@ -241,28 +242,29 @@ return iCalcA===iCalcB?0:(iCalcA>iCalcB?1:-1);
 With a little extra code you can create a sortable table:
 
 ``` javascript
-var mTable = document.getElementById('xtable')
-    ,mTHead = mTable.querySelector('thead')
-    ,amTh = mTHead.querySelectorAll('th')
-    ,mTBody = mTable.querySelector('tbody')
+var table = document.getElementById('xtable')
+    ,tableHead = table.querySelector('thead')
+    ,tableHeaders = tableHead.querySelectorAll('th')
+    ,tableBody = table.querySelector('tbody')
 ;
-mTHead.addEventListener('click',function(e){
-    var mTarget = e.target
-        ,sTarget = mTarget.textContent
-        ,mTh,iIndex,bAsc,sOrder
+tableHead.addEventListener('click',function(e){
+    var tableHeader = e.target
+        ,textContent = tableHeader.textContent
+        ,tableHeaderIndex,isAscending,order
     ;
-    if (sTarget!=='add row') {
-        mTh = mTarget;
-        while (mTh.nodeName!=='TH') mTh = mTh.parentNode;
-        iIndex = Array.prototype.indexOf.call(amTh,mTh);
-        bAsc = mTh.getAttribute('data-order')==='asc';
-        sOrder = bAsc?'desc':'asc';
-        mTh.setAttribute('data-order',sOrder);
+    if (textContent!=='add row') {
+        while (tableHeader.nodeName!=='TH') {
+			tableHeader = tableHeader.parentNode;
+		}
+        tableHeaderIndex = Array.prototype.indexOf.call(tableHeaders,tableHeader);
+        isAscending = tableHeader.getAttribute('data-order')==='asc';
+        order = isAscending?'desc':'asc';
+        tableHeader.setAttribute('data-order',order);
         tinysort(
-            mTBody.querySelectorAll('tr')
+            tableBody.querySelectorAll('tr')
             ,{
-                selector:'td:nth-child('+(iIndex+1)+')'
-                ,order: sOrder
+                selector:'td:nth-child('+(tableHeaderIndex+1)+')'
+                ,order: order
             }
         );
     }
@@ -300,19 +302,19 @@ Tinysort has no built in animating features but it can quite easily be accomplis
 </style>
 
 ``` javascript
-var mUl = document.getElementById('xanim')
-	,amLi = mUl.querySelectorAll('li')
-	,iLiHeight = amLi[0].offsetHeight
+var ul = document.getElementById('xanim')
+	,lis = ul.querySelectorAll('li')
+	,liHeight = lis[0].offsetHeight
 ;
-mUl.style.height = mUl.offsetHeight+'px';
-for (var i= 0,l=amLi.length;i<l;i++) {
-	var mLi = amLi[i];
-	mLi.style.position = 'absolute';
-	mLi.style.top = i*iLiHeight+'px';
+ul.style.height = ul.offsetHeight+'px';
+for (var i= 0,l=lis.length;i<l;i++) {
+	var li = lis[i];
+	li.style.position = 'absolute';
+	li.style.top = i*liHeight+'px';
 }
 tinysort('ul#xanim>li').forEach(function(elm,i){
     setTimeout((function(elm,i){
-        elm.style.top = i*iLiHeight+'px';
+        elm.style.top = i*liHeight+'px';
     }).bind(null,elm,i),40);
 });
 ```

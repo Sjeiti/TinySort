@@ -1,7 +1,7 @@
 /**
  * TinySort CharOrder: a TinySort plugin to sort non-latin characters.
  * @summary TinySort CharOrder
- * @version 2.2.2
+ * @version 2.2.3
  * @requires tinysort
  * @license MIT/GPL
  * @author Ron Valstar <ron@ronvalstar.nl>
@@ -66,7 +66,7 @@
 				orderedCharlist = allCharsList.slice(0); // first set to entire 32-255 charlist
 				// then loop through the charOrder rule
 				for (var
-					 charListNotLatin = []
+					charListNotLatin = []
 					,addReplacement = function(nonLatin,replacement){
 							charListNotLatin.push(replacement);
 							replacements[criterium.cases?nonLatin:nonLatin.toLowerCase()] = replacement;
@@ -92,7 +92,9 @@
 									addReplacement(sCode.replace(/[{}]/g,''),lastChar);
 								}
 							}
-							for (j=0,m=replaces.length;j<m;j++) addReplacement(replaces[j],lastChar);
+							for (j=0,m=replaces.length;j<m;j++) {
+								addReplacement(replaces[j],lastChar);
+							}
 							i += replaces.length+1;
 						} else if (char==='{') { // find doubles: dž, ss, lj ...
 							var doubleChars = charOrder.substr(i+1).match(/[^}]*/)[0];

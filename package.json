@@ -1,7 +1,7 @@
 {
   "name": "tinysort",
   "filename": "tinysort.min.js",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.",
   "main": "dist/tinysort.js",
   "license": "MIT/GPL",
@@ -35,7 +35,8 @@
     "load-grunt-tasks": "~1.0.0",
     "jsdoc": "~3.3.0-alpha11",
     "mkdirp": "~0.5.0",
-    "time-grunt": "~1.0.0"
+    "time-grunt": "~1.0.0",
+    "grunt-jscs": "~1.6.0"
   },
   "autoupdate": {
     "source": "git",
