@@ -11,8 +11,8 @@ module.exports = function (grunt) {
 
 		watch: {
 			gruntfile: {
-				files: ['Gruntfile.js', '.jshintrc'],
-				options: { spawn: false, reload: true }
+				files: ['Gruntfile.js', '.jshintrc']
+				,options: { spawn: false, reload: true }
 			}
 			,default: {
 				files: ['src/*.js']
@@ -96,6 +96,21 @@ module.exports = function (grunt) {
 				,src: 'src/tinysort.charorder.js'
 				,dest: 'dist/tinysort.charorder.jgz'
 				,compress: true
+			}
+		}
+
+		,connect: {
+			server: {
+				options: {
+					port: 9001
+					,hostname: 'localhost'
+					/*,onCreateServer: function (server,connect,options) {
+						var io = require('socket.io').listen(server);
+						io.sockets.on('connection',function (socket) {
+							// do something with socket
+						});
+					}*/
+				}
 			}
 		}
 		,qunit: {

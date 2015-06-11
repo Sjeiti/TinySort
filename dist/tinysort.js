@@ -1,7 +1,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.2.2
+ * @version 2.2.4
  * @license MIT/GPL
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -55,7 +55,7 @@
 			,useFlex:fls
 			,emptyEnd:fls
 		}
-	;undef;
+	;
 
 	/**
 	 * TinySort is a small and simple script that will sort any nodeElment by it's text- or attribute value, or by that of one of it's children.
@@ -292,7 +292,8 @@
 						elmObj.elm.style.order = i;
 					});
 				} else {
-					parentNode.appendChild(sortedIntoFragment());
+					if (parentNode) parentNode.appendChild(sortedIntoFragment());
+					else console.warn('parentNode has been removed');
 				}
 			} else {
 				var criterium = criteria[0]
@@ -468,18 +469,20 @@
 	}
 
 	// matchesSelector shim
-	win.Element && function(ElementPrototype) {
-		ElementPrototype.matchesSelector = ElementPrototype.matchesSelector ||
-		ElementPrototype.mozMatchesSelector ||
-		ElementPrototype.msMatchesSelector ||
-		ElementPrototype.oMatchesSelector ||
-		ElementPrototype.webkitMatchesSelector ||
-		function (selector) {
-			var node = this, nodes = (node.parentNode || node.document).querySelectorAll(selector), i = -1;
-			while (nodes[++i] && nodes[i] != node);
+	win.Element&&(function(ElementPrototype) {
+		ElementPrototype.matchesSelector = ElementPrototype.matchesSelector
+		||ElementPrototype.mozMatchesSelector
+		||ElementPrototype.msMatchesSelector
+		||ElementPrototype.oMatchesSelector
+		||ElementPrototype.webkitMatchesSelector
+		||function (selector) {
+			var that = this, nodes = (that.parentNode || that.document).querySelectorAll(selector), i = -1;
+			//jscs:disable requireCurlyBraces
+			while (nodes[++i] && nodes[i] != that);
+			//jscs:enable requireCurlyBraces
 			return !!nodes[i];
 		};
-	}(Element.prototype);
+	})(Element.prototype);
 
 	// extend the plugin to expose stuff
 	extend(plugin,{
