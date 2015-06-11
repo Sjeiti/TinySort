@@ -292,7 +292,12 @@
 						elmObj.elm.style.order = i;
 					});
 				} else {
-					parentNode.appendChild(sortedIntoFragment());
+					if (parentNode) {
+						parentNode.appendChild(sortedIntoFragment());
+					}
+					else {
+						console.warn("parentNode has been removed");
+					}
 				}
 			} else {
 				var criterium = criteria[0]
