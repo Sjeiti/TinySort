@@ -2,7 +2,6 @@
 module.exports = function(grunt) {
 'use strict';
 	grunt.registerMultiTask('renderPages', 'Render pages with PhantomJS', function(){
-
 		var done = this.async()
 			,exec = require('child_process').exec
 			,fs = require('fs')

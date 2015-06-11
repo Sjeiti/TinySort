@@ -1,7 +1,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.2.3
+ * @version 2.2.4
  * @license MIT/GPL
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -292,12 +292,8 @@
 						elmObj.elm.style.order = i;
 					});
 				} else {
-					if (parentNode) {
-						parentNode.appendChild(sortedIntoFragment());
-					}
-					else {
-						console.warn("parentNode has been removed");
-					}
+					if (parentNode) parentNode.appendChild(sortedIntoFragment());
+					else console.warn('parentNode has been removed');
 				}
 			} else {
 				var criterium = criteria[0]

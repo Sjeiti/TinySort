@@ -98,10 +98,6 @@ module.exports = function (grunt) {
 				,compress: true
 			}
 		}
-
-		,connect: {
-			server: { options: { port: 9001 } }
-		}
 		,qunit: {
 			all: { options: { urls: ['http://localhost:9001/test/unit/index.html'] } }
 		}
