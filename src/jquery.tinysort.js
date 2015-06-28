@@ -23,14 +23,18 @@
 		tinysort: function() {
 			var aArg = Array.prototype.slice.call(arguments)
 				,aSorted,iSorted;
-			aArg.unshift(this);
-			aSorted = tinysort.apply(null,aArg);
-			iSorted = aSorted.length;
-			for (var i=0,l=this.length;i<l;i++) {
-				if (i<iSorted) this[i] = aSorted[i];
-				else delete this[i];
+				
+			if (this.length){
+				aArg.unshift(this);
+				aSorted = tinysort.apply(null,aArg);
+				iSorted = aSorted.length;
+				for (var i=0,l=this.length;i<l;i++) {
+					if (i<iSorted) this[i] = aSorted[i];
+					else delete this[i];
+				}
+				this.length = iSorted;
 			}
-			this.length = iSorted;
+			
 			return this;
 		}
 	});
