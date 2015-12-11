@@ -7,6 +7,7 @@ Documentation and examples are at [tinysort.sjeiti.com](http://tinysort.sjeiti.c
 
 
 
+
 ## usage
 
 The first (and only required) argument is a [NodeList](https://developer.mozilla.org/en/docs/Web/API/NodeList), an array of HTMLElements or a string (which is converted to a NodeList using document.querySelectorAll).
@@ -44,41 +45,5 @@ tinysort.defaults.attr = 'title';
 
 The options object can have the following settings:
 
-**selector** (String)
-<p>A CSS selector to select the element to sort to.</p>
-
-**order** (String='asc')
-<p>The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.</p>
-
-**attr** (String)
-<p>Order by attribute value (ie title, href, class)</p>
-
-**data** (String)
-<p>Use the data attribute for sorting.</p>
-
-**place** (String='org')
-<p>Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first', 'last' or 'org'.</p>
-
-**useVal** (Boolean=false)
-<p>Use element value instead of text.</p>
-
-**cases** (Boolean=false)
-<p>A case sensitive sort (orders [aB,aa,ab,bb])</p>
-
-**forceStrings** (Boolean=false)
-<p>If false the string '2' will sort with the value 2, not the string '2'.</p>
-
-**ignoreDashes** (Boolean=false)
-<p>Ignores dashes when looking for numerals.</p>
-
-**sortFunction** (function)
-<p>Override the default sort function. The parameters are of a type {elementObject}.</p>
-
-**useFlex** (Boolean=true)
-<p>If one parent and display flex, ordering is done by CSS (instead of DOM)</p>
-
-**emptyEnd** (Boolean=true)
-<p>Sort empty values to the end instead of the start</p>
-
-
+{{options}}
 

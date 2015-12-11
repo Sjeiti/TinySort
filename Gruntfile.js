@@ -144,8 +144,6 @@ module.exports = function (grunt) {
 			}
 		}
 
-		,extendMarkdown: { bar:{} }
-
 		// uses Phantomjs to render pages and inject a js file
 		,renderPages: {
 			docs: {
@@ -155,15 +153,6 @@ module.exports = function (grunt) {
 				,pages: ['tinysort.html']
 				,inject: 'src-dev/js/phantomRenderDocs.js'
 				,renderImage: false
-			}
-		}
-
-		// extend the rendered jsdoc files with data
-		,extendDocs: {
-			main: {
-				src: './doc/index.html'
-				,dest: './doc/index.html'
-				,json: './temp/tinysort.json'
 			}
 		}
 	});

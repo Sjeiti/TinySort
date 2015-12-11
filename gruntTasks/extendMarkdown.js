@@ -2,18 +2,17 @@
 module.exports = function (grunt) {
 	'use strict';
 
-	grunt.registerMultiTask('extendMarkdown','',function () {
+	grunt.registerTask('extendMarkdown','',function () {
 		var fs = require('fs')
 			//
-			,data = this.data
-			,sSrc = data.src||'jsdoc/main.md'
-			,sDst = data.dest||'README.md'
-			,sJSON = data.json||'temp/tinysort.json'
+			,sSrc = 'jsdoc/main.md'
+			,sDst = 'README.md'
+			,sJSON = 'temp/tinysort.json'
 			//
 			,sFileSrc = fs.readFileSync(sSrc).toString()
 			,sFileDst = fs.readFileSync(sDst).toString()
-			,aJSON = JSON.parse(fs.readFileSync(sJSON).toString())
-			//s
+			,parsedJson = JSON.parse(fs.readFileSync(sJSON).toString())
+			//
 			,aSrcSplit = splitHeading(sFileSrc)
 			,aDstSplit = splitHeading(sFileDst)
 			//
@@ -26,16 +25,17 @@ module.exports = function (grunt) {
 		setContents('usage',aDstSplit,sUsage);
 		sNewFile = makeContents(aDstSplit);
 
-		for (var i=1,l=aJSON.length;i<l;i++) {
-			var option = aJSON[i]
-				,name = option[0]
-				,type = option[1]
-				//,ptnl = option[2]
-				,dflt = option[3]
-				,desc = option[4]
-			;
-			sOptions += '**'+name+'** ('+type+(dflt!==''&&dflt!=='null'?'='+dflt:'')+')\n'+desc+'\n\n';
-		}
+		parsedJson.forEach(function(o){
+			if (o.id==='tinysort.tinysort') {
+				o.params.forEach(function(param){
+					var name = param.name
+						,type = param.type.names.join(',')
+						,defaultvalue = param.defaultvalue||''
+						,description = param.description;
+					sOptions += '**'+name+'** ('+type+(defaultvalue!==''&&defaultvalue!=='null'?'='+defaultvalue:'')+')\n'+description+'\n\n';
+				});
+			}
+		});
 
 		sNewFile = sNewFile.replace('{{options}}',sOptions);
 
