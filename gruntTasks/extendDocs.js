@@ -35,7 +35,7 @@ module.exports = function (grunt) {
 							,type = param.type.names.join(',')
 							,defaultvalue = param.defaultvalue||''
 							,description = param.description;
-						options += '<dt id="option-'+name+'">aha<a href="#option-'+name+'"">'+name+'</a><small class="option-type" title="type">'+type+'</small><small class="option-default" title="default: '+defaultvalue+'">'+defaultvalue+'</small></dt>';
+						options += '<dt id="option-'+name+'"><a href="#option-'+name+'"">'+name+'</a><small class="option-type" title="type">'+type+'</small><small class="option-default" title="default: '+defaultvalue+'">'+defaultvalue+'</small></dt>';
 						options += '<dd>'+description+'</dd>';
 					});
 					var fileNew = fs.readFileSync(docIndex).toString().replace(/{{options}}/,'<dl class="dl-horizontal options">'+options+'</dl>');

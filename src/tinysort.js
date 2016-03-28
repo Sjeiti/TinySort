@@ -1,7 +1,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.2.5
+ * @version 2.2.6
  * @license MIT
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -311,12 +311,14 @@
 					});
 				} else if (placeStart||placeEnd) {
 					var startElmObj = elmObjsSortedInitial[placeStart?0:elmObjsSortedInitial.length-1]
-						,startParent = startElmObj.elm.parentNode
-						,startElm = placeStart?startParent.firstChild:startParent.lastChild;
-					if (startElm!==startElmObj.elm) startElmObj = {elm:startElm};
-					addGhost(startElmObj);
-					placeEnd&&startParent.appendChild(startElmObj.ghost);
-					replaceGhost(startElmObj,sortedIntoFragment());
+						,startParent = startElmObj&&startElmObj.elm.parentNode
+						,startElm = startParent&&(placeStart&&startParent.firstChild||startParent.lastChild);
+					if (startElm) {
+						if (startElm!==startElmObj.elm) startElmObj = {elm:startElm};
+						addGhost(startElmObj);
+						placeEnd&&startParent.appendChild(startElmObj.ghost);
+						replaceGhost(startElmObj,sortedIntoFragment());
+					}
 				} else if (placeFirst||placeLast) {
 					var firstElmObj = elmObjsSortedInitial[placeFirst?0:elmObjsSortedInitial.length-1];
 					replaceGhost(addGhost(firstElmObj),sortedIntoFragment());

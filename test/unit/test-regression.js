@@ -147,6 +147,13 @@
 			return sSorted==='012345678910111213';
 		})(),'mixed literal and numeral');
 	});
+	test('issue 114', function() {
+		ok( (function(){
+			var aSorted = tinysort(zenLi('ul>li.test{_a$}*6',{a:[' 0 ',' 5 ',' 1 ',' 4 ',' 2 ',' 3 ']}),'.test-none')
+				,sSorted = eachElement(aSorted);
+			return sSorted==='';
+		})(),'empty selector');
+	});
 	// todo: write test for #83: https://github.com/Sjeiti/TinySort/issues/83
 	/*test('issue 86', function() {
 		ok( (function(){
