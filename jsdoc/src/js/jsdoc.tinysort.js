@@ -176,6 +176,9 @@ iddqd.ns('jsdoc.tinysort',(function(){
 		} else if (sId==='xdta'){
 			selector += '*'+iLen+'>span{a$}+a[href=# data-foo=b$]{c$}';
 			oParse = {a:'s',b:'s',c:'s'};
+		} else if (sId==='xnat'){
+			selector += '{a$}*'+iLen;
+			oParse = {a:'sf'};
 		} else if (sId==='xinp'){
 			selector += '*'+iLen+'>input[value=a$]';
 			oParse = {a:'s'};

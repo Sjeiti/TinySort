@@ -113,6 +113,13 @@
 				,sSorted = eachElement(aSorted,function(elm){ return ' '+elm.textContent; });
 			return sSorted===' a1 a1.1 a7 a11';
 		})(),'tinysort(nodeList); mixed numeral/literal');
+
+		ok( (function(){
+			var aSorted = tinysort(zenLi('ul>li{b$}*5',{b:['11','1','3a','10','1a']}),{natural:true})
+				,sSorted = eachElement(aSorted,function(elm){ return ' '+elm.textContent; });
+			return sSorted===' 1 1a 3a 10 11';
+		})(),'tinysort(nodeList,{natural:true}); mixed numeral/literal natural sort');
+
 		ok( (function(){
 			var aSorted = tinysort(zenLi('ul>(li>span{a$}+li>span.striked{b$})*3',{a:aList.slice(0,3),b:aList.slice(3)}),'span:not([class=striked])',{returns:true,place:'org'})
 				,sSorted = aSorted[0].parentNode.textContent+aSorted.length;//eachs(aSorted,function(elm){ return ' '+elm.textContent; });
@@ -133,7 +140,6 @@
 				,sSorted = eachElement(aSorted,function(elm){ return elm.getAttribute('value'); });
 			return sSorted==='1234';
 		})(),'tinysort(nodeList,{emptyEnd:true}); empty values to end');
-
 
 		ok( (function(){
 			return placeTest('org')==='bachfegd';

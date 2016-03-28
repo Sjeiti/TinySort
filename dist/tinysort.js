@@ -1,8 +1,8 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.2.4
- * @license MIT/GPL
+ * @version 2.3.0
+ * @license MIT
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
@@ -35,17 +35,26 @@
 		,defaults = {				// default settings
 
 			selector: nll			// CSS selector to select the element to sort to
+
 			,order: 'asc'			// order: asc, desc or rand
+
 			,attr: nll				// order by attribute value
 			,data: nll				// use the data attribute for sorting
 			,useVal: fls			// use element value instead of text
+
 			,place: 'org'			// place ordered elements at position: start, end, org (original position), first, last
 			,returns: fls			// return all elements or only the sorted ones (true/false)
+
 			,cases: fls				// a case sensitive sort orders [aB,aa,ab,bb]
+
 			,natural: fls			// use natural sort order
+
 			,forceStrings:fls		// if false the string '2' will sort with the value 2, not the string '2'
+
 			,ignoreDashes:fls		// ignores dashes when looking for numerals
+
 			,sortFunction: nll		// override the default sort function
+
 			,useFlex:fls
 			,emptyEnd:fls
 		}
@@ -96,7 +105,9 @@
 			/** @type {HTMLElement} */
 			,parentNode
 			,isSameParent = true
-			,isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&getComputedStyle(nodeList[0].parentNode,null).display.indexOf('flex')!==-1
+			,firstParent = nodeList.length&&nodeList[0].parentNode
+			,isFragment = firstParent.rootNode!==document
+			,isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&!isFragment&&getComputedStyle(firstParent,null).display.indexOf('flex')!==-1
 		;
 
 		initCriteria.apply(nll,Array.prototype.slice.call(arguments,1));
@@ -208,31 +219,39 @@
 		 * Compare strings using natural sort order
 		 * http://web.archive.org/web/20130826203933/http://my.opera.com/GreyWyvern/blog/show.dml/1671288
 		 */
-		function naturalCompare(a, b) {
-			function chunkify(t) {
-				var tz = [], x = 0, y = -1, n = 0, i, j;
-				while (i = (j = t.charAt(x++)).charCodeAt(0)) {
-					var m = (i == 46 || (i >=48 && i <= 57));
-					if (m !== n) {
-						tz[++y] = "";
-						n = m;
-					}
-					tz[y] += j;
-				}
-				return tz;
-			}
-
-			var aa = chunkify(a.toString());
-			var bb = chunkify(b.toString());
+		function naturalCompare(a, b, chunkify) {
+			var aa = chunkify(a.toString())
+				,bb = chunkify(b.toString());
 			for (var x = 0; aa[x] && bb[x]; x++) {
-				if (aa[x] !== bb[x]) {
-					var c = Number(aa[x]), d = Number(bb[x]);
+				if (aa[x]!==bb[x]) {
+					var c = Number(aa[x])
+						,d = Number(bb[x]);
 					if (c == aa[x] && d == bb[x]) {
 						return c - d;
-					} else return (aa[x] > bb[x]) ? 1 : -1;
+					} else return aa[x]>bb[x]?1:-1;
 				}
 			}
 			return aa.length - bb.length;
+		}
+
+		/**
+		 * Split a string into an array by type: numeral or string
+		 * @memberof tinysort
+		 * @private
+		 * @param {string} t
+		 * @returns {Array}
+		 */
+		function chunkify(t) {
+			var tz = [], x = 0, y = -1, n = 0, i, j;
+			while (i = (j = t.charAt(x++)).charCodeAt(0)) {
+				var m = (i == 46 || (i >=48 && i <= 57));
+				if (m !== n) {
+					tz[++y] = '';
+					n = m;
+				}
+				tz[y] += j;
+			}
+			return tz;
 		}
 
 		/**
@@ -291,10 +310,11 @@
 						if (valueA===undef||valueB===undef) {
 							sortReturnNumber = 0;
 						} else {
-							if(!criterium.natural||(!isNaN(valueA)&&!isNaN(valueB))) {
+							// todo: check here
+							if (!criterium.natural||(!isNaN(valueA)&&!isNaN(valueB))) {
 								sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0);
 							} else {
-								sortReturnNumber = naturalCompare(valueA, valueB);
+								sortReturnNumber = naturalCompare(valueA, valueB, chunkify);
 							}
 						}
 					}
@@ -342,12 +362,14 @@
 					});
 				} else if (placeStart||placeEnd) {
 					var startElmObj = elmObjsSortedInitial[placeStart?0:elmObjsSortedInitial.length-1]
-						,startParent = startElmObj.elm.parentNode
-						,startElm = placeStart?startParent.firstChild:startParent.lastChild;
-					if (startElm!==startElmObj.elm) startElmObj = {elm:startElm};
-					addGhost(startElmObj);
-					placeEnd&&startParent.appendChild(startElmObj.ghost);
-					replaceGhost(startElmObj,sortedIntoFragment());
+						,startParent = startElmObj&&startElmObj.elm.parentNode
+						,startElm = startParent&&(placeStart&&startParent.firstChild||startParent.lastChild);
+					if (startElm) {
+						if (startElm!==startElmObj.elm) startElmObj = {elm:startElm};
+						addGhost(startElmObj);
+						placeEnd&&startParent.appendChild(startElmObj.ghost);
+						replaceGhost(startElmObj,sortedIntoFragment());
+					}
 				} else if (placeFirst||placeLast) {
 					var firstElmObj = elmObjsSortedInitial[placeFirst?0:elmObjsSortedInitial.length-1];
 					replaceGhost(addGhost(firstElmObj),sortedIntoFragment());

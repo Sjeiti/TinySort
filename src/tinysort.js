@@ -1,7 +1,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.2.7
+ * @version 2.3.0
  * @license MIT
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -34,7 +34,7 @@
 		,criteriumIndex = 0
 		,defaults = {				// default settings
 
-			selector: nll			// order: asc, desc or rand
+			selector: nll			// CSS selector to select the element to sort to
 
 			,order: 'asc'			// order: asc, desc or rand
 
@@ -46,6 +46,9 @@
 			,returns: fls			// return all elements or only the sorted ones (true/false)
 
 			,cases: fls				// a case sensitive sort orders [aB,aa,ab,bb]
+
+			,natural: fls			// use natural sort order
+
 			,forceStrings:fls		// if false the string '2' will sort with the value 2, not the string '2'
 
 			,ignoreDashes:fls		// ignores dashes when looking for numerals
@@ -70,6 +73,7 @@
 	 * @param {String} [options.place='org'] Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first', 'last' or 'org'.
 	 * @param {Boolean} [options.useVal=false] Use element value instead of text.
 	 * @param {Boolean} [options.cases=false] A case sensitive sort (orders [aB,aa,ab,bb])
+	 * @param {Boolean} [options.natural=false] Use natural sort order.
 	 * @param {Boolean} [options.forceStrings=false] If false the string '2' will sort with the value 2, not the string '2'.
 	 * @param {Boolean} [options.ignoreDashes=false] Ignores dashes when looking for numerals.
 	 * @param {Function} [options.sortFunction=null] Override the default sort function. The parameters are of a type {elementObject}.
@@ -136,6 +140,7 @@
 		 * @property {String} place - place ordered elements at position: start, end, org (original position), first
 		 * @property {Boolean} returns - return all elements or only the sorted ones (true/false)
 		 * @property {Boolean} cases - a case sensitive sort orders [aB,aa,ab,bb]
+		 * @property {Boolean} natural - use natural sort order
 		 * @property {Boolean} forceStrings - if false the string '2' will sort with the value 2, not the string '2'
 		 * @property {Boolean} ignoreDashes - ignores dashes when looking for numerals
 		 * @property {Function} sortFunction - override the default sort function
@@ -211,6 +216,45 @@
 		}
 
 		/**
+		 * Compare strings using natural sort order
+		 * http://web.archive.org/web/20130826203933/http://my.opera.com/GreyWyvern/blog/show.dml/1671288
+		 */
+		function naturalCompare(a, b, chunkify) {
+			var aa = chunkify(a.toString())
+				,bb = chunkify(b.toString());
+			for (var x = 0; aa[x] && bb[x]; x++) {
+				if (aa[x]!==bb[x]) {
+					var c = Number(aa[x])
+						,d = Number(bb[x]);
+					if (c == aa[x] && d == bb[x]) {
+						return c - d;
+					} else return aa[x]>bb[x]?1:-1;
+				}
+			}
+			return aa.length - bb.length;
+		}
+
+		/**
+		 * Split a string into an array by type: numeral or string
+		 * @memberof tinysort
+		 * @private
+		 * @param {string} t
+		 * @returns {Array}
+		 */
+		function chunkify(t) {
+			var tz = [], x = 0, y = -1, n = 0, i, j;
+			while (i = (j = t.charAt(x++)).charCodeAt(0)) {
+				var m = (i == 46 || (i >=48 && i <= 57));
+				if (m !== n) {
+					tz[++y] = '';
+					n = m;
+				}
+				tz[y] += j;
+			}
+			return tz;
+		}
+
+		/**
 		 * Sort all the things
 		 * @memberof tinysort
 		 * @private
@@ -266,7 +310,12 @@
 						if (valueA===undef||valueB===undef) {
 							sortReturnNumber = 0;
 						} else {
-							sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0);
+							// todo: check here
+							if (!criterium.natural||(!isNaN(valueA)&&!isNaN(valueB))) {
+								sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0);
+							} else {
+								sortReturnNumber = naturalCompare(valueA, valueB, chunkify);
+							}
 						}
 					}
 				}

@@ -1,7 +1,7 @@
 /**
  * TinySort CharOrder: a TinySort plugin to sort non-latin characters.
  * @summary TinySort CharOrder
- * @version 2.2.7
+ * @version 2.3.0
  * @requires tinysort
  * @license MIT/GPL
  * @author Ron Valstar <ron@ronvalstar.nl>

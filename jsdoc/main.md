@@ -189,6 +189,14 @@ Here are some example languages:
 </table>
 </div>
 
+### natural sorting
+
+Machines read differently than you do. Natural sorting makes your machine more like you by enabling it to differentiate between numeric values within a string. 
+
+``` javascript
+tinysort('ul#xnat>li',{natural:true});
+```
+
 ### sort by value
 
 The value property is primarily used to get the values of form elements, but list-elements also have the value property. By setting the useVal option you can also sort by this form element value.

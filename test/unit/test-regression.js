@@ -158,7 +158,6 @@
 			}
 			var aSorted = tinysort(fragment.querySelectorAll('li'))
 				,sSorted = eachElement(aSorted);
-			console.log('sSorted',sSorted); // todo: remove log
 			return sSorted==='012345';
 		})(),'empty selector');
 	});

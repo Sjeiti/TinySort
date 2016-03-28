@@ -72,6 +72,9 @@ Use element value instead of text.
 **options.cases** (Boolean)
 A case sensitive sort (orders [aB,aa,ab,bb])
 
+**options.natural** (Boolean)
+Use natural sort order.
+
 **options.forceStrings** (Boolean)
 If false the string '2' will sort with the value 2, not the string '2'.
 
