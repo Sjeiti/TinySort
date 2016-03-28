@@ -130,10 +130,10 @@
 		ok( (function(){
 			var aLi = zenLi('ul>li{a $}*6'),aSorted,sSorted;
 			aLi[3].innerHTML = 'a\n4';
-			aLi[1].innerHTML = 'a  2';
+			aLi[1].innerHTML = 'a	2';
 			aSorted = tinysort(aLi);
 			sSorted = eachElement(aSorted);
-			return sSorted==='a 1a  2a 3a\n4a 5a 6';
+			return sSorted==='a 1a	2a 3a\n4a 5a 6';
 		})(),'newlines and multiple spaces');
 	});
 	test('issue 78', function() {
@@ -146,6 +146,21 @@
 				,sSorted = eachElement(aSorted);
 			return sSorted==='012345678910111213';
 		})(),'mixed literal and numeral');
+	});
+	test('issue 113', function() {
+		ok( (function(){
+			var fragment = document.createDocumentFragment()
+					,i = 6;
+			while (i--) {
+				var li = document.createElement('li');
+				li.innerText = i;
+				fragment.appendChild(li);
+			}
+			var aSorted = tinysort(fragment.querySelectorAll('li'))
+				,sSorted = eachElement(aSorted);
+			console.log('sSorted',sSorted); // todo: remove log
+			return sSorted==='012345';
+		})(),'empty selector');
 	});
 	test('issue 114', function() {
 		ok( (function(){
