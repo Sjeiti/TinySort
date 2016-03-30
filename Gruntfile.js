@@ -36,7 +36,7 @@ module.exports = function (grunt) {
 			main: {
 				options: { regex: [/\d+\.\d+\.\d+/,/sVersion\s*=\s*'(\d+\.\d+\.\d+)'/] }
 				,src: [
-                    'src/tinysort.js'
+           'src/tinysort.js'
 					,'src/tinysort.charorder.js'
 					,'src/jquery.tinysort.js'
 					,'package.json'

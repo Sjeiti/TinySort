@@ -1,7 +1,7 @@
 {
   "name": "tinysort",
   "filename": "tinysort.min.js",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.",
   "main": "dist/tinysort.js",
   "license": "MIT",
@@ -23,21 +23,16 @@
     "html"
   ],
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib": "~0.7.0",
-    "grunt-contrib-clean": "~0.6.0",
-    "grunt-contrib-connect": "~0.10.1",
-    "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-jshint": "~0.6.2",
-    "grunt-contrib-qunit": "~0.7.0",
-    "grunt-contrib-uglify": "^1.0.1",
-    "grunt-jscs": "~1.6.0",
-    "grunt-version-git": "~0.3.1",
+    "jscs": "^2.11.0",
     "jsdoc": "~3.3.0-alpha11",
     "jsdoc-parse": "^1.2.1",
-    "load-grunt-tasks": "~1.0.0",
+    "jsdom": "^8.2.0",
+    "jshint": "^2.9.1",
     "mkdirp": "~0.5.0",
-    "time-grunt": "~1.0.0"
+    "node-qunit-phantomjs": "^1.4.0",
+    "promisify-node": "^0.4.0",
+    "rimraf": "^2.5.2",
+    "uglify-js": "^2.6.2"
   },
   "autoupdate": {
     "source": "git",
@@ -47,7 +42,15 @@
       "tinysort.js",
       "tinysort.min.js",
       "tinysort.charorder.js",
-      "tinysort.charorder.min.js"
+      "tinysort.charorder.min.js",
+      "jquery.tinysort.js",
+      "jquery.tinysort.min.js"
     ]
+  },
+  "scripts": {
+    "build": "node task/build test uglify",
+    "uglify": "node task/uglify",
+    "version": "node task/version patch",
+    "test": "node task/test"
   }
 }
