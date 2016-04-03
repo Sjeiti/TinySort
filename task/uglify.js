@@ -1,8 +1,8 @@
 var uglify = require('uglify-js')
     ,mkdirp = require('mkdirp')
-    ,jshint = require('jshint').JSHINT
-    ,jscs = require('jscs')
     ,fs = require('fs')
+    ,exec = require('child_process').exec
+    //
     ,warn = console.warn.bind(console)
     //
     ,targetFolder = './dist'
@@ -14,7 +14,7 @@ var uglify = require('uglify-js')
     ]
 ;
 
-hintFiles(files.map(s=>sourceFolder+'/'+s))
+validateFiles(files.map(s=>sourceFolder+'/'+s))
   .then(files=>Promise.all(files.map(
     file=>read(file)
       .then(source=>{
@@ -29,65 +29,16 @@ function read(file){
   return new Promise((resolve,reject)=>fs.readFile(file,(err,data)=>err&&reject(err)||resolve(data.toString())));
 }
 
-function hintFiles(fileNames){
-  return read('./.jshintrc')
-      .then(jshintrc=>{
-        var options = JSON.parse(jshintrc)
-            ,globals = options.globals;
-        delete options.globals;
-        return Promise.all(fileNames.map(file=>promiseHint(file, options, globals)));
-      })
-      .then(()=>console.log('jshint passed'),warn.bind(console,'jshint failed'))
-      .then(read.bind(null,'./.jscsrc'))
-      .then(jscsrc=>Promise.all(fileNames.map(file=>promiseJscs(file,JSON.parse(jscsrc)))))
-      .then(()=>console.log('jscs passed'),warn.bind(console,'jscs failed'))
+function validateFiles(fileNames){
+  return promiseExec('jshint ./src/')
+      .then(()=>console.log('jshint passed'),warn.bind(console,'jshint failed\n\n'))
+      .then(()=>promiseExec('jscs ./src/'))
+      .then(()=>console.log('jscs passed'),warn.bind(console,'jscs failed\n\n'))
       .then(()=>fileNames);
 }
 
-/**
- * @see http://jshint.com/docs/api/
- * @param {string[]} file
- * @param {object} options
- * @param {object} globals
- * @returns {Promise}
- */
-function promiseHint(file, options, globals){
-  return read(file)
-  .then(source=>{
-    return new Promise((resolve,reject)=>{
-      jshint(source.split(/\r\n|\n|\r/), options, globals);
-      var errors = jshint.errors;
-      if (errors.length===0) {
-        resolve();
-      } else {
-        errors.forEach(err=>console.warn(file,err.line+':'+err.character,err.reason));
-        reject();
-      }
-    });
-  });
-}
-
-function promiseJscs(file, options){
-  return read(file)
-  .then(source=>{
-    return new Promise((resolve,reject)=>{
-      var checker = new jscs()
-          ,results
-          ,errors;
-      checker.configure(options);
-      results = checker.checkString(source);
-      errors = results.getErrorList();
-      if (errors.length===0) {
-        resolve();
-      } else {
-        results.getErrorList().forEach(error=>console.log(results.explainError(error, true) + "\n"));
-        //console.log('file',file,source); // todo: remove log
-        //errors.forEach(err=>console.warn(file,err));
-        //errors.forEach(err=>console.warn(file,err.line+':'+err.character,err.reason));
-        reject();
-      }
-    });
-  });
+function promiseExec(command){
+	return new Promise((resolve,reject)=>exec(command,(error, stdout)=>error&&reject(stdout)||resolve()));
 }
 
 function minify(source,options){

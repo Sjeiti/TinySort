@@ -45,44 +45,56 @@ tinysort.defaults.attr = 'title';
 The options object can have the following settings:
 
 
-**options.selector** (String)
-A CSS selector to select the element to sort to.
+**options.selector** (StringNaN)
+undefined
 
-**options.order** (String='asc')
-The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.
+**options.order** (StringNaN)
+undefined
 
-**options.attr** (String=null)
-Order by attribute value (ie title, href, class)
+**options.attr** (StringNaN)
+undefined
 
-**options.data** (String=null)
-Use the data attribute for sorting.
+**options.data** (StringNaN)
+undefined
 
-**options.place** (String='org')
-Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first', 'last' or 'org'.
+**options.useVal** (BooleanNaN)
+undefined
 
-**options.useVal** (Boolean=false)
-Use element value instead of text.
+**options.place** (StringNaN)
+undefined
 
-**options.cases** (Boolean=false)
-A case sensitive sort (orders [aB,aa,ab,bb])
+**options.returns** (BooleanNaN)
+undefined
 
-**options.natural** (Boolean=false)
-Use natural sort order.
+**options.cases** (BooleanNaN)
+undefined
 
-**options.forceStrings** (Boolean=false)
-If false the string '2' will sort with the value 2, not the string '2'.
+**options.natural** (BooleanNaN)
+undefined
 
-**options.ignoreDashes** (Boolean=false)
-Ignores dashes when looking for numerals.
+**options.forceStrings** (BooleanNaN)
+undefined
 
-**options.sortFunction** (function=null)
-Override the default sort function. The parameters are of a type {elementObject}.
+**options.ignoreDashes** (BooleanNaN)
+undefined
 
-**options.useFlex** (Boolean=true)
-If one parent and display flex, ordering is done by CSS (instead of DOM)
+**options.sortFunction** (functionNaN)
+undefined
 
-**options.emptyEnd** (Boolean=true)
-Sort empty values to the end instead of the start
+**options.hasSelector** (booleanNaN)
+undefined
+
+**options.hasFilter** (booleanNaN)
+undefined
+
+**options.hasAttr** (booleanNaN)
+undefined
+
+**options.hasData** (booleanNaN)
+undefined
+
+**options.sortReturnNumber** (numberNaN)
+undefined
 
 
 ## examples

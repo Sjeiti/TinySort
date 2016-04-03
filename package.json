@@ -1,7 +1,7 @@
 {
   "name": "tinysort",
   "filename": "tinysort.min.js",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.",
   "main": "dist/tinysort.js",
   "license": "MIT",
@@ -49,8 +49,11 @@
   },
   "scripts": {
     "build": "node task/build test uglify",
+    "jscs": "jscs ./src/",
+    "jshint": "jshint ./src/",
     "uglify": "node task/uglify",
     "version": "node task/version patch",
-    "test": "node task/test"
+    "test": "node task/test",
+    "doc": "node task/jsdoc"
   }
 }

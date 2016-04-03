@@ -12,9 +12,11 @@ rimraf('./doc/*')
     .then(copy.bind(null,'./dist/*.js','./doc/scripts/'))
     .then(()=>'jsdoc files copied')
     // read tinysort jsdoc output and insert options table to index
-    .then(readFile.bind(null,'./doc/tinysort.html'))
-    .then(querySelector.bind(null,'table table'))
+    .then(readFile.bind(null,'./doc/global.html'))
+    .then(querySelector.bind(null,'table:last-of-type')) // todo: should be better
+    //.then(querySelector.bind(null,'#properties-+*+dl>table'))
     .then(parseTable)
+    //
 ;
 
 function parseTable(table){
