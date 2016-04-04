@@ -1,11 +1,8 @@
 {
-    "globals": {
-    	"iddqd": true
-    	,"Promise": true
-	},
-    "strict": true,
+    "globals": {},
+    "esnext": true,
     "browser": true,
-    "jquery": true,
+    "node": true,
     "devel": true,
     "plusplus": false,
     "white": false,
@@ -13,7 +10,7 @@
     "noarg": true,
     "nonew": true,
     "undef": true,
-    "unused": "vars",
+    "unused": true,
     "trailing": true,
     "laxcomma": true,
     "loopfunc": true,

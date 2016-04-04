@@ -3,20 +3,20 @@ var fs = require('fs')
 		,rimraf = promisify(require('rimraf'))
 		,exec = promisify(require('child_process').exec)
     ,glob = promisify(require('glob'))
+    ,mkdirp = promisify(require('mkdirp'))
     ,jsdom = require('jsdom')
 ;
 
 rimraf('./doc/*')
     .then(exec.bind(null,'"node_modules/.bin/jsdoc" -c jsdoc.json',{cwd:'./'}))
     .then(()=>(new Promise(r=>setTimeout(r,2000)))) // hacky
-    .then(copy.bind(null,'./dist/*.js','./doc/scripts/'))
+    .then(mkdirp.bind(null,'./doc/dist/'))
+    .then(copy.bind(null,'./dist/*.js','./doc/dist/'))
     .then(()=>'jsdoc files copied')
     // read tinysort jsdoc output and insert options table to index
     .then(readFile.bind(null,'./doc/global.html'))
-    .then(querySelector.bind(null,'table:last-of-type')) // todo: should be better
-    //.then(querySelector.bind(null,'#properties-+*+dl>table'))
+    .then(querySelector.bind(null,'#header-options+* table'))
     .then(parseTable)
-    //
 ;
 
 function parseTable(table){

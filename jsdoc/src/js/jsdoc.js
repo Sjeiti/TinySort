@@ -15,9 +15,12 @@ iddqd.ns('jsdoc',(function(undefined){
 //		loadScript('scripts/jsdoc.tinysort.js').then(function(){
 //			jsdoc.tinysort();
 //		});
-		loadScript('scripts/jsdoc.tinysort.js').then(function(){
+//		console.log('load','/scripts/jsdoc.tinysort.js'); // todo: remove log
+		/*loadScript('/js/jsdoc.tinysort.js').then(function(){
+			//console.log('loaded',arguments); // todo: remove log
 			jsdoc.tinysort();
-		});
+		});*/
+
 
 		/*var mClone = document.querySelector('a[href="namespaces.list.html"').parentNode
 			,mRL = mClone.cloneNode(true)

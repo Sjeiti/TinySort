@@ -45,56 +45,44 @@ tinysort.defaults.attr = 'title';
 The options object can have the following settings:
 
 
-**options.selector** (StringNaN)
-undefined
+**options.selector** (String)
+A CSS selector to select the element to sort to.
 
-**options.order** (StringNaN)
-undefined
+**options.order** (String='asc')
+The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.
 
-**options.attr** (StringNaN)
-undefined
+**options.attr** (String=null)
+Order by attribute value (ie title, href, class)
 
-**options.data** (StringNaN)
-undefined
+**options.data** (String=null)
+Use the data attribute for sorting.
 
-**options.useVal** (BooleanNaN)
-undefined
+**options.place** (String='org')
+Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first', 'last' or 'org'.
 
-**options.place** (StringNaN)
-undefined
+**options.useVal** (Boolean=false)
+Use element value instead of text.
 
-**options.returns** (BooleanNaN)
-undefined
+**options.cases** (Boolean=false)
+A case sensitive sort (orders [aB,aa,ab,bb])
 
-**options.cases** (BooleanNaN)
-undefined
+**options.natural** (Boolean=false)
+Use natural sort order.
 
-**options.natural** (BooleanNaN)
-undefined
+**options.forceStrings** (Boolean=false)
+If false the string '2' will sort with the value 2, not the string '2'.
 
-**options.forceStrings** (BooleanNaN)
-undefined
+**options.ignoreDashes** (Boolean=false)
+Ignores dashes when looking for numerals.
 
-**options.ignoreDashes** (BooleanNaN)
-undefined
+**options.sortFunction** (function=null)
+Override the default sort function. The parameters are of a type {elementObject}.
 
-**options.sortFunction** (functionNaN)
-undefined
+**options.useFlex** (Boolean=true)
+If one parent and display flex, ordering is done by CSS (instead of DOM)
 
-**options.hasSelector** (booleanNaN)
-undefined
-
-**options.hasFilter** (booleanNaN)
-undefined
-
-**options.hasAttr** (booleanNaN)
-undefined
-
-**options.hasData** (booleanNaN)
-undefined
-
-**options.sortReturnNumber** (numberNaN)
-undefined
+**options.emptyEnd** (Boolean=true)
+Sort empty values to the end instead of the start
 
 
 ## examples
