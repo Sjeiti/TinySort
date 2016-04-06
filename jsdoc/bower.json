@@ -1,6 +1,6 @@
 {
   "name": "Sjeiti JSDoc template",
-  "version": "0.0.1",
+  "version": "0.4.19",
   "dependencies": {
     "es5-shim": "*",
     "es6-promise-polyfill": "~1.0.0",

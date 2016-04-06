@@ -1,6 +1,6 @@
 {
   "name": "Sjeiti_JSDoc_template",
-  "version": "0.4.13",
+  "version": "0.4.19",
   "description": "Sjeiti JSDoc template",
   "main": "index.js",
   "directories": {
@@ -15,7 +15,9 @@
     "node-zip": "~1.1.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node task/build test uglify",
+    "uglify": "node task/uglify",
+    "version": "node task/version patch"
   },
   "author": "Ron Valstar (http://ronvalstar.nl/)",
   "license": "none"

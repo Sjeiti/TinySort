@@ -10,8 +10,9 @@ var fs = require('fs')
   ,exec = require('child_process').exec
   //
   ,files = [
-		'src/js/sk123ow.js'
-		,'src/js/sk123ow.lang.js'
+     './src/js/jsdoc.js'
+    ,'./package.json'
+    ,'./bower.json'
   ]
   //
   ,versionObject = {major:0,minor:1,patch:2}

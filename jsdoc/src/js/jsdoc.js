@@ -1,3 +1,6 @@
+/**
+ * @version 0.4.19
+ */
 iddqd.ns('jsdoc',(function(undefined){
 	'use strict';
 
@@ -12,15 +15,6 @@ iddqd.ns('jsdoc',(function(undefined){
 		initTutorials();
 		//initHash();
 		//initSmoothScroll();
-//		loadScript('scripts/jsdoc.tinysort.js').then(function(){
-//			jsdoc.tinysort();
-//		});
-//		console.log('load','/scripts/jsdoc.tinysort.js'); // todo: remove log
-		/*loadScript('/js/jsdoc.tinysort.js').then(function(){
-			//console.log('loaded',arguments); // todo: remove log
-			jsdoc.tinysort();
-		});*/
-
 
 		/*var mClone = document.querySelector('a[href="namespaces.list.html"').parentNode
 			,mRL = mClone.cloneNode(true)
