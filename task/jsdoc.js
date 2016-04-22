@@ -12,7 +12,8 @@ rimraf('./doc/*')
     .then(()=>(new Promise(r=>setTimeout(r,2000)))) // hacky
     .then(mkdirp.bind(null,'./doc/dist/'))
     .then(copy.bind(null,'./dist/*.js','./doc/dist/'))
-    .then(()=>'jsdoc files copied')
+    //.then(()=>'jsdoc files copied')
+    //.then(console.log.bind(console))
     // read tinysort jsdoc output and insert options table to index
     .then(readFile.bind(null,'./doc/global.html'))
     .then(querySelector.bind(null,'#header-options+* table'))
