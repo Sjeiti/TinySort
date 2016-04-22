@@ -26,6 +26,7 @@
 			document.body.appendChild(mList);
 			var aSorted = tinysort('ul>li')
 				,sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
+			document.body.removeChild(mList);
 			return sSorted===sJoin;
 		})(),'tinysort(string);');
 		ok( (function(){
@@ -33,7 +34,9 @@
 				,iNodes = aNodes.length
 				,aArray = []
 				,aSorted,sSorted;
-			while (iNodes--) aArray.unshift(aNodes[iNodes]);
+			while (iNodes--) {
+				aArray.unshift(aNodes[iNodes]);
+			}
 			aSorted = tinysort(aArray);
 			sSorted = eachElement(aSorted,function(elm){return elm.textContent;});
 			return sSorted===sJoin;

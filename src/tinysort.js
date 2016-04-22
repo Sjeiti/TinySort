@@ -1,7 +1,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 2.3.4
+ * @version 2.3.5
  * @license MIT
  * @author Ron Valstar <ron@ronvalstar.nl>
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -32,6 +32,7 @@
     ,plugins = []
     ,numCriteria = 0
     ,criteriumIndex = 0
+    ,largeChar = String.fromCharCode(0xFFF)
     ,/**options*/defaults = {        // default settings
 
       selector: nll      // CSS selector to select the element to sort to
@@ -117,7 +118,7 @@
 
     initCriteria.apply(nll,Array.prototype.slice.call(arguments,1));
     initSortList();
-    sort();
+    elmObjsSorted.sort(sortFunction);
     applyToDOM();
 
     /**
@@ -211,13 +212,6 @@
         listPartial.push(elementObject);
       });
       elmObjsSortedInitial = elmObjsSorted.slice(0);
-    }
-
-    /**
-     * Sorts the sortList
-     */
-    function sort(){
-      elmObjsSorted.sort(sortFunction);
     }
 
     /**
@@ -332,6 +326,7 @@
         if (sortReturnNumber===0) criteriumIndex++;
       }
       if (sortReturnNumber===0) sortReturnNumber = a.pos>b.pos?1:-1;
+      //console.log('sfn',a.pos,b.pos,valueA,valueB,sortReturnNumber); // todo: remove log;
       return sortReturnNumber;
     }
 
@@ -456,6 +451,7 @@
         if (!criterium.cases) sortBy = sortBy.toLowerCase();
         sortBy = sortBy.replace(/\s+/g,' '); // spaces/newlines
       }
+      if (sortBy===null) sortBy = largeChar;
       return sortBy;
     }
 
