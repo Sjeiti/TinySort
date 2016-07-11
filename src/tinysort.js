@@ -94,9 +94,9 @@
 
     if(options&&options.logger!=null){ // deliberately using != for "null or undefined"
       if (typeof options.logger==="function") {
-        if (typeof options.logger.info === "function") {
+        if (options.logger.warn&&typeof options.logger.warn==="function") {
           logger = options.logger;
-        } else if (!options.logger.info) {
+        } else if (!options.logger.warn) {
           logger.warn("The supplied logger does not have an info method. Using console as default logger.");
         }
       } else if (options.logger===false){
