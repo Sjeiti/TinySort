@@ -42,6 +42,7 @@
       ,attr: nll         // order by attribute value
       ,data: nll         // use the data attribute for sorting
       ,useVal: fls       // use element value instead of text
+      ,subject: nll			// use function to retrieve data for sorting
 
       ,place: 'org'      // place ordered elements at position: start, end, org (original position), first, last
       ,returns: fls      // return all elements or only the sorted ones (true/false)
@@ -173,6 +174,7 @@
         hasSelector: hasSelector
         ,hasAttr: !(allOptions.attr===nll||allOptions.attr==='')
         ,hasData: allOptions.data!==nll
+        ,hasSubject: typeof allOptions.subject==='function'
         // filter
         ,hasFilter: hasFilter
         ,sortReturnNumber: allOptions.order==='asc'?1:-1
@@ -445,6 +447,7 @@
       if (criterium.hasAttr) sortBy = element.getAttribute(criterium.attr);
       else if (criterium.useVal) sortBy = element.value||element.getAttribute('value');
       else if (criterium.hasData) sortBy = element.getAttribute('data-'+criterium.data);
+      else if (criterium.hasSubject) sortBy = criterium.subject(element);
       else if (element) sortBy = element.textContent;
       // strings should be ordered in lowercase (unless specified)
       if (isString(sortBy)) {
