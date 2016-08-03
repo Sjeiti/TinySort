@@ -174,6 +174,7 @@
         hasSelector: hasSelector
         ,hasAttr: !(allOptions.attr===nll||allOptions.attr==='')
         ,hasData: allOptions.data!==nll
+        ,hasSubject: typeof allOptions.subject==='function'
         // filter
         ,hasFilter: hasFilter
         ,sortReturnNumber: allOptions.order==='asc'?1:-1
