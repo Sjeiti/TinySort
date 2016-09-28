@@ -24,7 +24,7 @@
   var fls = !1
     ,undef
     ,nll = null
-    ,win = window
+    ,win = (typeof module !== 'undefined' && module.exports) ? global : window
     ,doc = win.document
     ,parsefloat = parseFloat
     ,regexLastNr = /(-?\d+\.?\d*)\s*$/g    // regex for testing strings ending on numbers
