@@ -1,5 +1,5 @@
 /**
- * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
+ * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of its children.
  * @summary A nodeElement sorting script.
  * @version 2.3.6
  * @license MIT
@@ -24,7 +24,7 @@
   var fls = !1
     ,undef
     ,nll = null
-    ,win = window
+    ,win = (typeof module !== 'undefined' && module.exports) ? global : window
     ,doc = win.document
     ,parsefloat = parseFloat
     ,regexLastNr = /(-?\d+\.?\d*)\s*$/g    // regex for testing strings ending on numbers
@@ -75,6 +75,7 @@
    * @property {Boolean} [forceStrings=false] If false the string '2' will sort with the value 2, not the string '2'.
    * @property {Boolean} [ignoreDashes=false] Ignores dashes when looking for numerals.
    * @property {Function} [sortFunction=null] Override the default sort function. The parameters are of a type {elementObject}.
+   * @property {Function|Boolean} [logger=console] Override the default logger function, or set to false in order to disable. The custom logger must come equipped with a .warn method.
    * @property {Boolean} [useFlex=true] If one parent and display flex, ordering is done by CSS (instead of DOM)
    * @property {Boolean} [emptyEnd=true] Sort empty values to the end instead of the start
    */
@@ -88,9 +89,24 @@
    * @returns {HTMLElement[]}
    */
   function tinysort(nodeList,options){
+
+    var logger = console;
+
+    if(options&&options.logger!=null){ // deliberately using != for "null or undefined"
+      if (typeof options.logger==="function") {
+        if (options.logger.warn&&typeof options.logger.warn==="function") {
+          logger = options.logger;
+        } else if (!options.logger.warn) {
+          logger.warn("The supplied logger does not have an info method. Using console as default logger.");
+        }
+      } else if (options.logger===false){
+        logger.warn = function(){};
+      }
+    }
+
     if (isString(nodeList)) nodeList = doc.querySelectorAll(nodeList);
     if (nodeList.length===0) {
-      console.warn('No elements to sort');
+      logger.warn('No elements to sort');
     }
 
     var fragment = doc.createDocumentFragment()
@@ -344,7 +360,7 @@
           });
         } else {
           if (parentNode) parentNode.appendChild(sortedIntoFragment());
-          else console.warn('parentNode has been removed');
+          else logger.warn('parentNode has been removed');
         }
       } else {
         var criterium = criteria[0]
