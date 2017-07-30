@@ -221,6 +221,7 @@ Here are some example languages:
         <tr><td>Greek</td><td>α[ά]βγδε[έ]ζη[ή]θι[ίϊΐ]κλμνξο[ό]πρστυ[ύϋΰ]φχψω[ώ]</td></tr>
         <tr><td>Icelandic</td><td>a[á]dðe[é]i[í]o[ó]u[ú]y[ý]zþæö</td></tr>
         <tr><td>Polish</td><td>aąbcćeęlłnńoósśuúzźż</td></tr>
+        <tr><td>Russian</td><td>абвгдеёжзийклмнопрстуфхцчшщъыьэюя</td></tr>
         <tr><td>Serbo-Croatian</td><td>cčćd{dž}đl{lj}n{nj}sšzž</td></tr>
         <tr><td>Spanish</td><td>a[á]c{ch}e[é]i[í]l{ll}nño[ó]u[ú]y[ý]</td></tr>
         <tr><td>Swedish</td><td>åäö</td></tr>
