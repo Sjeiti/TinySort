@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>tinysort</id>
+    <version>2.3.6</version>
+    <title>TinySort</title>
+    <authors>Ron Valstar</authors>
+    <owners>sjeiti</owners>
+    <licenseUrl>https://github.com/Sjeiti/TinySort/blob/master/LICENSE</licenseUrl>
+    <projectUrl>http://tinysort.sjeiti.com/</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/Sjeiti/TinySort/master/style/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes>- removed Grunt as build tool, build is now pure Node
+- fixed issue #116 bug with sorting null values</releaseNotes>
+    <summary>TinySort is a small script that sorts HTMLElements.</summary>
+    <description>TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of its children.</description>
+    <copyright>Copyright 2016 Ron Valstar</copyright>
+    <tags>JavaScript sort sorting</tags>
+  </metadata>
+  <files>
+    <file src="dist\tinysort.*" target="content\Scripts" />
+  </files>
+</package>
