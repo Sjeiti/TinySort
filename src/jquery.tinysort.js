@@ -7,7 +7,7 @@
  * @version 2.3.6
  * @requires tinysort
  * @license MIT/GPL
- * @author Ron Valstar (http://www.sjeiti.com/)
+ * @author Ron Valstar (http://www.ronvalstar.nl/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  */
 (function (factory) {

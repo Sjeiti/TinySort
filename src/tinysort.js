@@ -4,7 +4,7 @@
  * @summary A nodeElement sorting script.
  * @version 3.0.0
  * @license MIT
- * @author Ron Valstar <ron@ronvalstar.nl>
+ * @author Ron Valstar (http://www.ronvalstar.nl/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
  */
