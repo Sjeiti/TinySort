@@ -12,6 +12,60 @@
     "type": "git",
     "url": "https://github.com/Sjeiti/TinySort.git"
   },
+  "scripts": {
+    "build": "node task/build test uglify",
+    "jscs": "jscs ./src/",
+    "jshint": "jshint ./src/",
+    "uglify": "node task/uglify",
+    "version": "next-version package.json bower.json src/tinysort.js src/jquery.tinysort.js src/tinysort.charorder.js",
+    "test": "node task/test",
+    "doc": "node task/jsdoc",
+    "_1": "",
+    "_js:ts": "npm run _js:main && npm run _js:uglify",
+    "_js:main": "babel src/tinysort.js --out-file dist/tinysort.js --presets=es2015,stage-0",
+    "_js:uglify": "uglifyjs temp/tinysort.js --compress --mangle --output dist/tinysort.min.js",
+    "_marked": "marked -i README.md  -o temp/_marked.html",
+    "_lint": "eslint src/*.js --fix",
+    "_2": "",
+    "_build": "npm run clean && npm run dir && npm run js && npm run copy",
+    "_build:watch": "chokidar \"src/js/**/*.js\" -c \"npm run build\"",
+    "_dev": "npm run serve | npm run js:watch | npm run copy:watch",
+    "_clean": "rimraf dist",
+    "_js": "webpack --config webpack.config.js",
+    "_js:watch": "chokidar \"src/**/*.js\" -c \"npm run js\"",
+    "_copy": "copy src\\index.html dist\\index.html | copy src\\page.html dist\\page.html",
+    "_copy:watch": "chokidar \"src/**/*.html\" -c \"npm run copy\"",
+    "_dir": "mkdirp dist/js",
+    "_serve": "node ./task/serve dist 8385"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-babili": "0.0.12",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "body-parser": "^1.17.1",
+    "chokidar-cli": "^1.2.0",
+    "eslint": "^3.19.0",
+    "express": "^4.15.2",
+    "jscs": "^2.11.0",
+    "jsdoc": "~3.3.0-alpha11",
+    "jsdoc-api": "^4.0.3",
+    "jsdoc-parse": "^1.2.1",
+    "jsdom": "^8.2.0",
+    "jshint": "^2.9.1",
+    "marked": "^0.4.0",
+    "mkdirp": "^0.5.1",
+    "next-version": "^0.9.3",
+    "node-qunit-phantomjs": "^1.4.0",
+    "open": "0.0.5",
+    "promisify-node": "^0.4.0",
+    "rimraf": "^2.6.1",
+    "serve-static": "^1.12.1",
+    "uglify-js": "^2.6.2",
+    "webpack": "^2.4.1"
+  },
   "keywords": [
     "sort",
     "element",
@@ -22,22 +76,6 @@
     "dom",
     "html"
   ],
-  "devDependencies": {
-    "express": "^4.13.4",
-    "jscs": "^2.11.0",
-    "jsdoc": "~3.3.0-alpha11",
-    "jsdoc-parse": "^1.2.1",
-    "jsdom": "^8.2.0",
-    "jshint": "^2.9.1",
-    "mkdirp": "~0.5.0",
-    "next-version": "^0.9.3",
-    "node-qunit-phantomjs": "^1.4.0",
-    "open": "0.0.5",
-    "promisify-node": "^0.4.0",
-    "rimraf": "^2.5.2",
-    "serve-static": "^1.10.2",
-    "uglify-js": "^2.6.2"
-  },
   "autoupdate": {
     "source": "git",
     "target": "git://github.com/Sjeiti/TinySort.git",
@@ -50,14 +88,5 @@
       "jquery.tinysort.js",
       "jquery.tinysort.min.js"
     ]
-  },
-  "scripts": {
-    "build": "node task/build test uglify",
-    "jscs": "jscs ./src/",
-    "jshint": "jshint ./src/",
-    "uglify": "node task/uglify",
-    "version": "next-version package.json bower.json src/tinysort.js src/jquery.tinysort.js src/tinysort.charorder.js",
-    "test": "node task/test",
-    "doc": "node task/jsdoc"
   }
 }
