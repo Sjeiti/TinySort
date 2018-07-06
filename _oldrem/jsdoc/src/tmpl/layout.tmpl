@@ -24,25 +24,25 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="<?js= this.nav.index.link ?>"><?js= this.nav.index.title ?></a>
+			<a class="navbar-brand" href="http://tinysort.sjeiti.com">TinySort</a>
 		</div>
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
-				<?js this.nav.topLevelNav.forEach(function(entry){ ?>
+				<!--<?js this.nav.topLevelNav.forEach(function(entry){ ?>-->
 				<li class="dropdown">
-					<a href="<?js= entry.link ?>" class="dropdown-toggle" data-toggle="dropdown"><?js= entry.title ?><b
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">asdf<!--<?js= entry.title ?>--><b
 						class="caret"></b></a>
 
 					<ul class="dropdown-menu <?js= that.navOptions.navType ==='inline' ? 'inline' : '' ?>" role="menu">
-						<?js entry.members.forEach(function(member){ ?>
+						<!--<?js entry.members.forEach(function(member){ ?>-->
 						<li>
-							<?js= member ?>
+							<!--<?js= member ?>-->
 						</li>
-						<?js	}); ?>
+						<!--<?js	}); ?>-->
 
 					</ul>
 				</li>
-				<?js }); ?>
+				<!--<?js }); ?>-->
 			</ul>
 		</div>
 	</div>

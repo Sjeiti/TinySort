@@ -1,51 +1,45 @@
-'use strict';
-
 /*global define, module*/
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
  * @version 3.0.0
  * @license MIT
- * @author Ron Valstar <ron@ronvalstar.nl>
+ * @author Ron Valstar (http://www.ronvalstar.nl/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
  */
-(function (root, tinysort) {
-  typeof define === 'function' && define.amd ? define('tinysort', function () {
-    return tinysort;
-  }) : root.tinysort = tinysort;
-})(window || module || {}, function (_undef) {
-  var fls = !1,
-      undef = _undef,
-      nll = null,
-      win = window,
-      doc = win.document,
-      parsefloat = parseFloat,
-      regexLastNr = /(-?\d+\.?\d*)\s*$/g // regex for testing strings ending on numbers
-  ,
-      regexLastNrNoDash = /(\d+\.?\d*)\s*$/g // regex for testing strings ending on numbers ignoring dashes
-  ,
-      plugins = [],
-      largeChar = String.fromCharCode(0xFFF),
-      /**{options}*/defaults = { // default settings
-    selector: nll // CSS selector to select the element to sort to
-    , order: 'asc' // order: asc, desc or rand
-    , attr: nll // order by attribute value
-    , data: nll // use the data attribute for sorting
-    , useVal: fls // use element value instead of text
-    , place: 'org' // place ordered elements at position: start, end, org (original position), first, last
-    , returns: fls // return all elements or only the sorted ones (true/false)
-    , cases: fls // a case sensitive sort orders [aB,aa,ab,bb]
-    , natural: fls // use natural sort order
-    , forceStrings: fls // if false the string '2' will sort with the value 2, not the string '2'
-    , ignoreDashes: fls // ignores dashes when looking for numerals
-    , sortFunction: nll // override the default sort function
-    , useFlex: fls,
-    emptyEnd: fls,
-    console: console
-  };
-  var numCriteria = 0,
-      criteriumIndex = 0;
+(function(root,tinysort){
+  typeof define==='function'&&define.amd?define('tinysort',()=>tinysort):(root.tinysort = tinysort)
+}(window||module||{},(_undef=>{
+  const fls = !1
+    ,undef = _undef
+    ,nll = null
+    ,win = window
+    ,doc = win.document
+    ,parsefloat = parseFloat
+    ,regexLastNr = /(-?\d+\.?\d*)\s*$/g    // regex for testing strings ending on numbers
+    ,regexLastNrNoDash = /(\d+\.?\d*)\s*$/g  // regex for testing strings ending on numbers ignoring dashes
+    ,plugins = []
+    ,largeChar = String.fromCharCode(0xFFF)
+    ,/**{options}*/defaults = {        // default settings
+      selector: nll      // CSS selector to select the element to sort to
+      ,order: 'asc'      // order: asc, desc or rand
+      ,attr: nll         // order by attribute value
+      ,data: nll         // use the data attribute for sorting
+      ,useVal: fls       // use element value instead of text
+      ,place: 'org'      // place ordered elements at position: start, end, org (original position), first, last
+      ,returns: fls      // return all elements or only the sorted ones (true/false)
+      ,cases: fls        // a case sensitive sort orders [aB,aa,ab,bb]
+      ,natural: fls      // use natural sort order
+      ,forceStrings:fls  // if false the string '2' will sort with the value 2, not the string '2'
+      ,ignoreDashes:fls  // ignores dashes when looking for numerals
+      ,sortFunction: nll // override the default sort function
+      ,useFlex:fls
+      ,emptyEnd:fls
+      ,console
+    }
+  let numCriteria = 0
+    ,criteriumIndex = 0
 
   /**
    * Options object
@@ -74,57 +68,48 @@
    * @param {options} [options] A list of options.
    * @returns {HTMLElement[]}
    */
-  function tinysort(nodeList, options) {
-    isString(nodeList) && (nodeList = doc.querySelectorAll(nodeList));
+  function tinysort(nodeList,options){
+    isString(nodeList) && (nodeList = doc.querySelectorAll(nodeList))
 
-    var _Object$assign = Object.assign({}, defaults, options || {}),
-        console = _Object$assign.console;
+    const {console} = Object.assign({},defaults,options||{})
+    nodeList.length===0 && console && console.warn && console.warn('No elements to sort')
 
-    nodeList.length === 0 && console && console.warn && console.warn('No elements to sort');
+    const fragment = doc.createDocumentFragment()
+      /** both sorted and unsorted elements
+       * @type {elementObject[]} */
+      ,elmObjsAll = []
+      /** sorted elements
+       * @type {elementObject[]} */
+      ,elmObjsSorted = []
+      /** unsorted elements
+       * @type {elementObject[]} */
+      ,elmObjsUnsorted = []
+      /** sorted elements before sort
+       * @type {elementObject[]} */
+      ,elmObjsSortedInitial = []
+      /** @type {criteriumIndex[]} */
+      ,criteria = []
+    let /** @type {HTMLElement} */parentNode
+      ,isSameParent = true
+      ,firstParent = nodeList.length&&nodeList[0].parentNode
+      ,isFragment = firstParent.rootNode!==document
+      ,isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&!isFragment&&getComputedStyle(firstParent,null).display.indexOf('flex')!==-1
 
-    var fragment = doc.createDocumentFragment()
-    /** both sorted and unsorted elements
-     * @type {elementObject[]} */
-    ,
-        elmObjsAll = []
-    /** sorted elements
-     * @type {elementObject[]} */
-    ,
-        elmObjsSorted = []
-    /** unsorted elements
-     * @type {elementObject[]} */
-    ,
-        elmObjsUnsorted = []
-    /** sorted elements before sort
-     * @type {elementObject[]} */
-    ,
-        elmObjsSortedInitial = []
-    /** @type {criteriumIndex[]} */
-    ,
-        criteria = [];
-    var /** @type {HTMLElement} */parentNode = void 0,
-        isSameParent = true,
-        firstParent = nodeList.length && nodeList[0].parentNode,
-        isFragment = firstParent.rootNode !== document,
-        isFlex = nodeList.length && (options === undef || options.useFlex !== false) && !isFragment && getComputedStyle(firstParent, null).display.indexOf('flex') !== -1;
-
-    initCriteria.apply(nll, Array.prototype.slice.call(arguments, 1));
-    initSortList();
-    elmObjsSorted.sort(sortFunction);
-    applyToDOM();
+    initCriteria.apply(nll,Array.prototype.slice.call(arguments,1))
+    initSortList()
+    elmObjsSorted.sort(sortFunction)
+    applyToDOM()
 
     /**
      * Create criteria list
      */
-    function initCriteria() {
-      if (arguments.length === 0) {
-        addCriterium({}); // have at least one criterium
+    function initCriteria(){
+      if (arguments.length===0) {
+        addCriterium({}) // have at least one criterium
       } else {
-        loop(arguments, function (param) {
-          return addCriterium(isString(param) ? { selector: param } : param);
-        });
+        loop(arguments,param=>addCriterium(isString(param)?{selector:param}:param))
       }
-      numCriteria = criteria.length;
+      numCriteria = criteria.length
     }
 
     /**
@@ -155,19 +140,19 @@
      * @private
      * @param {Object} [options]
      */
-    function addCriterium(options) {
-      var hasSelector = !!options.selector,
-          hasFilter = hasSelector && options.selector[0] === ':',
-          allOptions = extend(options || {}, defaults);
+    function addCriterium(options){
+      const hasSelector = !!options.selector
+        ,hasFilter = hasSelector&&options.selector[0]===':'
+        ,allOptions = extend(options||{},defaults)
       criteria.push(extend({
         // has find, attr or data
-        hasSelector: hasSelector,
-        hasAttr: !(allOptions.attr === nll || allOptions.attr === ''),
-        hasData: allOptions.data !== nll
+        hasSelector
+        ,hasAttr: !(allOptions.attr===nll||allOptions.attr==='')
+        ,hasData: allOptions.data!==nll
         // filter
-        , hasFilter: hasFilter,
-        sortReturnNumber: allOptions.order === 'asc' ? 1 : -1
-      }, allOptions));
+        ,hasFilter
+        ,sortReturnNumber: allOptions.order==='asc'?1:-1
+      },allOptions))
     }
 
     /**
@@ -184,24 +169,22 @@
      * @memberof tinysort
      * @private
      */
-    function initSortList() {
-      loop(nodeList, function (elm, i) {
-        if (!parentNode) parentNode = elm.parentNode;else if (parentNode !== elm.parentNode) isSameParent = false;
-        var _criteria$ = criteria[0],
-            hasFilter = _criteria$.hasFilter,
-            selector = _criteria$.selector,
-            isPartial = !selector || hasFilter && elm.matches(selector) || selector && elm.querySelector(selector),
-            listPartial = isPartial ? elmObjsSorted : elmObjsUnsorted,
-            elementObject = {
-          elm: elm,
-          pos: i,
-          posn: listPartial.length
-        };
-
-        elmObjsAll.push(elementObject);
-        listPartial.push(elementObject);
-      });
-      elmObjsSortedInitial.splice.apply(elmObjsSortedInitial, [0, Number.MAX_SAFE_INTEGER].concat(elmObjsSorted));
+    function initSortList(){
+      loop(nodeList,(elm,i)=>{
+        if (!parentNode) parentNode = elm.parentNode
+        else if (parentNode!==elm.parentNode) isSameParent = false
+        const {hasFilter,selector} = criteria[0]
+          ,isPartial = !selector||(hasFilter&&elm.matches(selector))||(selector&&elm.querySelector(selector))
+          ,listPartial = isPartial?elmObjsSorted:elmObjsUnsorted
+          ,elementObject = {
+            elm: elm
+            ,pos: i
+            ,posn: listPartial.length
+          }
+        elmObjsAll.push(elementObject)
+        listPartial.push(elementObject)
+      })
+      elmObjsSortedInitial.splice(0,Number.MAX_SAFE_INTEGER,...elmObjsSorted)
     }
 
     /**
@@ -209,18 +192,18 @@
      * http://web.archive.org/web/20130826203933/http://my.opera.com/GreyWyvern/blog/show.dml/1671288
      */
     function naturalCompare(a, b, chunkify) {
-      var aa = chunkify(a.toString()),
-          bb = chunkify(b.toString());
-      for (var x = 0; aa[x] && bb[x]; x++) {
-        if (aa[x] !== bb[x]) {
-          var c = Number(aa[x]),
-              d = Number(bb[x]);
+      const aa = chunkify(a.toString())
+        ,bb = chunkify(b.toString())
+      for (let x = 0; aa[x] && bb[x]; x++) {
+        if (aa[x]!==bb[x]) {
+          const c = Number(aa[x])
+            ,d = Number(bb[x])
           if (c == aa[x] && d == bb[x]) {
-            return c - d;
-          } else return aa[x] > bb[x] ? 1 : -1;
+            return c - d
+          } else return aa[x]>bb[x]?1:-1
         }
       }
-      return aa.length - bb.length;
+      return aa.length - bb.length
     }
 
     /**
@@ -231,22 +214,17 @@
      * @returns {Array}
      */
     function chunkify(t) {
-      var tz = [];
-      var x = 0,
-          y = -1,
-          n = 0,
-          i = void 0,
-          j = void 0;
-      while (i = (j = t.charAt(x++)).charCodeAt(0)) {
-        // eslint-disable-line no-cond-assign
-        var m = i === 46 || i >= 48 && i <= 57;
+      const tz = []
+      let x = 0, y = -1, n = 0, i, j
+      while (i = (j = t.charAt(x++)).charCodeAt(0)) { // eslint-disable-line no-cond-assign
+        const m = (i === 46 || (i >=48 && i <= 57))
         if (m !== n) {
-          tz[++y] = '';
-          n = m;
+          tz[++y] = ''
+          n = m
         }
-        tz[y] += j;
+        tz[y] += j
       }
-      return tz;
+      return tz
     }
 
     /**
@@ -257,81 +235,66 @@
      * @param {elementObject} b
      * @returns {number}
      */
-    function sortFunction(a, b) {
-      var sortReturnNumber = 0;
-      if (criteriumIndex !== 0) criteriumIndex = 0;
-
-      var _loop = function _loop() {
+    function sortFunction(a,b){
+      let sortReturnNumber = 0
+      if (criteriumIndex!==0) criteriumIndex = 0
+      while (sortReturnNumber===0&&criteriumIndex<numCriteria) {
         /** @type {criterium} */
-        var criterium = criteria[criteriumIndex],
-            regexLast = criterium.ignoreDashes ? regexLastNrNoDash : regexLastNr;
+        const criterium = criteria[criteriumIndex]
+          ,regexLast = criterium.ignoreDashes?regexLastNrNoDash:regexLastNr
         //
-        loop(plugins, function (plugin) {
-          return plugin.prepare && plugin.prepare(criterium);
-        });
+        loop(plugins,plugin=>plugin.prepare && plugin.prepare(criterium))
         //
-        var isNumeric = fls
-        // prepare sort elements
-        ,
-            valueA = getSortBy(a, criterium),
-            valueB = getSortBy(b, criterium);
-        if (criterium.sortFunction) {
-          // custom sort
-          sortReturnNumber = criterium.sortFunction(a, b);
-        } else if (criterium.order === 'rand') {
-          // random sort
-          sortReturnNumber = Math.random() < 0.5 ? 1 : -1;
-        } else {
-          // regular sort
-          var noA = valueA === '' || valueA === undef,
-              noB = valueB === '' || valueB === undef;
-          if (valueA === valueB) {
-            sortReturnNumber = 0;
-          } else if (criterium.emptyEnd && (noA || noB)) {
-            sortReturnNumber = noA && noB ? 0 : noA ? 1 : -1;
+        let isNumeric = fls
+          // prepare sort elements
+          ,valueA = getSortBy(a,criterium)
+          ,valueB = getSortBy(b,criterium)
+        if (criterium.sortFunction) { // custom sort
+          sortReturnNumber = criterium.sortFunction(a,b)
+        } else if (criterium.order==='rand') { // random sort
+          sortReturnNumber = Math.random()<0.5?1:-1
+        } else { // regular sort
+          const noA = valueA===''||valueA===undef
+            ,noB = valueB===''||valueB===undef
+          if (valueA===valueB) {
+            sortReturnNumber = 0
+          } else if (criterium.emptyEnd&&(noA||noB)) {
+            sortReturnNumber = noA&&noB?0:noA?1:-1
           } else {
             if (!criterium.forceStrings) {
               // cast to float if both strings are numeral (or end numeral)
-              var valuesA = isString(valueA) ? valueA && valueA.match(regexLast) : fls // todo: isString superfluous because getSortBy returns string|undefined
-              ,
-                  valuesB = isString(valueB) ? valueB && valueB.match(regexLast) : fls;
+              let valuesA = isString(valueA)?valueA&&valueA.match(regexLast):fls// todo: isString superfluous because getSortBy returns string|undefined
+                ,valuesB = isString(valueB)?valueB&&valueB.match(regexLast):fls
 
-              if (valuesA && valuesB) {
-                var previousA = valueA.substr(0, valueA.length - valuesA[0].length),
-                    previousB = valueB.substr(0, valueB.length - valuesB[0].length);
-                if (previousA == previousB) {
-                  isNumeric = !fls;
-                  valueA = parsefloat(valuesA[0]);
-                  valueB = parsefloat(valuesB[0]);
+              if (valuesA&&valuesB) {
+                const previousA = valueA.substr(0,valueA.length-valuesA[0].length)
+                  ,previousB = valueB.substr(0,valueB.length-valuesB[0].length)
+                if (previousA==previousB) {
+                  isNumeric = !fls
+                  valueA = parsefloat(valuesA[0])
+                  valueB = parsefloat(valuesB[0])
                 }
               }
             }
-            if (valueA === undef || valueB === undef) {
-              sortReturnNumber = 0;
+            if (valueA===undef||valueB===undef) {
+              sortReturnNumber = 0
             } else {
               // todo: check here
-              if (!criterium.natural || !isNaN(valueA) && !isNaN(valueB)) {
-                sortReturnNumber = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+              if (!criterium.natural||(!isNaN(valueA)&&!isNaN(valueB))) {
+                sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0)
               } else {
-                sortReturnNumber = naturalCompare(valueA, valueB, chunkify);
+                sortReturnNumber = naturalCompare(valueA, valueB, chunkify)
               }
             }
           }
         }
-        loop(plugins, function (_ref) {
-          var sort = _ref.sort;
-          return sort && (sortReturnNumber = sort(criterium, isNumeric, valueA, valueB, sortReturnNumber));
-        });
-        sortReturnNumber *= criterium.sortReturnNumber; // lastly assign asc/desc
-        sortReturnNumber === 0 && criteriumIndex++;
-      };
-
-      while (sortReturnNumber === 0 && criteriumIndex < numCriteria) {
-        _loop();
+        loop(plugins,({sort})=>sort && (sortReturnNumber = sort(criterium,isNumeric,valueA,valueB,sortReturnNumber)))
+        sortReturnNumber *= criterium.sortReturnNumber // lastly assign asc/desc
+        sortReturnNumber===0 && criteriumIndex++
       }
-      sortReturnNumber === 0 && (sortReturnNumber = a.pos > b.pos ? 1 : -1);
+      sortReturnNumber===0 && (sortReturnNumber = a.pos>b.pos?1:-1)
       //console.log('sfn',a.pos,b.pos,valueA,valueB,sortReturnNumber); // todo: remove log;
-      return sortReturnNumber;
+      return sortReturnNumber
     }
 
     /**
@@ -339,45 +302,39 @@
      * @memberof tinysort
      * @private
      */
-    function applyToDOM() {
-      var hasSortedAll = elmObjsSorted.length === elmObjsAll.length;
-      var _criteria$2 = criteria[0],
-          place = _criteria$2.place,
-          console = _criteria$2.console;
-
-      if (isSameParent && hasSortedAll) {
+    function applyToDOM(){
+      const hasSortedAll = elmObjsSorted.length===elmObjsAll.length
+      const {place,console} = criteria[0]
+      if (isSameParent&&hasSortedAll) {
         if (isFlex) {
-          elmObjsSorted.forEach(function (elmObj, i) {
-            return elmObj.elm.style.order = i;
-          });
+          elmObjsSorted.forEach((elmObj,i)=>elmObj.elm.style.order = i)
         } else {
-          if (parentNode) parentNode.appendChild(sortedIntoFragment());else console && console.warn && console.warn('parentNode has been removed');
+          if (parentNode) parentNode.appendChild(sortedIntoFragment())
+          else console && console.warn && console.warn('parentNode has been removed')
         }
       } else {
-        var isPlaceOrg = place === 'org',
-            isPlaceStart = place === 'start',
-            isPlaceEnd = place === 'end',
-            isPlaceFirst = place === 'first',
-            isPlaceLast = place === 'last';
+        const isPlaceOrg = place==='org'
+          ,isPlaceStart = place==='start'
+          ,isPlaceEnd = place==='end'
+          ,isPlaceFirst = place==='first'
+          ,isPlaceLast = place==='last'
 
         if (isPlaceOrg) {
-          elmObjsSorted.forEach(addGhost);
-          elmObjsSorted.forEach(function (elmObj, i) {
-            return replaceGhost(elmObjsSortedInitial[i], elmObj.elm);
-          });
-        } else if (isPlaceStart || isPlaceEnd) {
-          var startElmObj = elmObjsSortedInitial[isPlaceStart ? 0 : elmObjsSortedInitial.length - 1],
-              startParent = startElmObj && startElmObj.elm.parentNode,
-              startElm = startParent && (isPlaceStart && startParent.firstChild || startParent.lastChild);
+          elmObjsSorted.forEach(addGhost)
+          elmObjsSorted.forEach((elmObj,i)=>replaceGhost(elmObjsSortedInitial[i],elmObj.elm))
+        } else if (isPlaceStart||isPlaceEnd) {
+          let startElmObj = elmObjsSortedInitial[isPlaceStart?0:elmObjsSortedInitial.length-1]
+            ,startParent = startElmObj&&startElmObj.elm.parentNode
+            ,startElm = startParent&&(isPlaceStart&&startParent.firstChild||startParent.lastChild)
           if (startElm) {
-            startElm !== startElmObj.elm && (startElmObj = { elm: startElm });
-            addGhost(startElmObj);
-            isPlaceEnd && startParent.appendChild(startElmObj.ghost);
-            replaceGhost(startElmObj, sortedIntoFragment());
+            startElm!==startElmObj.elm && (startElmObj = {elm:startElm})
+            addGhost(startElmObj)
+            isPlaceEnd&&startParent.appendChild(startElmObj.ghost)
+            replaceGhost(startElmObj,sortedIntoFragment())
           }
-        } else if (isPlaceFirst || isPlaceLast) {
-          var firstElmObj = elmObjsSortedInitial[isPlaceFirst ? 0 : elmObjsSortedInitial.length - 1];
-          replaceGhost(addGhost(firstElmObj), sortedIntoFragment());
+        } else if (isPlaceFirst||isPlaceLast) {
+          const firstElmObj = elmObjsSortedInitial[isPlaceFirst?0:elmObjsSortedInitial.length-1]
+          replaceGhost(addGhost(firstElmObj),sortedIntoFragment())
         }
       }
     }
@@ -388,11 +345,9 @@
      * @private
      * @returns {DocumentFragment}
      */
-    function sortedIntoFragment() {
-      elmObjsSorted.forEach(function (elmObj) {
-        return fragment.appendChild(elmObj.elm);
-      });
-      return fragment;
+    function sortedIntoFragment(){
+      elmObjsSorted.forEach(elmObj=>fragment.appendChild(elmObj.elm))
+      return fragment
     }
 
     /**
@@ -402,12 +357,12 @@
      * @param {elementObject} elmObj
      * @returns {elementObject}
      */
-    function addGhost(elmObj) {
-      var element = elmObj.elm,
-          ghost = doc.createElement('div');
-      elmObj.ghost = ghost;
-      element.parentNode.insertBefore(ghost, element);
-      return elmObj;
+    function addGhost(elmObj){
+      const element = elmObj.elm
+        ,ghost = doc.createElement('div')
+      elmObj.ghost = ghost
+      element.parentNode.insertBefore(ghost,element)
+      return elmObj
     }
 
     /**
@@ -417,12 +372,12 @@
      * @param {elementObject} elmObjGhost
      * @param {HTMLElement} elm
      */
-    function replaceGhost(elmObjGhost, elm) {
-      var ghost = elmObjGhost.ghost,
-          ghostParent = ghost.parentNode;
-      ghostParent.insertBefore(elm, ghost);
-      ghostParent.removeChild(ghost);
-      delete elmObjGhost.ghost;
+    function replaceGhost(elmObjGhost,elm){
+      const ghost = elmObjGhost.ghost
+        ,ghostParent = ghost.parentNode
+      ghostParent.insertBefore(elm,ghost)
+      ghostParent.removeChild(ghost)
+      delete elmObjGhost.ghost
     }
 
     /**
@@ -434,27 +389,30 @@
      * @returns {String}
      * @todo memoize
      */
-    function getSortBy(elementObject, criterium) {
-      var sortBy = void 0,
-          element = elementObject.elm,
-          selector = criterium.selector;
+    function getSortBy(elementObject,criterium){
+      let sortBy
+          ,element = elementObject.elm
+          ,{selector} = criterium
       // element
       if (selector) {
         if (criterium.hasFilter) {
-          if (!element.matches(selector)) element = nll;
+          if (!element.matches(selector)) element = nll
         } else {
-          element = element.querySelector(selector);
+          element = element.querySelector(selector)
         }
       }
       // value
-      if (criterium.hasAttr) sortBy = element.getAttribute(criterium.attr);else if (criterium.useVal) sortBy = element.value || element.getAttribute('value');else if (criterium.hasData) sortBy = element.getAttribute('data-' + criterium.data);else if (element) sortBy = element.textContent;
+      if (criterium.hasAttr) sortBy = element.getAttribute(criterium.attr)
+      else if (criterium.useVal) sortBy = element.value||element.getAttribute('value')
+      else if (criterium.hasData) sortBy = element.getAttribute('data-'+criterium.data)
+      else if (element) sortBy = element.textContent
       // strings should be ordered in lowercase (unless specified)
       if (isString(sortBy)) {
-        if (!criterium.cases) sortBy = sortBy.toLowerCase();
-        sortBy = sortBy.replace(/\s+/g, ' '); // spaces/newlines
+        if (!criterium.cases) sortBy = sortBy.toLowerCase()
+        sortBy = sortBy.replace(/\s+/g,' ') // spaces/newlines
       }
-      if (sortBy === null) sortBy = largeChar;
-      return sortBy;
+      if (sortBy===null) sortBy = largeChar
+      return sortBy
     }
 
     /*function memoize(fnc) {
@@ -474,13 +432,11 @@
      * @param o
      * @returns {boolean}
      */
-    function isString(o) {
-      return typeof o === 'string';
+    function isString(o){
+      return typeof o==='string'
     }
 
-    return elmObjsSorted.map(function (o) {
-      return o.elm;
-    });
+    return elmObjsSorted.map(o=>o.elm)
   }
 
   /**
@@ -491,13 +447,13 @@
    * @param {Array} array The object or array
    * @param {Function} func Callback function with the parameters value and key.
    */
-  function loop(array, func) {
-    var l = array.length;
-    var i = l,
-        j = void 0;
+  function loop(array,func){
+    const l = array.length
+    let i = l
+      ,j
     while (i--) {
-      j = l - i - 1;
-      func(array[j], j);
+      j = l-i-1
+      func(array[j],j)
     }
   }
 
@@ -511,26 +467,24 @@
    * @param {boolean} [overwrite=false]  Overwrite properties.
    * @returns {Object} Subject.
    */
-  function extend(obj, fns, overwrite) {
-    for (var s in fns) {
-      if (overwrite || obj[s] === undef) {
-        obj[s] = fns[s];
+  function extend(obj,fns,overwrite){
+    for (let s in fns) {
+      if (overwrite||obj[s]===undef) {
+        obj[s] = fns[s]
       }
     }
-    return obj;
+    return obj
   }
 
-  function plugin(prepare, sort, sortBy) {
-    plugins.push({ prepare: prepare, sort: sort, sortBy: sortBy });
+  function plugin(prepare,sort,sortBy){
+    plugins.push({prepare,sort,sortBy})
   }
 
   // Element.prototype.matches IE
-  win.Element && function (elementPrototype) {
-    return elementPrototype.matches = elementPrototype.matches || elementPrototype.msMatchesSelector;
-  }(Element.prototype);
+  win.Element&&(elementPrototype=>elementPrototype.matches = elementPrototype.matches||elementPrototype.msMatchesSelector)(Element.prototype)
 
   // extend the plugin to expose stuff
-  extend(plugin, { loop: loop });
+  extend(plugin,{loop})
 
-  return extend(tinysort, { plugin: plugin, defaults: defaults });
-}());
+  return extend(tinysort,{plugin,defaults})
+})()))

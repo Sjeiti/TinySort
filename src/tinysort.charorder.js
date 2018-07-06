@@ -2,7 +2,7 @@
 /**
  * TinySort CharOrder: a TinySort plugin to sort non-latin characters.
  * @summary TinySort CharOrder
- * @version 2.3.6
+ * @version 3.0.1
  * @requires tinysort
  * @license MIT/GPL
  * @author Ron Valstar (http://www.ronvalstar.nl/)
@@ -18,19 +18,13 @@
 		,fnIndexOf = Array.prototype.indexOf// minify placeholder
 		,plugin = tinysort.plugin
 		,loop = plugin.loop
+		,allCharsList = Array.from(new Array(287),(o,i)=>fromCharCode(i+32).toLowerCase()).filter((o,i,a)=>a.indexOf(o)===i) // all latin chars 32-255
+		,regexNonLatin = /[^a-zA-Z]/g
 		//
   let charOrder // equals the input oSettings.charOrder so we can test any changes
-		,allCharsList = (function(a){ // all latin chars 32-255
-      // using lowerCase instead of upperCase so _ will sort before
-      for (let i = 32,s = fromCharCode(i),len = 255; i<len; i++, s = fromCharCode(i).toLowerCase()) {
-        if (fnIndexOf.call(a,s)=== -1) a.push(s)
-      }
-      return a.sort()
-    })([])
-		,orderedCharlist					// similar to sAllChars but with the changed char order
-		,replacementIndex = 0x2500			// doubles are replaced with Unicode char starting at 0x2500
-		,replacements = {}					// replacement object // todo: reset?
-		,regexNonLatin = /[^a-zA-Z]/g
+		,orderedCharlist // similar to sAllChars but with the changed char order
+		,replacementIndex = 0x2500 // doubles are replaced with Unicode char starting at 0x2500
+		,replacements = {} // replacement object // todo: reset?
 
 	// add to namespace
   tinysort.defaults.charOrder = charOrder // sets to undefined
@@ -58,17 +52,14 @@
       if (charOrder) {
         orderedCharlist = allCharsList.slice(0) // first set to entire 32-255 charlist
 				// then loop through the charOrder rule
-        for (var
-          charListNotLatin = []
-					,addReplacement = function(nonLatin,replacement){
-  charListNotLatin.push(replacement)
-  replacements[criterium.cases?nonLatin:nonLatin.toLowerCase()] = replacement
-}
+        for (let charListNotLatin = []
+					,addReplacement = (nonLatin,replacement)=>charListNotLatin.push(replacement)&&(replacements[criterium.cases?nonLatin:nonLatin.toLowerCase()] = replacement)
 					,lastLatinChar = 'z' // if oSettings.charOrder has no [a-z] characters are appended to z
 					,l = charOrder.length
 					,j,m // init
-				,i=0;i<l;i++) { // loop through chars to set 'sOrderChar'
-          var  char = charOrder[i]
+          ,i=0;i<l;i++
+        ) { // loop through chars to set 'sOrderChar'
+          const char = charOrder[i]
 						,charCode = char.charCodeAt()
 						,charIsLatin = charCode>96&&charCode<123 // 'a'.charCodeAt()===97 'z'.charCodeAt()===122
           if (!charIsLatin){
