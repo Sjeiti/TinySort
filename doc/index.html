@@ -35,6 +35,33 @@
 	</div>
 </nav>
 
+<div class="firstparagraph">
+  <div class="container">
+    <div class="col-sm-9"></div>
+    <div class="col-sm-3 download">
+      <h3 class="nav-label">source</h3>
+      <a href="https://github.com/Sjeiti/TinySort" class="btn btn-sm btn-download">https://github.com/Sjeiti/TinySort</a>
+      <input value="npm i -S tinysort" class="btn btn-sm btn-source">
+      <input type="radio" name="wrap" id="wrap-cdn" checked="checked" class="unveal"><label for="wrap-cdn" class="btn btn-sm">cdn</label><input type="radio" name="wrap" id="wrap-download" class="unveal"><label for="wrap-download" class="btn btn-sm">download</label>
+      <div class="wrap wrap-download">
+        <a download="tinysort.js" href="dist/tinysort.js" class="btn btn-sm btn-download filesize" data-filesize="19kB">tinysort.js</a>
+        <a download="tinysort.min.js" href="dist/tinysort.min.js" class="btn btn-sm btn-download filesize" data-filesize="4kB">tinysort.min.js</a>
+        <a download="tinysort.charorder.js" href="dist/tinysort.charorder.js" class="btn btn-sm btn-download filesize" data-filesize="6kB">tinysort.charorder.js</a>
+        <a download="tinysort.charorder.min.js" href="dist/tinysort.charorder.min.js" class="btn btn-sm btn-download filesize" data-filesize="2kB">tinysort.charorder.min.js</a>
+        <a download="jquery.tinysort.js" href="dist/jquery.tinysort.js" class="btn btn-sm btn-download filesize" data-filesize="1kB">jquery.tinysort.js</a>
+        <a download="jquery.tinysort.min.js" href="dist/jquery.tinysort.min.js" class="btn btn-sm btn-download filesize" data-filesize="912B">jquery.tinysort.min.js</a>
+      </div>
+      <div class="wrap wrap-cdn">
+        <a href="http://cdnjs.com/libraries/tinysort" class="btn btn-sm btn-cdn">http://cdnjs.com/libraries/tinysort</a>
+        <input value="https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.3.6/tinysort.js" class="btn btn-sm btn-cdn">
+        <input value="https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.3.6/tinysort.min.js" class="btn btn-sm btn-cdn">
+        <input value="https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.3.6/tinysort.charorder.js" class="btn btn-sm btn-cdn">
+        <input value="https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.3.6/tinysort.charorder.min.js" class="btn btn-sm btn-cdn">
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class="container">
   <div class="span8">
     <div class="span12">
@@ -57,6 +84,7 @@
 
 <!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>-->
 <script src="js/main.js"></script>
+<script src="dist/tinysort.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rainbow/1.2.0/js/rainbow.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rainbow/1.2.0/js/language/generic.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rainbow/1.2.0/js/language/html.js"></script>
