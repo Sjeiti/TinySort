@@ -1,6 +1,4 @@
-import { expand } from '@emmetio/expand-abbreviation'
-
-const zen = s=>stringToElement(expand(s))
+import {zen,getFragment,toSlug,formatSize,createElement,clearElement} from './util'
 
 initFirstPararaph()
 initTinySort()
@@ -113,8 +111,10 @@ function initTableOfContents(){
     !ignore&&createElement('a',null,li,{href:'#'+slug},text)
   })
   const navbarNav = document.querySelector('.nav.navbar-nav')
-  while (navbarNav.firstChild) navbarNav.removeChild(navbarNav.firstChild)
-  navbarNav.appendChild(list[0])
+  clearElement(navbarNav).appendChild(list[0])
+  // while (navbarNav.firstChild) navbarNav.removeChild(navbarNav.firstChild)
+  // navbarNav.querySelector('.nav.navbar-nav').appendChild(list[0])
+  // document.querySelector('.nav.navbar-nav').appendChild(list[0]) // insane behavior: var reference is gone
 }
 
 /**
@@ -160,207 +160,107 @@ function initMenuEvents(){
   })
 }
 
-/**
- * Turn a title into a slug
- * @param {String} s A string
- * @returns {string}
- */
-function toSlug(s) {
-  let str = s.toLowerCase()
-    ,replace = {
-      a: /[àáäâ]/g,
-      e: /[èéëê]/g,
-      i: /[ìíïî]/g,
-      o: /[òóöô]/g,
-      u: /[ùúüû]/g,
-      n: /[ñ]/g,
-      c: /[ç]/g,
-      '-': /[^a-z0-9]|-+/g,
-      '': /^-+|-+$/g
-    }
-  for (let replacement in replace) {
-    str = str.replace(replace[replacement],replacement)
-  }
-  return str
-}
-
-/**
- * Small utility method for quickly creating elements.
- * @name createElement
- * @param {String} [type='div'] The element type
- * @param {String|Array} classes An optional string or list of classes to be added
- * @param {HTMLElement} parent An optional parent to add the element to
- * @param {Object} attributes An optional click event handler
- * @param {String} text An optional click event handler
- * @param {Function} click An optional click event handler
- * @returns {HTMLElement} Returns the newly created element
- */
-function createElement(type,classes,parent,attributes,text,click) {
-  const mElement = document.createElement(type || 'div')
-  if (attributes) for (let attr in attributes) mElement.setAttribute(attr,attributes[attr])
-  if (classes) {
-    const oClassList = mElement.classList,aArguments = typeof(classes)==='string'?classes.split(' '):classes
-    oClassList.add.apply(oClassList,aArguments)
-  }
-  if (text) mElement.textContent = text
-  click && mElement.addEventListener('click',click)
-  parent && parent.appendChild(mElement)
-  return mElement
-}
-
-/**
- * Set the innerHTML of a cached div
- * Helper method for getFragment and stringToElement
- * @param {string} str
- * @returns {HTMLElement}
- */
-function wrapHTMLString(str) {
-  const div = document.createElement('div')
-  div.innerHTML = str
-  return div
-}
-
-/**
- * Get documentFragment from an HTML string
- * @param {string} str
- * @returns {DocumentFragment}
- */
-export function getFragment(str) {
-  const fragment = document.createDocumentFragment()
-  Array.from(wrapHTMLString(str).childNodes).forEach(elm => fragment.appendChild(elm))
-  return fragment
-}
-
-/**
- * Turn an HTML string into an element
- * @param {string} str
- * @returns {HTMLElement}
- */
-export function stringToElement(str) {
-  return wrapHTMLString(str.replace(/^\s*|\s*$/g, '')).childNodes[0]
-}
-
-/**
- * Formats a number to the appropriate filesize notation
- * @param {number} number The number to format
- * @param {number} round The number of decimals to round by
- * @returns {string} Filesize string result
- * @todo extend to generic formatter
- */
-export function formatSize(number,round) {
-  let i, size = number
-  if (round===undefined) round = 0
-  const aSizes = ['B','kB','MB','GB','TB','PB','EB','ZB','YB']
-  for (i = 0; size>1024 && (aSizes.length>=(i + 2)); i++) size /= 1024
-  const iMult = Math.pow(10,round)
-  return (Math.round(size * iMult) / iMult) + aSizes[i]
-}
-
+//##############################################################################
+//##############################################################################
 //##############################################################################
 //##############################################################################
 
+/**
+ * Sort the example
+ * @param {string} code
+ */
 function doSort(code) {
-  console.log('doSort',code) // todo: remove log
-  /*jshint evil:true*/
   eval(code)
-  /*jshint evil:false*/
 }
 
+/**
+ * Reset the example
+ * @param {HTMLElement} parent
+ * @param {string} selector
+ */
 function reset(parent,selector) {
-  console.log('reset',parent,selector) // todo: remove log
-  const matchId = selector.match(/#(\w+)/)
-  const matchedId = matchId && matchId.pop()
-  console.log('\tmatchedId',matchedId) // todo: remove log
-  let oParse = {}
-  const iLen = 8
-  const l = getList.bind(null,iLen)
-  let mExample
-  if (matchedId==='xattr' || matchedId==='xret') {
-    selector += '*' + iLen + '>span.a${b$}'
-    oParse = {a: 't',b: 's'}
-  } else if (matchedId==='xsub') {
-    selector += '*' + iLen + '>span{a$ }+span{b$}'
-    oParse = {a: 's',b: 's'}
-  } else if (matchedId==='xval') {
-    selector += '*' + iLen + '>span{a$}+{ }+a[href=#b$ title=c$]{d$}'
-    oParse = {a: 's',b: 's',c: 's',d: 's'}
-  } else if (matchedId==='xdta') {
-    selector += '*' + iLen + '>span{a$}+a[href=# data-foo=b$]{c$}'
-    oParse = {a: 's',b: 's',c: 's'}
-  } else if (matchedId==='xnat') {
-    selector += '{a$}*' + iLen
-    oParse = {a: 'sf'}
-  } else if (matchedId==='xinp') {
-    selector += '*' + iLen + '>input[value=a$]'
-    oParse = {a: 's'}
-  } else if (matchedId==='xany') {
-    selector = 'div#' + matchedId + '>span{a$ }*' + iLen
-    oParse = {a: 's'}
-  } else if (matchedId==='ximg') {
-    selector = 'div#' + matchedId + '>img[src=style/logo.svg width=30 title=a$]*' + iLen
-    oParse = {a: 's'}
-  } else if (matchedId==='xnum') {
-    selector += '{a$}*' + iLen
-    oParse = {a: 'n'}
-  } else if (matchedId==='xmix') {
-    selector += '{a$}*' + iLen
-    oParse = {a: l('si',4)}
-  } else if (matchedId==='xmul') {
-    selector += '*' + iLen + '>span.name{a$}+span.date[data-timestamp=b$]{b$}'
-    oParse = {a: l('s ',4),b: 'i'}
-  } else if (['greek','serb','danish'].indexOf(matchedId)!== -1) {
-    var aLang = {
-      greek: 'άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο',
-      serb: 'άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο',
-      danish: 'København,Æble,Øresund,Åben,Aarhus,Åse,druenzin,evisk,håndkommertepokker,imagen,mærk,vestegnendenne,vidste,væmme'
-    }[matchedId].split(',').sort(function () {
-      return Math.random()<0.5?1:-1
-    })
-    aLang.length = iLen
-    selector += '{a$}*' + iLen
-    oParse = {a: aLang}
-  } else {
-    selector += '{a$}*' + iLen
-    oParse = {a: 's'}
+  let zenSelector = selector, parseObj
+  const idSelector = selector.match(/(#\w+)/).pop()
+  const idName = idSelector.substr(1)
+  Object.entries({
+    'ul#xattr>li*8>span.a${b$}': {a: 't',b: 's'}
+    ,'ul#xret>li*8>span.a${b$}': {a: 't',b: 's'}
+    ,'ul#xsub>li*8>span{a$ }+span{b$}': {a: 's',b: 's'}
+    ,'ul#xval>li*8>span{a$}+{ }+a[href=#b$ title=c$]{d$}': {a: 's',b: 's',c: 's',d: 's'}
+    ,'ul#xdta>li*8>span{a$}+a[href=# data-foo=b$]{c$}': {a: 's',b: 's',c: 's'}
+    ,'ul#xnat>li{a$}*8': {a: getList(8,'sf',4)}
+    ,'ul#xinp>li*8>input[value=a$]': {a: 's'}
+    ,'ul#xnum>li*8': {a: 'n'}
+    ,'ul#xmix>li*8': {a: getList(8,'si',4)}
+    ,'ul#xmul>li*8>span.name{a$}+span.date[data-timestamp=b$]{b$}': {a: getList(8,'s ',4), b: 'i'}
+    ,'div#xany>span{a$ }*8': {a: 's'}
+    ,'div#ximg>img[src=style/logo.svg width=30 title=a$]*8': {a: 's'}
+  }).forEach(([key,value])=>{
+    if (key.includes(idSelector)) {
+      zenSelector = key
+      parseObj = value
+    }
+  })
+  if (!parseObj) {
+    if (['greek','serb','danish'].includes(idName)) {
+      const languageWords = {
+        greek: 'άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο',
+        serb: 'άλογο,ανδρας,δάσκαλος,δεντρο,δήμητρα,κάτω,λύθηκε,λύξη,μπροστά,πλένω,πλυντήριο',
+        danish: 'København,Æble,Øresund,Åben,Aarhus,Åse,druenzin,evisk,håndkommertepokker,imagen,mærk,vestegnendenne,vidste,væmme'
+      }[idName].split(',').sort(()=>Math.random()<0.5?1:-1)
+      zenSelector += '{a$}*8'
+      parseObj = {a: languageWords.slice(0,8)}
+    } else {
+      zenSelector += '{a$}*8'
+      parseObj = {a: 's'}
+    }
   }
-  for (var s in oParse) {
-    var sVal = oParse[s]
-    if (typeof sVal==='string') oParse[s] = l(sVal)
+  //
+  const len = parseInt((zenSelector.match(/\*(\d+)/)||[8]).pop(),10)
+  for (let s in parseObj) {
+    const parseValue = parseObj[s]
+    typeof parseValue==='string' && (parseObj[s] = getList(len,parseValue))
   }
-  mExample = zen(selector,oParse)
-  if (matchedId==='ximg') {
-    Array.from(mExample.querySelectorAll('img')).forEach(img=>img.style.backgroundColor = '#' + Math.floor(Math.random() * 16777215).toString(16))
+  //
+  const exampleElement = zen(zenSelector,parseObj)
+  if (idName==='ximg') {
+    Array.from(exampleElement.querySelectorAll('img')).forEach(img=>img.style.backgroundColor = '#' + Math.floor(Math.random() * 16777215).toString(16))
   }
-  while (parent.firstChild) parent.removeChild(parent.firstChild)
-  parent.appendChild(mExample)
+  clearElement(parent).appendChild(exampleElement)
 }
 
+/**
+ * Return a random list with types
+ * @param {number} len
+ * @param {string} type
+ * @param {number} max
+ * @returns {Array}
+ */
 function getList(len,type,max) {
-  var iNum = 1E3,iLen = len || 8,a = []
-  for (var i = 0; i<iLen; i++) {
-    var aType = type.split('')
-    aType.forEach(function (s,n) {
+  const result = []
+  const randMax = 1E3
+  for (let i = 0, l=len||8; i<l; i++) {
+    const types = type.split('')
+    types.forEach(function (s,n) {
       if (s==='s') {
-        var aLorem = 'a et at in mi ac id eu ut non dis cum sem dui nam sed est nec sit mus vel leo urna duis quam cras nibh enim quis arcu orci diam nisi nisl nunc elit odio amet eget ante erat eros ipsum morbi nulla neque vitae purus felis justo massa donec metus risus curae dolor etiam fusce lorem augue magna proin mauris nullam rutrum mattis libero tellus cursus lectus varius auctor sociis ornare magnis turpis tortor semper dictum primis ligula mollis luctus congue montes vivamus aliquam integer quisque feugiat viverra sodales gravida laoreet pretium natoque iaculis euismod posuere blandit egestas dapibus cubilia pulvinar bibendum faucibus lobortis ultrices interdum maecenas accumsan vehicula nascetur molestie sagittis eleifend facilisi suscipit volutpat venenatis fringilla elementum tristique penatibus porttitor imperdiet curabitur malesuada vulputate ultricies convallis ridiculus tincidunt fermentum dignissim facilisis phasellus consequat adipiscing parturient vestibulum condimentum ullamcorper scelerisque suspendisse consectetur pellentesque'.split(' ')
-        if (max) aLorem.length = max
-        aLorem.sort(function () {
-          return brnd()?1:-1
-        })
-        aType[n] = aLorem.pop()
+        const lorem = 'a et at in mi ac id eu ut non dis cum sem dui nam sed est nec sit mus vel leo urna duis quam cras nibh enim quis arcu orci diam nisi nisl nunc elit odio amet eget ante erat eros ipsum morbi nulla neque vitae purus felis justo massa donec metus risus curae dolor etiam fusce lorem augue magna proin mauris nullam rutrum mattis libero tellus cursus lectus varius auctor sociis ornare magnis turpis tortor semper dictum primis ligula mollis luctus congue montes vivamus aliquam integer quisque feugiat viverra sodales gravida laoreet pretium natoque iaculis euismod posuere blandit egestas dapibus cubilia pulvinar bibendum faucibus lobortis ultrices interdum maecenas accumsan vehicula nascetur molestie sagittis eleifend facilisi suscipit volutpat venenatis fringilla elementum tristique penatibus porttitor imperdiet curabitur malesuada vulputate ultricies convallis ridiculus tincidunt fermentum dignissim facilisis phasellus consequat adipiscing parturient vestibulum condimentum ullamcorper scelerisque suspendisse consectetur pellentesque'.split(' ')
+        if (max) lorem.length = max
+        lorem.sort(()=>Math.random()<0.5?1:-1)
+        types[n] = lorem.pop()
       } else if (s==='n') {
-        var fRnd = Math.random() * iNum
-        aType[n] = brnd()?roundDec(fRnd):fRnd << 0
+        const fRnd = Math.random() * randMax
+        types[n] = brnd()?roundDec(fRnd):fRnd << 0
       } else if (s==='i') {
-        aType[n] = roundDec(Math.random() * iNum)
+        types[n] = roundDec(Math.random() * randMax)
       } else if (s==='f') {
-        aType[n] = 0.01 * (Math.random() * iNum * 100 << 0)
+        types[n] = 0.01 * (Math.random() * randMax * 100 << 0)
       } else if (s==='t') {
-        aType[n] = brnd()?'':'striked'
+        types[n] = brnd()?'':'striked'
       }
     })
-    a.push(aType.join(''))
+    result.push(types.join(''))
   }
-  return a
+  return result
 }
 
 function brnd() {

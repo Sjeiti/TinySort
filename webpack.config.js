@@ -1,4 +1,5 @@
-const path = require('path');
+/*global require,module,__dirname*/
+const path = require('path')
 // console.log('asdf',path.join(__dirname, 'dist')) // todo: remove log
 module.exports = {
   entry: './doc/js/main.js',
@@ -23,7 +24,7 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'stage-0'/*, 'minify'*/]
+          presets: ['es2015', 'stage-0', 'minify']
         }
         // include: path.join(__dirname, 'src/js'),
         // babelrc: false,
@@ -37,4 +38,4 @@ module.exports = {
       }
     ]
   }
-};
+}

@@ -16,7 +16,7 @@
     "copy": "npm run copy:dist && copy:img",
     "copy:dist": "copyfiles dist/* distdoc",
     "copy:img": "copyfiles -u 1 doc/style/logo.* doc/style/*.ico distdoc",
-    "js:main": "babel src/tinysort.js --out-file dist/tinysort.min.js --presets=babili",
+    "js:main": "babel src/tinysort.js --out-file dist/tinysort.min.js --presets=es2015,stage-0,minify",
     "_js:doc": "babel doc/js/main.js --out-file distdoc/js/main.js --presets=es2015,stage-0,minify",
     "js:doc": "webpack --config webpack.config.js",
     "js:doc:watch": "chokidar \"doc/**/*.js\" -c \"npm run js:doc\"",
@@ -27,6 +27,7 @@
     "html": "node task/doc distdoc",
     "html:watch": "chokidar \"doc/**/*.html\" -c \"npm run html\"",
     "css": "npm run css:less && npm run css:prefix && npm run css:minify",
+    "css:watch": "chokidar \"doc/**/*.less\" -c \"npm run css\"",
     "css:less": "lessc doc/style/screen.less distdoc/style/screen.css",
     "css:prefix": "postcss distdoc/style/screen.css --use autoprefixer -d distdoc/style/",
     "css:minify": "postcss distdoc/style/screen.css --use cssnano -d distdoc/style/",
@@ -53,19 +54,16 @@
     "_dir": "mkdirp dist/js"
   },
   "dependencies": {
-    "@emmetio/expand-abbreviation": "^0.7.1",
-    "rainbow-code": "^2.1.4",
-    "webworker-threads": "^0.7.11"
+    "@emmetio/expand-abbreviation": "^0.7.1"
   },
   "devDependencies": {
     "autoprefixer": "^8.6.5",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.1.5",
-    "babel-preset-babili": "0.0.12",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-minify": "^0.4.3",
     "babel-preset-stage-0": "^6.24.1",
-    "babili": "^0.1.4",
     "body-parser": "^1.17.1",
     "bootstrap": "^3.3.7",
     "chokidar-cli": "^1.2.0",
@@ -78,6 +76,7 @@
     "less": "^3.5.2",
     "marked": "^0.4.0",
     "mkdirp": "^0.5.1",
+    "ncp": "^2.0.0",
     "next-version": "^0.9.3",
     "node-qunit-phantomjs": "^1.4.0",
     "open": "0.0.5",
