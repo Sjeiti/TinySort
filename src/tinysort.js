@@ -97,7 +97,7 @@
 
     initCriteria.apply(nll,Array.prototype.slice.call(arguments,1))
     initSortList()
-    elmObjsSorted.sort(sortFunction)
+    elmObjsSorted.sort(options&&options.sortFunction||sortFunction)
     applyToDOM()
 
     /**
