@@ -60,8 +60,10 @@ function fetchAsText(file){
  * @param version
  */
 function setVersion(version){
-  document.title += ` v${version}`
-  document.querySelector('h1').textContent += ` v${version}`
+  const v = ` v${version}`
+  document.title += v
+  document.querySelector('h1').textContent += v
+  document.querySelector('.navbar-brand').textContent += v
 }
 
 /**
@@ -82,8 +84,9 @@ function initTableOfContents(){
       ,slug = toSlug(text)
     if (headerNr===2) headerNr = 1
     //
-    const anchor = createElement('div',null,null,{id:slug,style:'position:relative;top:-'+navbarHeight+'px'})
-    elm.parentNode.insertBefore(anchor,elm)
+    // const anchor = createElement('div',null,null,{id:slug,style:'position:relative;top:-'+navbarHeight+'px'})
+    // elm.parentNode.insertBefore(anchor,elm)
+    elm.parentNode.insertBefore(zen(`div.anchorpoint>div#${slug}[style="top:-${navbarHeight}px;"]`),elm)
     //
     if (headerNrLast!==undefined) {
       if (headerNr>headerNrLast) {

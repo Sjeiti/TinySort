@@ -19,7 +19,7 @@
 @colorDownload: #337ab7;
 @colorCDN: #DD4814;
 @colorFooter: #444;
-@colorButton: #c1be79;
+@colorButton: #dedb97;
 
 ////////////////////////////////////////////////////////////
 
@@ -228,6 +228,15 @@ article {
 	}
 }
 
+.anchorpoint {
+  position: relative;
+  margin: 0;
+  height: 0;
+  >div {
+    position: absolute;
+  }
+}
+
 @media (min-width: @screen-sm-min) {
 	.download {
 		.lt(0,@navHeight - @firstPad,relative);
@@ -236,13 +245,15 @@ article {
 		}
 		.nav-label {
 			position: relative;
+      margin-top: 0;
 			background-color: @colorB2;
 			color: #DDD;
 			font-size: 1.2rem;
 			line-height: 160%;
 			text-align: center;
 			overflow: visible;
-			&:before {
+			border-radius: 0 0 1rem 1rem;
+			/*&:before {
 				content: '';
 				.dim(100%,1px);
 				.lt(0,-1px);
@@ -251,15 +262,15 @@ article {
 			}
 			&:first-child {
 				border-radius: 0 0 1rem 1rem;
-			}
+			}*/
 			&:not(:first-child) {
 				&:before,&:after {
 					content: '';
 					.dim(4px,100%);
 					background-color: inherit;
 				}
-				&:before { .lt(-4px); }
-				&:after { .rt(-4px); }
+				//&:before { .lt(-4px); }
+				//&:after { .rt(-4px); }
 			}
 		}
 	}
