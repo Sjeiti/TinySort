@@ -30,7 +30,7 @@ tinysort(NodeList,'span.surname');
 For multiple criteria you can just overload.
 
 ``` javascript
-tinysort(NodeList,'span.surname','span.name',{data:'age'});
+tinysort(NodeList,{selector:'.surname'},{selector:'.name'},{data:'age'});
 ```
 
 Default settings can be changed

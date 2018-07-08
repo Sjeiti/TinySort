@@ -62,8 +62,8 @@ function fetchAsText(file){
 function setVersion(version){
   const v = ` v${version}`
   document.title += v
-  document.querySelector('h1').textContent += v
-  document.querySelector('.navbar-brand').textContent += v
+  document.querySelector('h1').innerHTML += `<small>${v}</small>`
+  document.querySelector('.navbar-brand').innerHTML += `<small>${v}</small>`
 }
 
 /**

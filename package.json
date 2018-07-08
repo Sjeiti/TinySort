@@ -33,7 +33,7 @@
     "css:minify": "postcss distdoc/style/screen.css --use cssnano -d distdoc/style/",
     "version": "next-version package.json src/tinysort.js src/jquery.tinysort.js src/tinysort.charorder.js",
     "serve:doc": "node task/serve distdoc 8899",
-    "serve:unit": "node task/serve test/unit 8877"
+    "serve:unit": "node task/serve test 8877"
   },
   "scriptss": {
     "build": "node task/build test uglify",
