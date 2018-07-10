@@ -130,3 +130,18 @@ export function clearElement(elm){
   while (elm.firstChild) elm.removeChild(elm.firstChild)
   return elm
 }
+
+/**
+ * Load a Javascript file
+ * @param {string} src
+ * @returns {Promise<any>}
+ */
+export function loadScript(src) {
+  return new Promise((resolve,reject)=>{
+    const script = document.createElement('script')
+    script.src = src
+    script.addEventListener('load',resolve)
+    script.addEventListener('error',reject)
+    document.body.appendChild(script)
+  })
+}
