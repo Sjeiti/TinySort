@@ -1,8 +1,8 @@
 /* global QUnit, zenLi, eachElement, tinysort */
 
-import {loadScript} from '../doc/js/util'
+// import {loadScript} from '../doc/js/util'
 
-const {module,test,ok,/*assert,*/async} = QUnit
+const {module,test,ok,/*assert,async*/} = QUnit
   ,aLangSR = ['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']
   ,aLangDA = ['Åben','Æble','Åse','København','Aarhus','Øresund']
   ,aLangFR = ['Ésdf','ésdf','zsdf','Zsdf','Asdf','asdf']

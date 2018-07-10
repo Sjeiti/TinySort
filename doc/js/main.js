@@ -193,8 +193,8 @@ function reset(parent,selector) {
     ,'ul#xdta>li*8>span{a$}+a[href=# data-foo=b$]{c$}': {a: 's',b: 's',c: 's'}
     ,'ul#xnat>li{a$}*8': {a: getList(8,'sf',4)}
     ,'ul#xinp>li*8>input[value=a$]': {a: 's'}
-    ,'ul#xnum>li*8': {a: 'n'}
-    ,'ul#xmix>li*8': {a: getList(8,'si',4)}
+    ,'ul#xnum>li{a$}*8': {a: 'n'}
+    ,'ul#xmix>li{a$}*8': {a: getList(8,'si',4)}
     ,'ul#xmul>li*8>span.name{a$}+span.date[data-timestamp=b$]{b$}': {a: getList(8,'s ',4), b: 'i'}
     ,'div#xany>span{a$ }*8': {a: 's'}
     ,'div#ximg>img[src=style/logo.svg width=30 title=a$]*8': {a: 's'}

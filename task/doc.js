@@ -19,5 +19,6 @@ Promise.all([
 	,read(pathJs).then(contents => require('jsdoc-api').explain({ source: contents }))
 ])
 .then(([template,readme,jsdoc])=>{
+  console.log('jsdoc',jsdoc) // todo: remove log
   save(targetDoc,template.replace(/<!--body-->/,readme))
 })

@@ -5,7 +5,7 @@ The examples below should help getting you on your way.
 
 If you find a bug, have a feature request or a code improvement you can [file them here](https://github.com/Sjeiti/TinySort/issues). Please [provide code examples](http://jsfiddle.net/) where applicable.</small>
 
-<div class="alert alert-warning" role="alert"><p>TinySort used to be a jQuery plugin but was rewritten to remove the jQuery dependency. It is now smaller *and* faster (and has no dependencies). Functionality is the same but changes have been made to the parameters and options.</p></div>
+<p class="alert alert-warning" role="alert"><small>TinySort used to be a jQuery plugin but was rewritten to remove the jQuery dependency. It is now smaller *and* faster (and has no dependencies). Functionality is the same but changes have been made to the parameters and options.</small></p>
 
 ## usage
 
