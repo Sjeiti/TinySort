@@ -44,45 +44,47 @@ tinysort.defaults.attr = 'title';
 
 The options object can have the following settings:
 
-
-**options.selector** (String)
+**options.selector** (string=undefined)
 A CSS selector to select the element to sort to.
 
-**options.order** (String='asc')
+**options.order** (string='asc')
 The order of the sorting method. Possible values are 'asc', 'desc' and 'rand'.
 
-**options.attr** (String=null)
+**options.attr** (string=null)
 Order by attribute value (ie title, href, class)
 
-**options.data** (String=null)
+**options.data** (string=null)
 Use the data attribute for sorting.
 
-**options.place** (String='org')
+**options.place** (string='org')
 Determines the placement of the ordered elements in respect to the unordered elements. Possible values 'start', 'end', 'first', 'last' or 'org'.
 
-**options.useVal** (Boolean=false)
+**options.useVal** (boolean=false)
 Use element value instead of text.
 
-**options.cases** (Boolean=false)
+**options.cases** (boolean=false)
 A case sensitive sort (orders [aB,aa,ab,bb])
 
-**options.natural** (Boolean=false)
+**options.natural** (boolean=false)
 Use natural sort order.
 
-**options.forceStrings** (Boolean=false)
+**options.forceStrings** (boolean=false)
 If false the string '2' will sort with the value 2, not the string '2'.
 
-**options.ignoreDashes** (Boolean=false)
+**options.ignoreDashes** (boolean=false)
 Ignores dashes when looking for numerals.
 
 **options.sortFunction** (function=null)
 Override the default sort function. The parameters are of a type {elementObject}.
 
-**options.useFlex** (Boolean=true)
+**options.useFlex** (boolean=true)
 If one parent and display flex, ordering is done by CSS (instead of DOM)
 
-**options.emptyEnd** (Boolean=true)
+**options.emptyEnd** (boolean=true)
 Sort empty values to the end instead of the start
+
+**options.console** (boolean=undefined)
+an optional console implementation to prevent output to console
 
 
 ## examples
