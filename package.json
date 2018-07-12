@@ -15,6 +15,7 @@
     "dist:main": "npm run copy:main && npm run js",
 
     "copy": "npm run copy:dist && copy:img",
+    "copy:src": "copyfiles src/* dist -f",
     "copy:dist": "copyfiles dist/* distdoc",
     "copy:img": "copyfiles doc/style/logo.* doc/style/*.ico distdoc",
     "copy:test": "copyfiles src/* test/dist -f",
