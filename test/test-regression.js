@@ -4,7 +4,6 @@ const {module,test,ok} = QUnit
   ,aList = ['eek-','oif-','myr-','aar-','oac-','eax-']
   ,sJoin = aList.slice(0).sort().join('')
 
-
 module('regression')
 test('issue 8', ()=>{
   ok((()=>{
@@ -188,5 +187,44 @@ test('issue 116', ()=>{
     document.body.removeChild(div)
     return sSorted==='9a0b3c1457'
   })(),'empty selector')
+})
+
+test('issue 122', ()=>{
+
+  const aLangSR = ['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']
+  const orderSR = 'cčćd{dž}đl{lj}n{nj}sšzž'
+  const ordered = ' coga čega čovjek džep godina gospodin liljana luđak ljubav muškarac nož njuška zec'
+  const reverse = ' '+ordered.substr(1).split(' ').reverse().join(' ')
+
+  ok((()=>{
+    const aSorted = tinysort(zenLi('ul>li{a$}*'+aLangSR.length,{a:aLangSR}),{charOrder:orderSR})
+      ,sSorted = eachElement(aSorted,elm=>' '+elm.textContent)
+    return sSorted==ordered
+  })(),'normal')
+
+  ok((()=>{
+    const aSorted = tinysort(zenLi('ul>li{a$}*'+aLangSR.length,{a:aLangSR}),{charOrder:orderSR,order:'asc'})
+      ,sSorted = eachElement(aSorted,elm=>' '+elm.textContent)
+    return sSorted==ordered
+  })(),'ascending order')
+
+  ok((()=>{
+    const aSorted = tinysort(zenLi('ul>li{a$}*'+aLangSR.length,{a:aLangSR}),{charOrder:orderSR,order:'desc'})
+      ,sSorted = eachElement(aSorted,elm=>' '+elm.textContent)
+    return sSorted==reverse
+  })(),'descending order')
+
+  ok((()=>{
+    const aSorted = tinysort(zenLi('ul>li{a$}*4',{a:'đačb'.split('')}),{charOrder:'ađč'})
+      ,sSorted = aSorted.map(elm=>elm.textContent).join('')
+    return sSorted=='ađčb'
+  })(),'normal charorder')
+
+  ok((()=>{
+    window.foo=true;
+    const aSorted = tinysort(zenLi('ul>li{a$}*4',{a:'đačb'.split('')}),{charOrder:'ađč',order:'desc'})
+      ,sSorted = aSorted.map(elm=>elm.textContent).join('')
+    return sSorted=='bčđa'
+  })(),'descending charorder')
 })
 

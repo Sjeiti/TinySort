@@ -270,13 +270,15 @@ TinySort can also order randomly (or is that a contradiction).
 tinysort('ul#xrnd>li',{order:'rand'});
 ```
 
-### parsing a custom sort function
+### custom sort function
 
 Custom sort functions are similar to those you use with regular Javascript arrays with the exception that the parameters a and b are objects of a similar type {elementObject}, an object with the following properties:
 
  * elm {HTMLElement}: The element
  * pos {number}: original position
  * posn {number}: original position on the partial list
+ 
+When you use the custom sort function all other properties will be ignored because it expects a custom implementation.
 
 ``` javascript
 tinysort('ul#xcst>li',{sortFunction:function(a,b){

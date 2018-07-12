@@ -2,7 +2,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 3.0.1
+ * @version 3.1.3
  * @license MIT
  * @author Ron Valstar (http://www.ronvalstar.nl/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -293,7 +293,6 @@
         sortReturnNumber===0 && criteriumIndex++
       }
       sortReturnNumber===0 && (sortReturnNumber = a.pos>b.pos?1:-1)
-      //console.log('sfn',a.pos,b.pos,valueA,valueB,sortReturnNumber); // todo: remove log;
       return sortReturnNumber
     }
 
