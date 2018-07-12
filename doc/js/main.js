@@ -161,6 +161,15 @@ function initMenuEvents(){
       target.parentNode.classList.toggle('open',!isOpen)
     })
   })
+  //
+  document.querySelector('button[aria-controls="navbar"]').addEventListener('click',e=>{
+    const { target } = e
+    console.log('target',target,target.getAttribute('aria-expanded')) // todo: remove log
+    const isExpanded = target.getAttribute('aria-expanded')==='true'
+    target.setAttribute('aria-expanded', isExpanded?'false':'true')
+    const navbar = document.getElementById('navbar')
+    navbar.classList.toggle('collapse',isExpanded)
+  })
 }
 
 //##############################################################################
