@@ -13,43 +13,33 @@
   },
   "scripts": {
     "dist:main": "npm run copy:main && npm run js",
-
-    "copy": "npm run copy:dist && copy:img",
+    "copy": "npm run copy:dist && npm run copy:img",
     "copy:src": "copyfiles src/* dist -f",
     "copy:dist": "copyfiles dist/* distdoc",
     "copy:img": "copyfiles doc/style/logo.* doc/style/*.ico distdoc",
     "copy:test": "copyfiles src/* test/dist -f",
-
     "js": "npm run js:main && npm run js:charorder && npm run js:jquery",
     "js:main": "babel src/tinysort.js --out-file dist/tinysort.min.js --presets=es2015,stage-0,minify",
     "js:charorder": "babel src/tinysort.charorder.js --out-file dist/tinysort.charorder.min.js --presets=es2015,stage-0,minify",
     "js:jquery": "babel src/jquery.tinysort.js --out-file dist/jquery.tinysort.min.js --presets=es2015,stage-0,minify",
     "js:watch": "chokidar \"src/*.js\" -c \"npm run js && npm run copy:test\"",
-
     "js:test": "webpack --config webpack.config.test.js",
     "js:test:watch": "chokidar \"test/**/!(*.min).js\" -c \"npm run js:test\"",
-
     "js:doc": "webpack --config webpack.config.js",
     "js:doc:watch": "chokidar \"doc/**/*.js\" -c \"npm run js:doc\"",
-
     "lint": "npm run lint:src && npm run lint:doc && npm run lint:test",
     "lint:src": "eslint src/*.js --fix",
     "lint:doc": "eslint doc/js/*.js --fix",
     "lint:test": "eslint test/test-*.js --fix",
-
     "doc": "npm run copy && npm run html && npm run css && npm run js:doc",
-
     "html": "node task/doc distdoc",
     "html:watch": "chokidar \"doc/**/*.html\" -c \"npm run html\"",
-
     "css": "npm run css:less && npm run css:prefix && npm run css:minify",
     "css:less": "lessc doc/style/screen.less distdoc/style/screen.css",
     "css:prefix": "postcss distdoc/style/screen.css --use autoprefixer -d distdoc/style/",
     "css:minify": "postcss distdoc/style/screen.css --use cssnano -d distdoc/style/",
     "css:watch": "chokidar \"doc/**/*.less\" -c \"npm run css\"",
-
     "version": "next-version package.json bower.json src/tinysort.js src/jquery.tinysort.js src/tinysort.charorder.js",
-
     "serve:doc": "node task/serve distdoc 8899",
     "serve:unit": "node task/serve test 8877"
   },
