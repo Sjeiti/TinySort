@@ -175,18 +175,24 @@ test('issue 114', ()=>{
   })(),'Greek');
 });*/
 test('issue 116', ()=>{
-  ok((()=>{
-    const div = document.createElement('div')
-    document.body.appendChild(div)
-    div.innerHTML = '<ul><li><span class="test">1</span></li><li><span class="test" data-mod="c">3</span>c</li><li><span class="test">5</span></li><li><span class="test">7</span></li><li><span class="test" data-mod="b">0</span>b</li><li><span class="test">4</span></li><li><span class="test" data-mod="a">9</span>a</li></ul>'
-    const aSorted = tinysort(div.querySelectorAll('li'),{
-        selector: 'span'
+  const div = document.createElement('div')
+  document.body.appendChild(div)
+  div.innerHTML = `<ul>
+    <li><span>1</span></li>
+    <li><span data-mod="b">2</span>b</li>
+    <li><span>4</span></li>
+    <li><span data-mod="a">3</span>a</li>
+  </ul>`
+  const aSorted = tinysort(div.querySelectorAll('li'),{
+      selector: 'span'
       ,data: 'mod'
-      },{})
-      ,sSorted = eachElement(aSorted)
-    document.body.removeChild(div)
-    return sSorted==='9a0b3c1457'
-  })(),'empty selector')
+      ,emptyEnd:!true
+    },{})
+    ,sSorted = eachElement(aSorted)
+  document.body.removeChild(div)
+  console.log('sorted',sSorted)
+  //14579a0b3c
+  equal(sSorted,'9a0b3c1457','empty selector')
 })
 
 test('issue 122', ()=>{
