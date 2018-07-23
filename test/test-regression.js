@@ -186,13 +186,13 @@ test('issue 116', ()=>{
   const aSorted = tinysort(div.querySelectorAll('li'),{
       selector: 'span'
       ,data: 'mod'
-      ,emptyEnd:!true
+      ,emptyEnd:true
     },{})
     ,sSorted = eachElement(aSorted)
   document.body.removeChild(div)
   console.log('sorted',sSorted)
   //14579a0b3c
-  equal(sSorted,'9a0b3c1457','empty selector')
+  equal(sSorted,'3a2b14','empty selector')
 })
 
 test('issue 122', ()=>{

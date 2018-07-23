@@ -171,7 +171,62 @@ test('default functionality: multiple criteria', function() {
   // })(),'tinysort(nodeList,\'p:eq(1)\',{attr:\'title\'});')
 })
 
-// test('default functionality: AMD', function() {
+test('default functionality: null, undefined, no strin', function() {
+  (()=>{
+    const aSorted = tinysort(zenLi('ul>li[value=a$d]{a$}*4',{a:['b','a','c','']}))
+    equal(
+      Array.from(aSorted).map(elm=>elm.getAttribute('value')).join('')
+      ,'dadbdcd'
+      ,'tinysort(nodeList)'
+    )
+  })()
+  ;(()=>{
+    const aSorted = tinysort(zenLi('ul>li[value=a$d]{a$}*4',{a:['b','a','c','']}),{emptyEnd:true})
+    equal(
+      Array.from(aSorted).map(elm=>elm.getAttribute('value')).join('')
+      ,'adbdcdd'
+      ,'tinysort(nodeList,{emptyEnd:true});'
+    )
+  })()
+  ;(()=>{
+    const div = document.createElement('div')
+    document.body.appendChild(div)
+    div.innerHTML = `<ul>
+      <li value="b" data-foo></li>
+      <li value="c"></li>
+      <li value="a" data-foo="f"></li>
+      <li value="d" data-foo="e"></li>
+    </ul>`
+    const aSorted = tinysort(div.querySelectorAll('li'),{data:'foo'})
+    equal(
+      Array.from(aSorted).map(elm=>elm.getAttribute('value')).join('')
+      ,'cbda'
+      ,'mixed'
+    )
+  })()
+})
+
+/*test('issue 116xxxxx', ()=>{
+  const div = document.createElement('div')
+  document.body.appendChild(div)
+  div.innerHTML = `<ul>
+    <li><span>1</span></li>
+    <li><span data-mod="b">2</span>b</li>
+    <li><span>4</span></li>
+    <li><span data-mod="a">3</span>a</li>
+  </ul>`
+  const aSorted = tinysort(div.querySelectorAll('l>
+      selector: 'span'
+      ,data: 'mod'
+      ,emptyEnd:true
+    },{})
+    ,sSorted = eachElement(aSorted)
+  document.body.removeChild(div)
+  console.log('sorted',sSorted)
+  //14579a0b3c
+  equal(sSorted,'3a2b14','empty selector')
+})*/
+
 //   var done = async()
 //   /*global requirejs*/
 //   require.config({baseUrl: '../../src/'})

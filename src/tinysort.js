@@ -2,7 +2,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 3.1.4
+ * @version 3.2.0
  * @license MIT
  * @author Ron Valstar (http://www.ronvalstar.nl/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -20,7 +20,10 @@
     ,regexLastNr = /(-?\d+\.?\d*)\s*$/g    // regex for testing strings ending on numbers
     ,regexLastNrNoDash = /(\d+\.?\d*)\s*$/g  // regex for testing strings ending on numbers ignoring dashes
     ,plugins = []
-    ,largeChar = String.fromCharCode(0xFFF)
+    ,stringFromCharCode = i=>String.fromCharCode(i)
+    ,charsFrom = from=>Array.from(new Array(3),(o,i)=>stringFromCharCode(from+i))
+    ,charLow = charsFrom(0)
+    ,charHigh = charsFrom(0xFFF)
     ,/**{options}*/defaults = {        // default settings
       selector: nll      // CSS selector to select the element to sort to
       ,order: 'asc'      // order: asc, desc or rand
@@ -114,19 +117,7 @@
 
     /**
      * A criterium is a combination of the selector, the options and the default options
-     * @typedef {Object} criterium
-     * @property {String} selector - a valid CSS selector
-     * @property {String} order - order: asc, desc or rand
-     * @property {String} attr - order by attribute value
-     * @property {String} data - use the data attribute for sorting
-     * @property {boolean} useVal - use element value instead of text
-     * @property {String} place - place ordered elements at position: start, end, org (original position), first
-     * @property {boolean} returns - return all elements or only the sorted ones (true/false)
-     * @property {boolean} cases - a case sensitive sort orders [aB,aa,ab,bb]
-     * @property {boolean} natural - use natural sort order
-     * @property {boolean} forceStrings - if false the string '2' will sort with the value 2, not the string '2'
-     * @property {boolean} ignoreDashes - ignores dashes when looking for numerals
-     * @property {Function} sortFunction - override the default sort function
+     * @typedef {options} criterium
      * @property {boolean} hasSelector - options has a selector
      * @property {boolean} hasFilter - options has a filter
      * @property {boolean} hasAttr - options has an attribute selector
@@ -241,34 +232,32 @@
       while (sortReturnNumber===0&&criteriumIndex<numCriteria) {
         /** @type {criterium} */
         const criterium = criteria[criteriumIndex]
-          ,regexLast = criterium.ignoreDashes?regexLastNrNoDash:regexLastNr
+        const regexLast = criterium.ignoreDashes?regexLastNrNoDash:regexLastNr
         //
         loop(plugins,plugin=>plugin.prepare && plugin.prepare(criterium))
         //
         let isNumeric = fls
-          // prepare sort elements
-          ,valueA = getSortBy(a,criterium)
-          ,valueB = getSortBy(b,criterium)
+        // prepare sort elements
+        let valueA = getSortBy(a,criterium)
+        let valueB = getSortBy(b,criterium)
         if (criterium.sortFunction) { // custom sort
           sortReturnNumber = criterium.sortFunction(a,b)
         } else if (criterium.order==='rand') { // random sort
           sortReturnNumber = Math.random()<0.5?1:-1
         } else { // regular sort
           const noA = valueA===''||valueA===undef
-            ,noB = valueB===''||valueB===undef
+          const noB = valueB===''||valueB===undef
+          ;(noA||noB)&&alert('noAB',noA,noB)
           if (valueA===valueB) {
             sortReturnNumber = 0
-          } else if (criterium.emptyEnd&&(noA||noB)) {
-            sortReturnNumber = noA&&noB?0:noA?1:-1
           } else {
             if (!criterium.forceStrings) {
               // cast to float if both strings are numeral (or end numeral)
               let valuesA = isString(valueA)?valueA&&valueA.match(regexLast):fls// todo: isString superfluous because getSortBy returns string|undefined
-                ,valuesB = isString(valueB)?valueB&&valueB.match(regexLast):fls
-
+              let valuesB = isString(valueB)?valueB&&valueB.match(regexLast):fls
               if (valuesA&&valuesB) {
                 const previousA = valueA.substr(0,valueA.length-valuesA[0].length)
-                  ,previousB = valueB.substr(0,valueB.length-valuesB[0].length)
+                const previousB = valueB.substr(0,valueB.length-valuesB[0].length)
                 if (previousA==previousB) {
                   isNumeric = !fls
                   valueA = parsefloat(valuesA[0])
@@ -276,15 +265,10 @@
                 }
               }
             }
-            if (valueA===undef||valueB===undef) {
-              sortReturnNumber = 0
+            if (!criterium.natural||(!isNaN(valueA)&&!isNaN(valueB))) {
+              sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0)
             } else {
-              // todo: check here
-              if (!criterium.natural||(!isNaN(valueA)&&!isNaN(valueB))) {
-                sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0)
-              } else {
-                sortReturnNumber = naturalCompare(valueA, valueB, chunkify)
-              }
+              sortReturnNumber = naturalCompare(valueA, valueB, chunkify)
             }
           }
         }
@@ -410,7 +394,8 @@
         if (!criterium.cases) sortBy = sortBy.toLowerCase()
         sortBy = sortBy.replace(/\s+/g,' ') // spaces/newlines
       }
-      if (sortBy===null) sortBy = largeChar
+      const noIndex = [undef,nll,''].indexOf(sortBy)
+      if (noIndex!==-1) sortBy = (criterium.emptyEnd?charHigh:charLow)[noIndex]
       return sortBy
     }
 
