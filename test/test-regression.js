@@ -190,7 +190,6 @@ test('issue 116', ()=>{
     },{})
     ,sSorted = eachElement(aSorted)
   document.body.removeChild(div)
-  console.log('sorted',sSorted)
   //14579a0b3c
   equal(sSorted,'3a2b14','empty selector')
 })
@@ -234,3 +233,22 @@ test('issue 122', ()=>{
   })(),'descending charorder')
 })
 
+test('issue 146', ()=>{
+  const div = document.createElement('div')
+  div.innerHTML = `
+    <div class="elementx" data-order=4>a</div>
+    <div class="elementx" data-order=2>b</div>
+    <div class="info">c</div>
+    <div class="container">d</div>
+    <div class="elementx" data-order=1>e</div>
+    <div class="elementx" data-order=5>f</div>
+    <div class="elementx" data-order=3>g</div>`
+  const aSorted = tinysort(div.querySelectorAll('.elementx'),{
+      place: 'org'
+      ,data: 'order'
+    })
+    ,sSorted = Array.from(div.querySelectorAll('div')).map(elm=>elm.textContent).join('')
+  console.log('sorted',sSorted)
+  //alert('qq',div.
+  equal(sSorted,'ebcdgaf','foo')
+})

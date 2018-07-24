@@ -2,7 +2,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 3.2.0
+ * @version 3.2.2
  * @license MIT
  * @author Ron Valstar (http://www.ronvalstar.nl/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -12,37 +12,38 @@
   typeof define==='function'&&define.amd?define('tinysort',()=>tinysort):(root.tinysort = tinysort)
 }(window||module||{},(_undef=>{
   const fls = !1
-    ,undef = _undef
-    ,nll = null
-    ,win = window
-    ,doc = win.document
-    ,parsefloat = parseFloat
-    ,regexLastNr = /(-?\d+\.?\d*)\s*$/g    // regex for testing strings ending on numbers
-    ,regexLastNrNoDash = /(\d+\.?\d*)\s*$/g  // regex for testing strings ending on numbers ignoring dashes
-    ,plugins = []
-    ,stringFromCharCode = i=>String.fromCharCode(i)
-    ,charsFrom = from=>Array.from(new Array(3),(o,i)=>stringFromCharCode(from+i))
-    ,charLow = charsFrom(0)
-    ,charHigh = charsFrom(0xFFF)
-    ,/**{options}*/defaults = {        // default settings
-      selector: nll      // CSS selector to select the element to sort to
-      ,order: 'asc'      // order: asc, desc or rand
-      ,attr: nll         // order by attribute value
-      ,data: nll         // use the data attribute for sorting
-      ,useVal: fls       // use element value instead of text
-      ,place: 'org'      // place ordered elements at position: start, end, org (original position), first, last
-      ,returns: fls      // return all elements or only the sorted ones (true/false)
-      ,cases: fls        // a case sensitive sort orders [aB,aa,ab,bb]
-      ,natural: fls      // use natural sort order
-      ,forceStrings:fls  // if false the string '2' will sort with the value 2, not the string '2'
-      ,ignoreDashes:fls  // ignores dashes when looking for numerals
-      ,sortFunction: nll // override the default sort function
-      ,useFlex:fls
-      ,emptyEnd:fls
-      ,console
-    }
+  const undef = _undef
+  const nll = null
+  const win = window
+  const doc = win.document
+  const parsefloat = parseFloat
+  const regexLastNr = /(-?\d+\.?\d*)\s*$/g    // regex for testing strings ending on numbers
+  const regexLastNrNoDash = /(\d+\.?\d*)\s*$/g  // regex for testing strings ending on numbers ignoring dashes
+  const plugins = []
+  const stringFromCharCode = i=>String.fromCharCode(i)
+  const charsFrom = from=>Array.from(new Array(3),(o,i)=>stringFromCharCode(from+i))
+  const charLow = charsFrom(0)
+  const charHigh = charsFrom(0xFFF)
+  /**{options}*/
+  const defaults = {   // default settings
+    selector: nll      // CSS selector to select the element to sort to
+    ,order: 'asc'      // order: asc, desc or rand
+    ,attr: nll         // order by attribute value
+    ,data: nll         // use the data attribute for sorting
+    ,useVal: fls       // use element value instead of text
+    ,place: 'org'      // place ordered elements at position: start, end, org (original position), first, last
+    ,returns: fls      // return all elements or only the sorted ones (true/false)
+    ,cases: fls        // a case sensitive sort orders [aB,aa,ab,bb]
+    ,natural: fls      // use natural sort order
+    ,forceStrings:fls  // if false the string '2' will sort with the value 2, not the string '2'
+    ,ignoreDashes:fls  // ignores dashes when looking for numerals
+    ,sortFunction: nll // override the default sort function
+    ,useFlex:fls
+    ,emptyEnd:fls
+    ,console
+  }
   let numCriteria = 0
-    ,criteriumIndex = 0
+  let criteriumIndex = 0
 
   /**
    * Options object
@@ -78,25 +79,26 @@
     nodeList.length===0 && console && console.warn && console.warn('No elements to sort')
 
     const fragment = doc.createDocumentFragment()
-      /** both sorted and unsorted elements
-       * @type {elementObject[]} */
-      ,elmObjsAll = []
-      /** sorted elements
-       * @type {elementObject[]} */
-      ,elmObjsSorted = []
-      /** unsorted elements
-       * @type {elementObject[]} */
-      ,elmObjsUnsorted = []
-      /** sorted elements before sort
-       * @type {elementObject[]} */
-      ,elmObjsSortedInitial = []
-      /** @type {criteriumIndex[]} */
-      ,criteria = []
-    let /** @type {HTMLElement} */parentNode
-      ,isSameParent = true
-      ,firstParent = nodeList.length&&nodeList[0].parentNode
-      ,isFragment = firstParent.rootNode!==document
-      ,isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&!isFragment&&getComputedStyle(firstParent,null).display.indexOf('flex')!==-1
+    /** both sorted and unsorted elements
+     * @type {elementObject[]} */
+    const elmObjsAll = []
+    /** sorted elements
+     * @type {elementObject[]} */
+    const elmObjsSorted = []
+    /** unsorted elements
+     * @type {elementObject[]} */
+    const elmObjsUnsorted = []
+    /** sorted elements before sort
+     * @type {elementObject[]} */
+    const elmObjsSortedInitial = []
+    /** @type {criteriumIndex[]} */
+    const criteria = []
+    /** @type {HTMLElement} */
+    let parentNode
+    let isSameParent = true
+    let firstParent = nodeList.length&&nodeList[0].parentNode
+    let isFragment = firstParent.rootNode!==document
+    let isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&!isFragment&&getComputedStyle(firstParent,null).display.indexOf('flex')!==-1
 
     initCriteria.apply(nll,Array.prototype.slice.call(arguments,1))
     initSortList()
@@ -133,8 +135,8 @@
      */
     function addCriterium(options){
       const hasSelector = !!options.selector
-        ,hasFilter = hasSelector&&options.selector[0]===':'
-        ,allOptions = extend(options||{},defaults)
+      const hasFilter = hasSelector&&options.selector[0]===':'
+      const allOptions = extend(options||{},defaults)
       criteria.push(extend({
         // has find, attr or data
         hasSelector
@@ -165,9 +167,9 @@
         if (!parentNode) parentNode = elm.parentNode
         else if (parentNode!==elm.parentNode) isSameParent = false
         const {hasFilter,selector} = criteria[0]
-          ,isPartial = !selector||(hasFilter&&elm.matches(selector))||(selector&&elm.querySelector(selector))
-          ,listPartial = isPartial?elmObjsSorted:elmObjsUnsorted
-          ,elementObject = {
+        const isPartial = !selector||(hasFilter&&elm.matches(selector))||(selector&&elm.querySelector(selector))
+        const listPartial = isPartial?elmObjsSorted:elmObjsUnsorted
+        const elementObject = {
             elm: elm
             ,pos: i
             ,posn: listPartial.length
@@ -184,7 +186,7 @@
      */
     function naturalCompare(a, b, chunkify) {
       const aa = chunkify(a.toString())
-        ,bb = chunkify(b.toString())
+      const bb = chunkify(b.toString())
       for (let x = 0; aa[x] && bb[x]; x++) {
         if (aa[x]!==bb[x]) {
           const c = Number(aa[x])
@@ -245,9 +247,6 @@
         } else if (criterium.order==='rand') { // random sort
           sortReturnNumber = Math.random()<0.5?1:-1
         } else { // regular sort
-          const noA = valueA===''||valueA===undef
-          const noB = valueB===''||valueB===undef
-          ;(noA||noB)&&alert('noAB',noA,noB)
           if (valueA===valueB) {
             sortReturnNumber = 0
           } else {
@@ -286,9 +285,11 @@
      * @private
      */
     function applyToDOM(){
-      const hasSortedAll = elmObjsSorted.length===elmObjsAll.length
+      const numSorted = elmObjsSorted.length
+      const hasSortedAll = numSorted===elmObjsAll.length
+      const hasSortedAllSiblings = numSorted===parentNode.children.length
       const {place,console} = criteria[0]
-      if (isSameParent&&hasSortedAll) {
+      if (isSameParent&&hasSortedAll&&hasSortedAllSiblings) {
         if (isFlex) {
           elmObjsSorted.forEach((elmObj,i)=>elmObj.elm.style.order = i)
         } else {
@@ -297,18 +298,17 @@
         }
       } else {
         const isPlaceOrg = place==='org'
-          ,isPlaceStart = place==='start'
-          ,isPlaceEnd = place==='end'
-          ,isPlaceFirst = place==='first'
-          ,isPlaceLast = place==='last'
-
+        const isPlaceStart = place==='start'
+        const isPlaceEnd = place==='end'
+        const isPlaceFirst = place==='first'
+        const isPlaceLast = place==='last'
         if (isPlaceOrg) {
           elmObjsSorted.forEach(addGhost)
           elmObjsSorted.forEach((elmObj,i)=>replaceGhost(elmObjsSortedInitial[i],elmObj.elm))
         } else if (isPlaceStart||isPlaceEnd) {
           let startElmObj = elmObjsSortedInitial[isPlaceStart?0:elmObjsSortedInitial.length-1]
-            ,startParent = startElmObj&&startElmObj.elm.parentNode
-            ,startElm = startParent&&(isPlaceStart&&startParent.firstChild||startParent.lastChild)
+          const startParent = startElmObj&&startElmObj.elm.parentNode
+          const startElm = startParent&&(isPlaceStart&&startParent.firstChild||startParent.lastChild)
           if (startElm) {
             startElm!==startElmObj.elm && (startElmObj = {elm:startElm})
             addGhost(startElmObj)
