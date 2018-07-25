@@ -39,7 +39,7 @@
     "css:prefix": "postcss distdoc/style/screen.css --use autoprefixer -d distdoc/style/",
     "css:minify": "postcss distdoc/style/screen.css --use cssnano -d distdoc/style/",
     "css:watch": "chokidar \"doc/**/*.less\" -c \"npm run css\"",
-    "version": "next-version package.json bower.json src/tinysort.js src/jquery.tinysort.js src/tinysort.charorder.js",
+    "version": "next-version package.json bower.json src/tinysort.js src/jquery.tinysort.js src/tinysort.charorder.js tinysort.nuspec",
     "serve:doc": "node task/serve distdoc 8899",
     "serve:test": "node task/serve test 8877"
   },
