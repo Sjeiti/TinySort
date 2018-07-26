@@ -2,7 +2,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 3.2.2
+ * @version 3.2.4
  * @license MIT
  * @author Ron Valstar (http://www.ronvalstar.nl/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -69,10 +69,11 @@
    * @memberof tinysort
    * @public
    * @param {NodeList|HTMLElement[]|String} nodeList The nodelist or array of elements to be sorted. If a string is passed it should be a valid CSS selector.
-   * @param {options} [options] A list of options.
+   * @param {options[]} [...optionsList] A list of options.
    * @returns {HTMLElement[]}
    */
-  function tinysort(nodeList,options){
+  function tinysort(nodeList,...optionsList){
+    const options = optionsList[0]||{}
     isString(nodeList) && (nodeList = doc.querySelectorAll(nodeList))
 
     const {console} = Object.assign({},defaults,options||{})
@@ -100,21 +101,20 @@
     let isFragment = firstParent.rootNode!==document
     let isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&!isFragment&&getComputedStyle(firstParent,null).display.indexOf('flex')!==-1
 
-    initCriteria.apply(nll,Array.prototype.slice.call(arguments,1))
+    numCriteria = addCriteria(optionsList)
     initSortList()
-    elmObjsSorted.sort(options&&options.sortFunction||sortFunction)
+    elmObjsSorted.sort(options.sortFunction||sortFunction)
     applyToDOM()
 
     /**
      * Create criteria list
+     * @param {object[]} optionsList
+     * @returns {number}
      */
-    function initCriteria(){
-      if (arguments.length===0) {
-        addCriterium({}) // have at least one criterium
-      } else {
-        loop(arguments,param=>addCriterium(isString(param)?{selector:param}:param))
-      }
-      numCriteria = criteria.length
+    function addCriteria(optionsList){
+      return optionsList.length===0
+        &&addCriterium({}) // have at least one criterium
+        ||loop(optionsList,param=>addCriterium(isString(param)?{selector:param}:param)).length
     }
 
     /**
@@ -132,12 +132,13 @@
      * @memberof tinysort
      * @private
      * @param {Object} [options]
+     * @returns {number}
      */
     function addCriterium(options){
       const hasSelector = !!options.selector
       const hasFilter = hasSelector&&options.selector[0]===':'
       const allOptions = extend(options||{},defaults)
-      criteria.push(extend({
+      return criteria.push(extend({
         // has find, attr or data
         hasSelector
         ,hasAttr: !(allOptions.attr===nll||allOptions.attr==='')
@@ -163,17 +164,14 @@
      * @private
      */
     function initSortList(){
-      loop(nodeList,(elm,i)=>{
+      loop(nodeList,(elm,pos)=>{
         if (!parentNode) parentNode = elm.parentNode
         else if (parentNode!==elm.parentNode) isSameParent = false
         const {hasFilter,selector} = criteria[0]
         const isPartial = !selector||(hasFilter&&elm.matches(selector))||(selector&&elm.querySelector(selector))
         const listPartial = isPartial?elmObjsSorted:elmObjsUnsorted
-        const elementObject = {
-            elm: elm
-            ,pos: i
-            ,posn: listPartial.length
-          }
+        const posn = listPartial.length
+        const elementObject = {elm,pos,posn}
         elmObjsAll.push(elementObject)
         listPartial.push(elementObject)
       })
@@ -430,15 +428,16 @@
    * @private
    * @param {Array} array The object or array
    * @param {Function} func Callback function with the parameters value and key.
+   * @returns {Array}
    */
   function loop(array,func){
     const l = array.length
     let i = l
-      ,j
     while (i--) {
-      j = l-i-1
+      const j = l-i-1
       func(array[j],j)
     }
+    return array
   }
 
   /**
@@ -460,8 +459,15 @@
     return obj
   }
 
+  /**
+   * Public API method for plugins
+   * @param {Function} prepare
+   * @param {Function} sort
+   * @param {object} sortBy
+   * @returns {number}
+   */
   function plugin(prepare,sort,sortBy){
-    plugins.push({prepare,sort,sortBy})
+    return plugins.push({prepare,sort,sortBy})
   }
 
   // Element.prototype.matches IE
