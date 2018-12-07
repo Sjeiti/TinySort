@@ -2,7 +2,7 @@
 /**
  * TinySort is a small script that sorts HTML elements. It sorts by text- or attribute value, or by that of one of it's children.
  * @summary A nodeElement sorting script.
- * @version 3.1.4
+ * @version 3.2.5
  * @license MIT
  * @author Ron Valstar (http://www.ronvalstar.nl/)
  * @copyright Ron Valstar <ron@ronvalstar.nl>
@@ -12,34 +12,38 @@
   typeof define==='function'&&define.amd?define('tinysort',()=>tinysort):(root.tinysort = tinysort)
 }(window||module||{},(_undef=>{
   const fls = !1
-    ,undef = _undef
-    ,nll = null
-    ,win = window
-    ,doc = win.document
-    ,parsefloat = parseFloat
-    ,regexLastNr = /(-?\d+\.?\d*)\s*$/g    // regex for testing strings ending on numbers
-    ,regexLastNrNoDash = /(\d+\.?\d*)\s*$/g  // regex for testing strings ending on numbers ignoring dashes
-    ,plugins = []
-    ,largeChar = String.fromCharCode(0xFFF)
-    ,/**{options}*/defaults = {        // default settings
-      selector: nll      // CSS selector to select the element to sort to
-      ,order: 'asc'      // order: asc, desc or rand
-      ,attr: nll         // order by attribute value
-      ,data: nll         // use the data attribute for sorting
-      ,useVal: fls       // use element value instead of text
-      ,place: 'org'      // place ordered elements at position: start, end, org (original position), first, last
-      ,returns: fls      // return all elements or only the sorted ones (true/false)
-      ,cases: fls        // a case sensitive sort orders [aB,aa,ab,bb]
-      ,natural: fls      // use natural sort order
-      ,forceStrings:fls  // if false the string '2' will sort with the value 2, not the string '2'
-      ,ignoreDashes:fls  // ignores dashes when looking for numerals
-      ,sortFunction: nll // override the default sort function
-      ,useFlex:fls
-      ,emptyEnd:fls
-      ,console
-    }
+  const undef = _undef
+  const nll = null
+  const win = window
+  const doc = win.document
+  const parsefloat = parseFloat
+  const regexLastNr = /(-?\d+\.?\d*)\s*$/g    // regex for testing strings ending on numbers
+  const regexLastNrNoDash = /(\d+\.?\d*)\s*$/g  // regex for testing strings ending on numbers ignoring dashes
+  const plugins = []
+  const stringFromCharCode = i=>String.fromCharCode(i)
+  const charsFrom = from=>Array.from(new Array(3),(o,i)=>stringFromCharCode(from+i))
+  const charLow = charsFrom(0)
+  const charHigh = charsFrom(0xFFF)
+  /**{options}*/
+  const defaults = {   // default settings
+    selector: nll      // CSS selector to select the element to sort to
+    ,order: 'asc'      // order: asc, desc or rand
+    ,attr: nll         // order by attribute value
+    ,data: nll         // use the data attribute for sorting
+    ,useVal: fls       // use element value instead of text
+    ,place: 'org'      // place ordered elements at position: start, end, org (original position), first, last
+    ,returns: fls      // return all elements or only the sorted ones (true/false)
+    ,cases: fls        // a case sensitive sort orders [aB,aa,ab,bb]
+    ,natural: fls      // use natural sort order
+    ,forceStrings:fls  // if false the string '2' will sort with the value 2, not the string '2'
+    ,ignoreDashes:fls  // ignores dashes when looking for numerals
+    ,sortFunction: nll // override the default sort function
+    ,useFlex:fls
+    ,emptyEnd:fls
+    ,console
+  }
   let numCriteria = 0
-    ,criteriumIndex = 0
+  let criteriumIndex = 0
 
   /**
    * Options object
@@ -65,68 +69,57 @@
    * @memberof tinysort
    * @public
    * @param {NodeList|HTMLElement[]|String} nodeList The nodelist or array of elements to be sorted. If a string is passed it should be a valid CSS selector.
-   * @param {options} [options] A list of options.
+   * @param {options[]} [...optionsList] A list of options.
    * @returns {HTMLElement[]}
    */
-  function tinysort(nodeList,options){
+  function tinysort(nodeList,...optionsList){
+    const options = optionsList[0]||{}
     isString(nodeList) && (nodeList = doc.querySelectorAll(nodeList))
 
     const {console} = Object.assign({},defaults,options||{})
     nodeList.length===0 && console && console.warn && console.warn('No elements to sort')
 
     const fragment = doc.createDocumentFragment()
-      /** both sorted and unsorted elements
-       * @type {elementObject[]} */
-      ,elmObjsAll = []
-      /** sorted elements
-       * @type {elementObject[]} */
-      ,elmObjsSorted = []
-      /** unsorted elements
-       * @type {elementObject[]} */
-      ,elmObjsUnsorted = []
-      /** sorted elements before sort
-       * @type {elementObject[]} */
-      ,elmObjsSortedInitial = []
-      /** @type {criteriumIndex[]} */
-      ,criteria = []
-    let /** @type {HTMLElement} */parentNode
-      ,isSameParent = true
-      ,firstParent = nodeList.length&&nodeList[0].parentNode
-      ,isFragment = firstParent.rootNode!==document
-      ,isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&!isFragment&&getComputedStyle(firstParent,null).display.indexOf('flex')!==-1
+    /** both sorted and unsorted elements
+     * @type {elementObject[]} */
+    const elmObjsAll = []
+    /** sorted elements
+     * @type {elementObject[]} */
+    const elmObjsSorted = []
+    /** unsorted elements
+     * @type {elementObject[]} */
+    const elmObjsUnsorted = []
+    /** sorted elements before sort
+     * @type {elementObject[]} */
+    const elmObjsSortedInitial = []
+    /** @type {criteriumIndex[]} */
+    const criteria = []
+    /** @type {HTMLElement} */
+    let parentNode
+    let isSameParent = true
+    let firstParent = nodeList.length&&nodeList[0].parentNode
+    let isFragment = firstParent.rootNode!==document
+    let isFlex = nodeList.length&&(options===undef||options.useFlex!==false)&&!isFragment&&getComputedStyle(firstParent,null).display.indexOf('flex')!==-1
 
-    initCriteria.apply(nll,Array.prototype.slice.call(arguments,1))
+    numCriteria = addCriteria(optionsList)
     initSortList()
-    elmObjsSorted.sort(options&&options.sortFunction||sortFunction)
+    elmObjsSorted.sort(options.sortFunction||sortFunction)
     applyToDOM()
 
     /**
      * Create criteria list
+     * @param {object[]} optionsList
+     * @returns {number}
      */
-    function initCriteria(){
-      if (arguments.length===0) {
-        addCriterium({}) // have at least one criterium
-      } else {
-        loop(arguments,param=>addCriterium(isString(param)?{selector:param}:param))
-      }
-      numCriteria = criteria.length
+    function addCriteria(optionsList){
+      return optionsList.length===0
+        &&addCriterium({}) // have at least one criterium
+        ||loop(optionsList,param=>addCriterium(isString(param)?{selector:param}:param)).length
     }
 
     /**
      * A criterium is a combination of the selector, the options and the default options
-     * @typedef {Object} criterium
-     * @property {String} selector - a valid CSS selector
-     * @property {String} order - order: asc, desc or rand
-     * @property {String} attr - order by attribute value
-     * @property {String} data - use the data attribute for sorting
-     * @property {boolean} useVal - use element value instead of text
-     * @property {String} place - place ordered elements at position: start, end, org (original position), first
-     * @property {boolean} returns - return all elements or only the sorted ones (true/false)
-     * @property {boolean} cases - a case sensitive sort orders [aB,aa,ab,bb]
-     * @property {boolean} natural - use natural sort order
-     * @property {boolean} forceStrings - if false the string '2' will sort with the value 2, not the string '2'
-     * @property {boolean} ignoreDashes - ignores dashes when looking for numerals
-     * @property {Function} sortFunction - override the default sort function
+     * @typedef {options} criterium
      * @property {boolean} hasSelector - options has a selector
      * @property {boolean} hasFilter - options has a filter
      * @property {boolean} hasAttr - options has an attribute selector
@@ -139,12 +132,13 @@
      * @memberof tinysort
      * @private
      * @param {Object} [options]
+     * @returns {number}
      */
     function addCriterium(options){
       const hasSelector = !!options.selector
-        ,hasFilter = hasSelector&&options.selector[0]===':'
-        ,allOptions = extend(options||{},defaults)
-      criteria.push(extend({
+      const hasFilter = hasSelector&&options.selector[0]===':'
+      const allOptions = extend(options||{},defaults)
+      return criteria.push(extend({
         // has find, attr or data
         hasSelector
         ,hasAttr: !(allOptions.attr===nll||allOptions.attr==='')
@@ -170,17 +164,14 @@
      * @private
      */
     function initSortList(){
-      loop(nodeList,(elm,i)=>{
+      loop(nodeList,(elm,pos)=>{
         if (!parentNode) parentNode = elm.parentNode
         else if (parentNode!==elm.parentNode) isSameParent = false
         const {hasFilter,selector} = criteria[0]
-          ,isPartial = !selector||(hasFilter&&elm.matches(selector))||(selector&&elm.querySelector(selector))
-          ,listPartial = isPartial?elmObjsSorted:elmObjsUnsorted
-          ,elementObject = {
-            elm: elm
-            ,pos: i
-            ,posn: listPartial.length
-          }
+        const isPartial = !selector||(hasFilter&&elm.matches(selector))||(selector&&elm.querySelector(selector))
+        const listPartial = isPartial?elmObjsSorted:elmObjsUnsorted
+        const posn = listPartial.length
+        const elementObject = {elm,pos,posn}
         elmObjsAll.push(elementObject)
         listPartial.push(elementObject)
       })
@@ -193,7 +184,7 @@
      */
     function naturalCompare(a, b, chunkify) {
       const aa = chunkify(a.toString())
-        ,bb = chunkify(b.toString())
+      const bb = chunkify(b.toString())
       for (let x = 0; aa[x] && bb[x]; x++) {
         if (aa[x]!==bb[x]) {
           const c = Number(aa[x])
@@ -241,34 +232,29 @@
       while (sortReturnNumber===0&&criteriumIndex<numCriteria) {
         /** @type {criterium} */
         const criterium = criteria[criteriumIndex]
-          ,regexLast = criterium.ignoreDashes?regexLastNrNoDash:regexLastNr
+        const regexLast = criterium.ignoreDashes?regexLastNrNoDash:regexLastNr
         //
         loop(plugins,plugin=>plugin.prepare && plugin.prepare(criterium))
         //
         let isNumeric = fls
-          // prepare sort elements
-          ,valueA = getSortBy(a,criterium)
-          ,valueB = getSortBy(b,criterium)
+        // prepare sort elements
+        let valueA = getSortBy(a,criterium)
+        let valueB = getSortBy(b,criterium)
         if (criterium.sortFunction) { // custom sort
           sortReturnNumber = criterium.sortFunction(a,b)
         } else if (criterium.order==='rand') { // random sort
           sortReturnNumber = Math.random()<0.5?1:-1
         } else { // regular sort
-          const noA = valueA===''||valueA===undef
-            ,noB = valueB===''||valueB===undef
           if (valueA===valueB) {
             sortReturnNumber = 0
-          } else if (criterium.emptyEnd&&(noA||noB)) {
-            sortReturnNumber = noA&&noB?0:noA?1:-1
           } else {
             if (!criterium.forceStrings) {
               // cast to float if both strings are numeral (or end numeral)
               let valuesA = isString(valueA)?valueA&&valueA.match(regexLast):fls// todo: isString superfluous because getSortBy returns string|undefined
-                ,valuesB = isString(valueB)?valueB&&valueB.match(regexLast):fls
-
+              let valuesB = isString(valueB)?valueB&&valueB.match(regexLast):fls
               if (valuesA&&valuesB) {
                 const previousA = valueA.substr(0,valueA.length-valuesA[0].length)
-                  ,previousB = valueB.substr(0,valueB.length-valuesB[0].length)
+                const previousB = valueB.substr(0,valueB.length-valuesB[0].length)
                 if (previousA==previousB) {
                   isNumeric = !fls
                   valueA = parsefloat(valuesA[0])
@@ -276,15 +262,10 @@
                 }
               }
             }
-            if (valueA===undef||valueB===undef) {
-              sortReturnNumber = 0
+            if (!criterium.natural||(!isNaN(valueA)&&!isNaN(valueB))) {
+              sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0)
             } else {
-              // todo: check here
-              if (!criterium.natural||(!isNaN(valueA)&&!isNaN(valueB))) {
-                sortReturnNumber = valueA<valueB?-1:(valueA>valueB?1:0)
-              } else {
-                sortReturnNumber = naturalCompare(valueA, valueB, chunkify)
-              }
+              sortReturnNumber = naturalCompare(valueA, valueB, chunkify)
             }
           }
         }
@@ -302,9 +283,11 @@
      * @private
      */
     function applyToDOM(){
-      const hasSortedAll = elmObjsSorted.length===elmObjsAll.length
+      const numSorted = elmObjsSorted.length
+      const hasSortedAll = numSorted===elmObjsAll.length
+      const hasSortedAllSiblings = numSorted===parentNode.children.length
       const {place,console} = criteria[0]
-      if (isSameParent&&hasSortedAll) {
+      if (isSameParent&&hasSortedAll&&hasSortedAllSiblings) {
         if (isFlex) {
           elmObjsSorted.forEach((elmObj,i)=>elmObj.elm.style.order = i)
         } else {
@@ -313,18 +296,17 @@
         }
       } else {
         const isPlaceOrg = place==='org'
-          ,isPlaceStart = place==='start'
-          ,isPlaceEnd = place==='end'
-          ,isPlaceFirst = place==='first'
-          ,isPlaceLast = place==='last'
-
+        const isPlaceStart = place==='start'
+        const isPlaceEnd = place==='end'
+        const isPlaceFirst = place==='first'
+        const isPlaceLast = place==='last'
         if (isPlaceOrg) {
           elmObjsSorted.forEach(addGhost)
           elmObjsSorted.forEach((elmObj,i)=>replaceGhost(elmObjsSortedInitial[i],elmObj.elm))
         } else if (isPlaceStart||isPlaceEnd) {
           let startElmObj = elmObjsSortedInitial[isPlaceStart?0:elmObjsSortedInitial.length-1]
-            ,startParent = startElmObj&&startElmObj.elm.parentNode
-            ,startElm = startParent&&(isPlaceStart&&startParent.firstChild||startParent.lastChild)
+          const startParent = startElmObj&&startElmObj.elm.parentNode
+          const startElm = startParent&&(isPlaceStart&&startParent.firstChild||startParent.lastChild)
           if (startElm) {
             startElm!==startElmObj.elm && (startElmObj = {elm:startElm})
             addGhost(startElmObj)
@@ -410,7 +392,8 @@
         if (!criterium.cases) sortBy = sortBy.toLowerCase()
         sortBy = sortBy.replace(/\s+/g,' ') // spaces/newlines
       }
-      if (sortBy===null) sortBy = largeChar
+      const noIndex = [undef,nll,''].indexOf(sortBy)
+      if (noIndex!==-1) sortBy = (criterium.emptyEnd?charHigh:charLow)[noIndex]
       return sortBy
     }
 
@@ -445,15 +428,16 @@
    * @private
    * @param {Array} array The object or array
    * @param {Function} func Callback function with the parameters value and key.
+   * @returns {Array}
    */
   function loop(array,func){
     const l = array.length
     let i = l
-      ,j
     while (i--) {
-      j = l-i-1
+      const j = l-i-1
       func(array[j],j)
     }
+    return array
   }
 
   /**
@@ -475,8 +459,15 @@
     return obj
   }
 
+  /**
+   * Public API method for plugins
+   * @param {Function} prepare
+   * @param {Function} sort
+   * @param {object} sortBy
+   * @returns {number}
+   */
   function plugin(prepare,sort,sortBy){
-    plugins.push({prepare,sort,sortBy})
+    return plugins.push({prepare,sort,sortBy})
   }
 
   // Element.prototype.matches IE

@@ -12,7 +12,7 @@
     "url": "https://github.com/Sjeiti/TinySort.git"
   },
   "scripts": {
-    "dist:main": "npm run copy:main && npm run js",
+    "dist:main": "npm run copy:src && npm run js",
     "copy": "npm run copy:dist && npm run copy:img",
     "copy:src": "copyfiles src/* dist -f",
     "copy:dist": "copyfiles dist/* distdoc",

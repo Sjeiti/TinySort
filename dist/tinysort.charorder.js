@@ -2,7 +2,7 @@
 /**
  * TinySort CharOrder: a TinySort plugin to sort non-latin characters.
  * @summary TinySort CharOrder
- * @version 3.1.4
+ * @version 3.2.5
  * @requires tinysort
  * @license MIT/GPL
  * @author Ron Valstar (http://www.ronvalstar.nl/)
@@ -119,7 +119,6 @@
 	 * @returns {Number} A sorting number -1, 0 or 1
 	 */
   function sort(criterium,isNumeric,a,b,sortReturn){
-    console.log('criterium.charOrder',criterium.charOrder) // todo: remove log
     if (a===b) {
       sortReturn = 0
     } else if (!isNumeric&&criterium.charOrder) {
