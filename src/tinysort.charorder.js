@@ -119,7 +119,6 @@
 	 * @returns {Number} A sorting number -1, 0 or 1
 	 */
   function sort(criterium,isNumeric,a,b,sortReturn){
-    console.log('criterium.charOrder',criterium.charOrder) // todo: remove log
     if (a===b) {
       sortReturn = 0
     } else if (!isNumeric&&criterium.charOrder) {
