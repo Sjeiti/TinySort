@@ -44,7 +44,9 @@
     "serve:test": "node task/serve test 8877"
   },
   "dependencies": {
-    "@emmetio/expand-abbreviation": "^0.7.1"
+    "@emmetio/expand-abbreviation": "^0.7.1",
+    "lodash": "^4.17.11",
+    "tough-cookie": "^2.5.0"
   },
   "devDependencies": {
     "autoprefixer": "^8.6.5",
@@ -56,7 +58,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "body-parser": "^1.17.1",
     "bootstrap": "^3.3.7",
-    "chokidar-cli": "^1.2.0",
+    "chokidar-cli": "^1.2.1",
     "copyfiles": "^2.0.0",
     "cssnano": "^4.0.0",
     "eslint": "^3.19.0",
