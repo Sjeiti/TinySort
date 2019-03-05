@@ -1,6 +1,6 @@
 # TinySort
 
-TinySort is a small script that sorts DOM elements. It sorts HTMLElements by text- or attribute value, or by that of one of it's children.
+TinySort is a small script that sorts DOM elements. It sorts HTMLElements by text- or attribute value, or by that of one of its children.
 The examples below should help getting you on your way.
 
 If you find a bug, have a feature request or a code improvement you can [file them here](https://github.com/Sjeiti/TinySort/issues). Please [provide code examples](http://jsfiddle.net/) where applicable.</small>
