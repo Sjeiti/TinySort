@@ -71,7 +71,7 @@
     "ncp": "^2.0.0",
     "next-version": "^0.9.3",
     "node-qunit-phantomjs": "^1.4.0",
-    "open": "0.0.5",
+    "open": "6.0.0",
     "postcss-cli": "^5.0.1",
     "rimraf": "^2.6.1",
     "serve-static": "^1.13.2",
