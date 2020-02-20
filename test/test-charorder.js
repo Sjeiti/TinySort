@@ -6,6 +6,7 @@ const {module,test,ok,/*assert,async*/} = QUnit
   ,aLangSR = ['džep','luđak','čovjek','gospodin','muškarac','ljubav','coga','zec','čega','liljana','godina','nož','njuška']
   ,aLangDA = ['Åben','Æble','Åse','København','Aarhus','Øresund']
   ,aLangFR = ['Ésdf','ésdf','zsdf','Zsdf','Asdf','asdf']
+  ,aLatin = ['abcd','bcde','cdef','defg','efgh','fghi']
 
 module('charorder plugin')
 test('non latin characters plugin', function() {
@@ -27,6 +28,12 @@ test('non latin characters plugin', function() {
       ,sSorted = eachElement(aSorted,elm=>' '+elm.textContent)
     return sSorted===' Asdf asdf Ésdf ésdf zsdf Zsdf'
   })(),'tst')
+
+  ok((()=>{
+    const aSorted = tinysort(zenLi('ul>li{a$}*'+aLatin.length,{a:aLatin}),{charOrder:'ba'})
+      ,sSorted = eachElement(aSorted,elm=>' '+elm.textContent)
+    return sSorted===' bcde abcd cdef defg efgh fghi'
+  })(),'latin')
 
   //console.log('',eachElement(zenLi('ul>li{a$}*'+aLangDA.length,{a:aLangDA}),function(elm){ return ' '+elm.textContent; })); // log
   /*ok((()=>{
