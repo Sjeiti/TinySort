@@ -385,7 +385,9 @@
       // value
       if (criterium.hasAttr) sortBy = element.getAttribute(criterium.attr)
       else if (criterium.useVal) sortBy = element.value||element.getAttribute('value')
-      else if (criterium.hasData) sortBy = element.getAttribute('data-'+criterium.data)
+      else if (criterium.hasData) {
+        sortBy = $("#" + element.id).data(criterium.data)
+      }
       else if (element) sortBy = element.textContent
       // strings should be ordered in lowercase (unless specified)
       if (isString(sortBy)) {
