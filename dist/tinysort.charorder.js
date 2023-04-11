@@ -2,11 +2,11 @@
 /**
  * TinySort CharOrder: a TinySort plugin to sort non-latin characters.
  * @summary TinySort CharOrder
- * @version 3.2.5
+ * @version 3.2.8
  * @requires tinysort
  * @license MIT/GPL
  * @author Ron Valstar (http://www.ronvalstar.nl/)
- * @copyright Ron Valstar <ron@ronvalstar.nl>
+ * @copyright Ron Valstar
  * @namespace tinysort.charorder
  */
 (function (root,factory) {

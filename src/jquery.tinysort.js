@@ -4,11 +4,11 @@
  * Does not use the first argument in tinysort.js since that is handled internally by the jQuery selector.
  * Sub-selections (option.selector) do not use the jQuery selector syntax but regular CSS3 selector syntax.
  * @summary jQuery plugin wrapper for TinySort
- * @version 3.2.7
+ * @version 3.2.8
  * @requires tinysort
  * @license MIT/GPL
  * @author Ron Valstar (http://www.ronvalstar.nl/)
- * @copyright Ron Valstar <ron@ronvalstar.nl>
+ * @copyright Ron Valstar
  */
 (function (factory) {
   typeof define==='function'&&define.amd
