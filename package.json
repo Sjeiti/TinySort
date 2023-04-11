@@ -54,7 +54,7 @@
     "tough-cookie": "^2.5.0"
   },
   "devDependencies": {
-    "autoprefixer": "^8.6.5",
+    "autoprefixer": "^10.4.14",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.1.5",
@@ -77,7 +77,7 @@
     "next-version": "^0.9.3",
     "node-qunit-phantomjs": "^1.4.0",
     "open": "6.0.0",
-    "postcss-cli": "^5.0.1",
+    "postcss-cli": "^10.1.0",
     "rimraf": "^2.6.1",
     "serve-static": "^1.13.2",
     "webpack": "^4.15.1",
