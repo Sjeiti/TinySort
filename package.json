@@ -49,7 +49,7 @@
     "serve:test": "node task/serve test 8877"
   },
   "dependencies": {
-    "@emmetio/expand-abbreviation": "^0.7.1",
+    "@emmetio/abbreviation": "^2.3.3",
     "lodash": "^4.17.11",
     "tough-cookie": "^2.5.0"
   },

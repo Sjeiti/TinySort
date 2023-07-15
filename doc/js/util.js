@@ -1,4 +1,4 @@
-import { expand } from '@emmetio/expand-abbreviation'
+import { expand } from '@emmetio/abbreviation'
 
 /**
  * Turn a title into a slug
