@@ -63,7 +63,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "body-parser": "^1.17.1",
     "bootstrap": "^3.3.7",
-    "chokidar-cli": "^1.2.1",
+    "chokidar-cli": "^3.0.0",
     "copyfiles": "^2.0.0",
     "cssnano": "^6.0.1",
     "eslint": "^8.51.0",
